@@ -3,11 +3,16 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/iam-authorization/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-compatibility/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-core/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-infrastructure/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-integration/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-launcher/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-organization/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-permission/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-persistent/iam-persistent-jdbc/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-persistent/iam-persistent-mongo/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-persistent/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-persistent/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
   </component>

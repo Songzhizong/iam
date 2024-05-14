@@ -9,5 +9,10 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>iam-persistent</artifactId>
+    <packaging>pom</packaging>
 
+    <modules>
+        <module>iam-persistent-jdbc</module>
+        <module>iam-persistent-mongo</module>
+    </modules>
 </project>

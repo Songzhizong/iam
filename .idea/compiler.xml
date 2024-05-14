@@ -6,10 +6,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="iam-persistent" />
         <module name="iam-authorization" />
+        <module name="iam-integration" />
+        <module name="iam-core" />
         <module name="iam-launcher" />
         <module name="iam-organization" />
+        <module name="iam-persistent-mongo" />
+        <module name="iam-persistent-jdbc" />
         <module name="iam-infrastructure" />
         <module name="iam-permission" />
         <module name="iam-compatibility" />
@@ -21,11 +24,15 @@
       <module name="iam" options="-parameters" />
       <module name="iam-authorization" options="-parameters" />
       <module name="iam-compatibility" options="-parameters" />
+      <module name="iam-core" options="-parameters" />
       <module name="iam-infrastructure" options="-parameters" />
+      <module name="iam-integration" options="-parameters" />
       <module name="iam-launcher" options="-parameters" />
       <module name="iam-organization" options="-parameters" />
       <module name="iam-permission" options="-parameters" />
       <module name="iam-persistent" options="-parameters" />
+      <module name="iam-persistent-jdbc" options="-parameters" />
+      <module name="iam-persistent-mongo" options="-parameters" />
     </option>
   </component>
 </project>

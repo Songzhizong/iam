@@ -1,0 +1,24 @@
+server:
+  port: 30030
+  shutdown: graceful
+  tomcat:
+    threads:
+      max: 512
+spring:
+  application:
+    name: IAM
+  #  threads:
+  #    virtual:
+  #      enabled: true
+  servlet:
+    multipart:
+      max-file-size: 1GB
+      max-request-size: 1GB
+      enabled: true
+  main:
+    allow-bean-definition-overriding: true
+
+ideal:
+  trace:
+    exclude-patterns:
+      - /actuator/**

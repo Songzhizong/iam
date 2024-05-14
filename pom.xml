@@ -14,9 +14,11 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>iam-core</module>
         <module>iam-launcher</module>
-        <module>iam-persistent</module>
         <module>iam-permission</module>
+        <module>iam-persistent</module>
+        <module>iam-integration</module>
         <module>iam-organization</module>
         <module>iam-authorization</module>
         <module>iam-compatibility</module>
