@@ -1,0 +1,14 @@
+### 创建用户组
+POST {{base_url}}/iam/user_groups?tenantId=622057660241412096
+Content-Type: application/json
+
+{
+  "containerId": 2,
+  "name": "管理员用户组",
+  "note": "管理员用户组"
+}
+
+### 删除用户组
+DELETE {{base_url}}/iam/user_groups/622066105392824320
+
+###

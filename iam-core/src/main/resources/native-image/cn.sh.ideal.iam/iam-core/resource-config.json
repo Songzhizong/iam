@@ -1,0 +1,9 @@
+{
+  "resources": {
+    "includes": [
+      {
+        "pattern": "\\Qcn.sh.ideal.iam.core.properties\\E"
+      }
+    ]
+  }
+}

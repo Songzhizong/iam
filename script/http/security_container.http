@@ -1,0 +1,11 @@
+### 创建安全容器
+POST {{base_url}}/iam/security_containers
+Content-Type: application/json
+
+{
+  "parentId": 1,
+  "name": "北京小米"
+}
+
+### 重命名安全容器
+PATCH {{base_url}}/iam/security_containers/3/rename?name=理想南京

@@ -13,7 +13,7 @@
     <dependencies>
         <dependency>
             <groupId>cn.sh.ideal.iam</groupId>
-            <artifactId>iam-core</artifactId>
+            <artifactId>iam-organization</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -25,6 +25,19 @@
             <artifactId>ideal-starter-trace-webmvc</artifactId>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>jdbc</id>
+            <dependencies>
+                <dependency>
+                    <groupId>cn.sh.ideal.iam</groupId>
+                    <artifactId>iam-persistent-jdbc</artifactId>
+                    <version>0.0.1-SNAPSHOT</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
@@ -38,6 +51,14 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${maven-deploy-plugin.version}</version>
+                <configuration>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>

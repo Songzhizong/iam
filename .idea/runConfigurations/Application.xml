@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
     <option name="ACTIVE_PROFILES" value="dev" />
+    <option name="ALTERNATIVE_JRE_PATH" value="$USER_HOME$/.sdkman/candidates/java/22.0.1-graal" />
     <module name="iam-launcher" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="cn.sh.ideal.iam.launcher.Application" />
     <method v="2">

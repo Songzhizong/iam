@@ -1,37 +1,25 @@
 spring:
-  config:
-    import:
-      - optional:application-sms-ihuyi.yml
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: "jdbc:postgresql://127.0.0.1:5432/ideal?currentSchema=iam&charset=UTF8"
+    username: zzsong
+    password: include203
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 0
+      maximum-pool-size: 100
+      idle-timeout: 300000
+      connection-test-query: 'select 1'
+      transaction-isolation: 2
   data:
-    mongodb:
-      auto-index-creation: true
-      uri: mongodb://127.0.0.1:27017/ideal
     redis:
       host: 127.0.0.1
       port: 6379
-
-ideal-common-service:
-  fss:
-    default-engine: s3
-    s3-engine:
-      shard-list:
-        - shard: '1'
-          endpoint: 'http://127.0.0.1:9000'
-          bucket: 'common-service'
-          access-key: 'minioadmin'
-          secret-key: 'minioadmin'
-          weight: 500
-          writeable: true
-          base-presigned-url: 'http://127.0.0.1:9000'
-
-
-ideal:
-  sms:
-    provider: ihuyi
-    ihuyi:
-      api-id: C81357548
-      api-key: fefef20e767401244c17da8af6df4593
-#      host: "http://127.0.0.1/webservice/sms.php?method=Submit"
+  jpa:
+    open-in-view: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
 
 logging:
   charset:
@@ -39,7 +27,7 @@ logging:
     console: utf-8
   level:
     root: info
-    cn.idealio.cs: debug
+    cn.sh.ideal.iam: debug
     cn.idealio.framework: info
     reactor.rabbitmq.Receiver: warn
     io.netty.resolver.dns.DnsServerAddressStreamProviders: off

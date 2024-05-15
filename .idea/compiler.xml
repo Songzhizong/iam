@@ -2,22 +2,35 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+      </profile>
+      <profile name="Annotation profile for iam" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
+        </processorPath>
         <module name="iam-authorization" />
-        <module name="iam-integration" />
         <module name="iam-core" />
         <module name="iam-launcher" />
         <module name="iam-organization" />
         <module name="iam-persistent-mongo" />
         <module name="iam-persistent-jdbc" />
+        <module name="iam-permission-front" />
         <module name="iam-infrastructure" />
-        <module name="iam-permission" />
         <module name="iam-compatibility" />
+        <module name="iam-permission-tbac" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="iam-integration" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
@@ -30,6 +43,8 @@
       <module name="iam-launcher" options="-parameters" />
       <module name="iam-organization" options="-parameters" />
       <module name="iam-permission" options="-parameters" />
+      <module name="iam-permission-front" options="-parameters" />
+      <module name="iam-permission-tbac" options="-parameters" />
       <module name="iam-persistent" options="-parameters" />
       <module name="iam-persistent-jdbc" options="-parameters" />
       <module name="iam-persistent-mongo" options="-parameters" />
