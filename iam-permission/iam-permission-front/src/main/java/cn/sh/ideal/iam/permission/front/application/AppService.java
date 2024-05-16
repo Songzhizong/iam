@@ -4,6 +4,7 @@ import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.exception.ResourceNotFoundException;
 import cn.idealio.framework.util.Asserts;
 import cn.sh.ideal.iam.core.constant.Terminal;
+import cn.sh.ideal.iam.infrastructure.configure.IamIDGenerator;
 import cn.sh.ideal.iam.permission.front.domain.model.*;
 import cn.sh.ideal.iam.permission.front.dto.args.CreateAppArgs;
 import cn.sh.ideal.iam.permission.front.dto.resp.*;
@@ -23,11 +24,17 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AppService {
+    private final IamIDGenerator idGenerator;
     private final AppRepository appRepository;
     private final EntityFactory entityFactory;
     private final PermissionRepository permissionRepository;
     private final PermissionItemRepository permissionItemRepository;
     private final PermissionGroupRepository permissionGroupRepository;
+
+    @Nonnull
+    public static String formatAppConfigName(long appId) {
+        return "app_config_" + appId + ".json";
+    }
 
     @Nonnull
     @Transactional(rollbackFor = Throwable.class)
@@ -40,7 +47,7 @@ public class AppService {
             log.error("创建应用失败, 终端[{}]下已存在根路径: [{}]", terminal, rootPath);
             throw new BadRequestException("终端下已存在此根路径");
         }
-        App app = entityFactory.app(args);
+        App app = entityFactory.app(idGenerator.generate(), args);
         return appRepository.insert(app);
     }
 

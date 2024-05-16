@@ -16,6 +16,13 @@ import java.util.List;
 public class PermissionRepositoryImpl implements PermissionRepository {
     private final PermissionJpaRepository permissionJpaRepository;
 
+    @Nonnull
+    @Override
+    public Permission insert(@Nonnull Permission permission) {
+        PermissionDO entity = (PermissionDO) permission;
+        return permissionJpaRepository.save(entity);
+    }
+
     @Override
     public void insert(@Nonnull List<Permission> permissions) {
         for (Permission permission : permissions) {
@@ -25,7 +32,7 @@ public class PermissionRepositoryImpl implements PermissionRepository {
     }
 
     @Override
-    public long deleteAllByAppId(long appId) {
+    public int deleteAllByAppId(long appId) {
         return permissionJpaRepository.deleteAllByAppId(appId);
     }
 

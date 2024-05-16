@@ -8,9 +8,12 @@ import java.util.List;
  */
 public interface PermissionRepository {
 
+    @Nonnull
+    Permission insert(@Nonnull Permission permission);
+
     void insert(@Nonnull List<Permission> permissions);
 
-    long deleteAllByAppId(long appId);
+    int deleteAllByAppId(long appId);
 
     @Nonnull
     List<Permission> findAllByAppId(long appId);

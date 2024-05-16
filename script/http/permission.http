@@ -1,0 +1,43 @@
+### 新增权限分组
+POST {{base_url}}/iam/front/permission_groups
+Content-Type: application/json
+
+{
+  "appId": 622416657016422400,
+  "name": "资产管理",
+  "orderNum": 1,
+  "enabled": true
+}
+
+### 新增权限配置项
+POST {{base_url}}/iam/front/permission_items
+Content-Type: application/json
+
+{
+  "groupId": 622428262412320768,
+  "name": "设备",
+  "orderNum": 0,
+  "enabled": true
+}
+
+### 新增权限点
+POST {{base_url}}/iam/front/permissions
+Content-Type: application/json
+
+{
+  "itemId": 622428631611736064,
+  "name": "所有权限",
+  "apis": [
+  ],
+  "authorities": [
+  ],
+  "childIds": [
+  ],
+  "itemSecurity": false,
+  "groupSecurity": false,
+  "allInItem": true,
+  "orderNum": 0,
+  "enabled": true
+}
+
+###

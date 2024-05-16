@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 /**
  * @author 宋志宗 on 2024/5/14
  */
-@Component
+@Component("organizationEntityFactory")
 public class EntityFactoryImpl implements EntityFactory {
     @Nonnull
     @Override

@@ -1,7 +1,11 @@
 package cn.sh.ideal.iam.permission.front.domain.model;
 
+import cn.idealio.framework.exception.BadRequestException;
+import cn.idealio.framework.lang.StringUtils;
 import cn.idealio.framework.spring.matcher.PathMatchers;
 import cn.sh.ideal.iam.permission.front.dto.resp.PermissionInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.LinkedHashSet;
@@ -13,6 +17,7 @@ import java.util.Set;
  * @author 宋志宗 on 2024/2/5
  */
 public interface Permission {
+    Logger log = LoggerFactory.getLogger(Permission.class);
 
     Long getId();
 
@@ -66,7 +71,18 @@ public interface Permission {
         Set<String> apiPatterns = new LinkedHashSet<>();
         Set<String> specificApis = new LinkedHashSet<>();
         for (String api : apis) {
-            if (PathMatchers.isPattern(api)) {
+            String[] split = StringUtils.split(api, " ");
+            if (split.length > 2) {
+                log.info("非法的api地址: " + api);
+                throw new BadRequestException("非法的api地址: " + api);
+            }
+            String path;
+            if (split.length == 1) {
+                path = split[0];
+            } else {
+                path = split[1];
+            }
+            if (PathMatchers.isPattern(path)) {
                 apiPatterns.add(api);
             } else {
                 specificApis.add(api);

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author 宋志宗 on 2024/2/5
@@ -15,6 +16,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PermissionItemRepositoryImpl implements PermissionItemRepository {
     private final PermissionItemJpaRepository permissionItemJpaRepository;
+
+    @Nonnull
+    @Override
+    public PermissionItem insert(@Nonnull PermissionItem item) {
+        PermissionItemDO entity = (PermissionItemDO) item;
+        return permissionItemJpaRepository.save(entity);
+    }
 
     @Override
     public void insert(@Nonnull List<PermissionItem> permissionItems) {
@@ -25,8 +33,14 @@ public class PermissionItemRepositoryImpl implements PermissionItemRepository {
     }
 
     @Override
-    public long deleteAllByAppId(long appId) {
+    public int deleteAllByAppId(long appId) {
         return permissionItemJpaRepository.deleteAllByAppId(appId);
+    }
+
+    @Nonnull
+    @Override
+    public Optional<PermissionItem> findById(long id) {
+        return permissionItemJpaRepository.findById(id).map(e -> e);
     }
 
     @Nonnull

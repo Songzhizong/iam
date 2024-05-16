@@ -1,7 +1,9 @@
 package cn.sh.ideal.iam.jdbc.permission.front;
 
+import cn.idealio.framework.util.Asserts;
 import cn.idealio.framework.util.data.hibernate.ManualIDGenerator;
 import cn.sh.ideal.iam.permission.front.domain.model.PermissionGroup;
+import cn.sh.ideal.iam.permission.front.dto.args.CreatePermissionGroupArgs;
 import cn.sh.ideal.iam.permission.front.dto.resp.PermissionGroupInfo;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,6 +13,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author 宋志宗 on 2024/2/5
@@ -56,6 +59,26 @@ public class PermissionGroupDO implements PermissionGroup {
     private long version = 0;
 
     @Nonnull
+    public static PermissionGroupDO create(long id, @Nonnull CreatePermissionGroupArgs args) {
+        Long appId = args.getAppId();
+        String name = args.getName();
+        Boolean enabled = args.getEnabled();
+        Integer orderNum = args.getOrderNum();
+        Asserts.nonnull(appId, "所属应用ID为空");
+        Asserts.notBlank(name, "权限分组名称为空");
+        if (enabled == null) {
+            enabled = true;
+        }
+        PermissionGroupDO permissionGroupDO = new PermissionGroupDO();
+        permissionGroupDO.setId(id);
+        permissionGroupDO.setAppId(appId);
+        permissionGroupDO.setName(name);
+        permissionGroupDO.setEnabled(enabled);
+        permissionGroupDO.setOrderNum(orderNum);
+        return permissionGroupDO;
+    }
+
+    @Nonnull
     public static PermissionGroupDO ofInfo(@Nonnull PermissionGroupInfo info) {
         PermissionGroupDO permissionGroupDO = new PermissionGroupDO();
         permissionGroupDO.setId(info.getId());
@@ -64,5 +87,12 @@ public class PermissionGroupDO implements PermissionGroup {
         permissionGroupDO.setEnabled(info.isEnabled());
         permissionGroupDO.setOrderNum(info.getOrderNum());
         return permissionGroupDO;
+    }
+
+    public void setOrderNum(@Nullable Integer orderNum) {
+        if (orderNum == null) {
+            orderNum = 0;
+        }
+        this.orderNum = orderNum;
     }
 }

@@ -29,7 +29,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="iam-integration" target="21" />
+      <module name="iam-integration" target="22" />
+      <module name="iam-permission-rbac" target="22" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

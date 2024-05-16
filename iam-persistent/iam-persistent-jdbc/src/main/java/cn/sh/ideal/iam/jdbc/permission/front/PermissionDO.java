@@ -1,9 +1,12 @@
 package cn.sh.ideal.iam.jdbc.permission.front;
 
+import cn.idealio.framework.util.Asserts;
 import cn.idealio.framework.util.data.hibernate.ManualIDGenerator;
 import cn.idealio.framework.util.data.jpa.LongSetConverter;
 import cn.idealio.framework.util.data.jpa.StringSetConverter;
 import cn.sh.ideal.iam.permission.front.domain.model.Permission;
+import cn.sh.ideal.iam.permission.front.domain.model.PermissionItem;
+import cn.sh.ideal.iam.permission.front.dto.args.CreatePermissionArgs;
 import cn.sh.ideal.iam.permission.front.dto.resp.PermissionInfo;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,6 +16,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -106,6 +110,56 @@ public class PermissionDO implements Permission {
     private long version = 0;
 
     @Nonnull
+    public static PermissionDO create(long id, @Nonnull PermissionItem item,
+                                      @Nonnull CreatePermissionArgs args) {
+        String name = args.getName();
+        Set<String> apis = args.getApis();
+        Set<String> authorities = args.getAuthorities();
+        Set<Long> childIds = args.getChildIds();
+        Boolean itemSecurity = args.getItemSecurity();
+        Boolean groupSecurity = args.getGroupSecurity();
+        Boolean allInItem = args.getAllInItem();
+        Boolean enabled = args.getEnabled();
+        Asserts.notBlank(name, "权限名称为空");
+        if (apis == null) {
+            apis = new LinkedHashSet<>();
+        }
+        if (authorities == null) {
+            authorities = new LinkedHashSet<>();
+        }
+        if (childIds == null) {
+            childIds = new LinkedHashSet<>();
+        }
+        if (itemSecurity == null) {
+            itemSecurity = false;
+        }
+        if (groupSecurity == null) {
+            groupSecurity = false;
+        }
+        if (allInItem == null) {
+            allInItem = false;
+        }
+        if (enabled == null) {
+            enabled = true;
+        }
+        PermissionDO permissionDO = new PermissionDO();
+        permissionDO.setId(id);
+        permissionDO.setAppId(item.getAppId());
+        permissionDO.setGroupId(item.getGroupId());
+        permissionDO.setItemId(item.getId());
+        permissionDO.setName(name);
+        permissionDO.setApis(apis);
+        permissionDO.setAuthorities(authorities);
+        permissionDO.setChildIds(childIds);
+        permissionDO.setItemSecurity(itemSecurity);
+        permissionDO.setGroupSecurity(groupSecurity);
+        permissionDO.setAllInItem(allInItem);
+        permissionDO.setEnabled(enabled);
+        permissionDO.setOrderNum(args.getOrderNum());
+        return permissionDO;
+    }
+
+    @Nonnull
     public static PermissionDO ofInfo(@Nonnull PermissionInfo info) {
         PermissionDO permissionDO = new PermissionDO();
         permissionDO.setId(info.getId());
@@ -122,5 +176,12 @@ public class PermissionDO implements Permission {
         permissionDO.setEnabled(info.isEnabled());
         permissionDO.setOrderNum(info.getOrderNum());
         return permissionDO;
+    }
+
+    public void setOrderNum(@Nullable Integer orderNum) {
+        if (orderNum == null) {
+            orderNum = 0;
+        }
+        this.orderNum = orderNum;
     }
 }
