@@ -14,9 +14,9 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
         </processorPath>
         <module name="iam-authorization" />
+        <module name="iam-permission-api" />
         <module name="iam-core" />
         <module name="iam-launcher" />
         <module name="iam-organization" />
@@ -43,6 +43,7 @@
       <module name="iam-launcher" options="-parameters" />
       <module name="iam-organization" options="-parameters" />
       <module name="iam-permission" options="-parameters" />
+      <module name="iam-permission-api" options="-parameters" />
       <module name="iam-permission-front" options="-parameters" />
       <module name="iam-permission-tbac" options="-parameters" />
       <module name="iam-persistent" options="-parameters" />

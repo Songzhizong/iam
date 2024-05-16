@@ -4,6 +4,10 @@ import cn.sh.ideal.iam.jdbc.organization.GroupDO;
 import cn.sh.ideal.iam.jdbc.organization.SecurityContainerDO;
 import cn.sh.ideal.iam.jdbc.organization.TenantDO;
 import cn.sh.ideal.iam.jdbc.organization.UserDO;
+import cn.sh.ideal.iam.jdbc.permission.front.AppDO;
+import cn.sh.ideal.iam.jdbc.permission.front.PermissionDO;
+import cn.sh.ideal.iam.jdbc.permission.front.PermissionGroupDO;
+import cn.sh.ideal.iam.jdbc.permission.front.PermissionItemDO;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
@@ -20,14 +24,19 @@ public class JdbcPersistentRuntimeHints implements RuntimeHintsRegistrar {
     @Override
     public void registerHints(@Nonnull RuntimeHints hints, ClassLoader classLoader) {
         List<TypeReference> references = List.of(
+                // organization
                 TypeReference.of(GroupDO.class),
                 TypeReference.of(SecurityContainerDO.class),
                 TypeReference.of(TenantDO.class),
-                TypeReference.of(UserDO.class)
+                TypeReference.of(UserDO.class),
+                // permission.front
+                TypeReference.of(AppDO.class),
+                TypeReference.of(PermissionDO.class),
+                TypeReference.of(PermissionGroupDO.class),
+                TypeReference.of(PermissionItemDO.class)
         );
         hints.reflection().registerTypes(
                 references, builder -> builder.withMembers(MemberCategory.values())
         );
-        hints.resources().registerPattern("common-service-persistent-jdbc/db_init_sql/*.sql");
     }
 }
