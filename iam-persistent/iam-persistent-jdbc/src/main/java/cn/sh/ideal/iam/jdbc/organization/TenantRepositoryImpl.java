@@ -1,6 +1,5 @@
 package cn.sh.ideal.iam.jdbc.organization;
 
-import cn.sh.ideal.iam.infrastructure.configure.IamIDGenerator;
 import cn.sh.ideal.iam.organization.domain.model.Tenant;
 import cn.sh.ideal.iam.organization.domain.model.TenantRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,14 +14,12 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 public class TenantRepositoryImpl implements TenantRepository {
-    private final IamIDGenerator idGenerator;
     private final TenantJpaRepository tenantJpaRepository;
 
     @Nonnull
     @Override
     public Tenant insert(@Nonnull Tenant tenant) {
         TenantDO entity = (TenantDO) tenant;
-        entity.setId(idGenerator.generate());
         return tenantJpaRepository.saveAndFlush(entity);
     }
 

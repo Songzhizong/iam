@@ -34,6 +34,8 @@ public interface SecurityContainerRepository {
     @Nonnull
     List<SecurityContainer> findAllByParentIdIn(@Nonnull Collection<Long> parentIds);
 
+    boolean exists();
+
     boolean existsByParentId(long parentId);
 
     boolean existsByParentIdAndName(@Nullable Long parentId, @Nonnull String name);

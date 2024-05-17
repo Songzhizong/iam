@@ -1,6 +1,5 @@
 package cn.sh.ideal.iam.jdbc.organization;
 
-import cn.sh.ideal.iam.infrastructure.configure.IamIDGenerator;
 import cn.sh.ideal.iam.organization.domain.model.Group;
 import cn.sh.ideal.iam.organization.domain.model.User;
 import cn.sh.ideal.iam.organization.domain.model.UserRepository;
@@ -20,7 +19,6 @@ import java.util.stream.Collectors;
 @Repository
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
-    private final IamIDGenerator idGenerator;
     private final UserJpaRepository userJpaRepository;
     private final GroupJpaRepository groupJpaRepository;
     private final UserGroupRelJpaRepository userGroupRelJpaRepository;
@@ -29,7 +27,6 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User insert(@Nonnull User user) {
         UserDO entity = (UserDO) user;
-        entity.setId(idGenerator.generate());
         return userJpaRepository.saveAndFlush(entity);
     }
 

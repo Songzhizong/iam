@@ -1,7 +1,7 @@
 package cn.sh.ideal.iam.jdbc.organization;
 
-import cn.sh.ideal.iam.organization.domain.model.SecurityContainer;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -15,6 +15,7 @@ public interface SecurityContainerJpaRepository extends JpaRepository<SecurityCo
     boolean existsByParentId(long parentId);
 
     boolean existsByParentIdAndName(long parentId, @Nonnull String name);
+
 
     @Nonnull
     List<SecurityContainerDO> findAllByParentIdIn(@Nonnull Collection<Long> parentIds);

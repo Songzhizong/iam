@@ -97,6 +97,7 @@ public class AppService {
         return new AppDetail(appInfo, permissionInfos, permissionItemInfos, permissionGroupInfos);
     }
 
+    @Transactional(rollbackFor = Throwable.class)
     public void reload(@Nonnull AppDetail appDetail) {
         AppInfo appInfo = appDetail.getApp();
         Asserts.nonnull(appInfo, "应用信息为空");

@@ -2,7 +2,7 @@ package cn.sh.ideal.iam.jdbc.organization;
 
 import cn.idealio.framework.lang.StringUtils;
 import cn.idealio.framework.util.Asserts;
-import cn.idealio.framework.util.data.hibernate.ManualIDGenerator;
+import cn.idealio.framework.util.data.hibernate.JpaIDGenerator;
 import cn.sh.ideal.iam.infrastructure.encryption.EncryptionProvider;
 import cn.sh.ideal.iam.infrastructure.encryption.EncryptionUtils;
 import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
@@ -13,6 +13,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.annotation.Nonnull;
@@ -40,8 +42,8 @@ public class UserDO implements User {
     @Comment("主键")
     @Column(nullable = false, name = "id_")
     @GeneratedValue(generator = TABLE_NAME)
-    @GenericGenerator(name = TABLE_NAME, type = ManualIDGenerator.class)
-    private Long id = -1L;
+    @GenericGenerator(name = TABLE_NAME, type = JpaIDGenerator.class)
+    private Long id = null;
 
     @Comment("所属租户ID")
     @Column(nullable = false, name = "tenant_id_")
@@ -79,6 +81,16 @@ public class UserDO implements User {
     @Version
     @Column(nullable = false, name = "version_")
     private long version = 0;
+
+    @Version
+    @CreatedDate
+    @Column(nullable = false, name = "created_time_")
+    private long createdTime = 0;
+
+    @Version
+    @LastModifiedBy
+    @Column(nullable = false, name = "updated_time_")
+    private long updatedTime = 0;
 
     @Nonnull
     public static UserDO create(long tenantId,

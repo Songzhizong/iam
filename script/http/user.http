@@ -1,16 +1,16 @@
 ### 新增用户
-POST {{base_url}}/iam/users?tenantId=622057660241412096
+POST {{base_url}}/iam/users?tenantId=622606755238510592
 Content-Type: application/json
 
 {
-  "containerId": 2,
+  "containerId": 1,
   "name": "宋志宗",
   "account": "songzhizong",
   "phone": "18256928780",
   "email": "zzsong91@163.com",
   "language": "zh_CN",
   "userGroupIds": [
-    622070529905393664
+    622606909349822464
   ]
 }
 

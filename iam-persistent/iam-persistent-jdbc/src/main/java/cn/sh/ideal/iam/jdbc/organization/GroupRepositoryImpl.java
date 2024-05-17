@@ -1,6 +1,5 @@
 package cn.sh.ideal.iam.jdbc.organization;
 
-import cn.sh.ideal.iam.infrastructure.configure.IamIDGenerator;
 import cn.sh.ideal.iam.organization.domain.model.Group;
 import cn.sh.ideal.iam.organization.domain.model.GroupRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,6 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 public class GroupRepositoryImpl implements GroupRepository {
-    private final IamIDGenerator idGenerator;
     private final GroupJpaRepository groupJpaRepository;
     private final UserGroupRelJpaRepository userGroupRelJpaRepository;
 
@@ -26,7 +24,6 @@ public class GroupRepositoryImpl implements GroupRepository {
     @Override
     public Group insert(@Nonnull Group group) {
         GroupDO entity = (GroupDO) group;
-        entity.setId(idGenerator.generate());
         return groupJpaRepository.saveAndFlush(entity);
     }
 

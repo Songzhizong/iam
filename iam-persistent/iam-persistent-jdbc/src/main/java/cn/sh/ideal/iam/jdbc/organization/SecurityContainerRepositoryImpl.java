@@ -3,6 +3,8 @@ package cn.sh.ideal.iam.jdbc.organization;
 import cn.sh.ideal.iam.organization.domain.model.SecurityContainer;
 import cn.sh.ideal.iam.organization.domain.model.SecurityContainerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Nonnull;
@@ -65,6 +67,13 @@ public class SecurityContainerRepositoryImpl implements SecurityContainerReposit
     public List<SecurityContainer> findAllByParentIdIn(@Nonnull Collection<Long> parentIds) {
         return securityContainerJpaRepository.findAllByParentIdIn(parentIds)
                 .stream().map(e -> (SecurityContainer) e).toList();
+    }
+
+    @Override
+    public boolean exists() {
+        Page<SecurityContainerDO> page = securityContainerJpaRepository.findAll(Pageable.ofSize(1));
+        List<SecurityContainerDO> content = page.getContent();
+        return !content.isEmpty();
     }
 
     @Override

@@ -13,6 +13,8 @@ import cn.sh.ideal.iam.organization.domain.model.SecurityContainerRepository;
 import cn.sh.ideal.iam.organization.dto.args.CreateSecurityContainerArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +33,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class SecurityContainerService {
+public class SecurityContainerService implements ApplicationRunner {
     private static final Duration CHANGE_PARENT_LOCK_TIMEOUT = Duration.ofSeconds(30);
     private final String lockValue = UUID.randomUUID().toString().replace("-", "");
     private final EntityFactory entityFactory;
@@ -140,5 +142,16 @@ public class SecurityContainerService {
     public Set<String> existsResourceTypes(long id) {
         // TODO 获取指定安全容器下拥有的资源类型编码
         return Set.of();
+    }
+
+    @Override
+    public void run(ApplicationArguments args) {
+        if (securityContainerRepository.exists()) {
+            return;
+        }
+        CreateSecurityContainerArgs createSecurityContainerArgs = new CreateSecurityContainerArgs();
+        createSecurityContainerArgs.setName("Root Container");
+        SecurityContainer container = entityFactory.securityContainer(null, createSecurityContainerArgs, i18nReader);
+        securityContainerRepository.insert(container);
     }
 }

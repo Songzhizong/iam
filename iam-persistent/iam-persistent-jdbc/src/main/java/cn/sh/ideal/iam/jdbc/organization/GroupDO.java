@@ -1,7 +1,7 @@
 package cn.sh.ideal.iam.jdbc.organization;
 
 import cn.idealio.framework.util.Asserts;
-import cn.idealio.framework.util.data.hibernate.ManualIDGenerator;
+import cn.idealio.framework.util.data.hibernate.JpaIDGenerator;
 import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.Group;
 import cn.sh.ideal.iam.organization.dto.args.CreateGroupArgs;
@@ -35,8 +35,8 @@ public class GroupDO implements Group {
     @Comment("主键")
     @Column(nullable = false, name = "id_")
     @GeneratedValue(generator = TABLE_NAME)
-    @GenericGenerator(name = TABLE_NAME, type = ManualIDGenerator.class)
-    private Long id = -1L;
+    @GenericGenerator(name = TABLE_NAME, type = JpaIDGenerator.class)
+    private Long id = null;
 
     @Comment("所属租户ID")
     @Column(nullable = false, name = "tenant_id_")

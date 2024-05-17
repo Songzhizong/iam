@@ -3,6 +3,7 @@ package cn.sh.ideal.iam.organization.application;
 import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.lang.StringUtils;
 import cn.idealio.framework.util.NumberSystemConverter;
+import cn.sh.ideal.iam.infrastructure.configure.IamIDGenerator;
 import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.EntityFactory;
 import cn.sh.ideal.iam.organization.domain.model.Tenant;
@@ -23,6 +24,7 @@ import javax.annotation.Nonnull;
 @RequiredArgsConstructor
 public class TenantService {
     private static final long MAX_TIME = 4765107660000L;
+    private final IamIDGenerator idGenerator;
     private final EntityFactory entityFactory;
     private final TenantRepository tenantRepository;
     private final OrganizationI18nReader i18nReader;
@@ -39,7 +41,8 @@ public class TenantService {
             abbreviation = generateAbbreviation();
         }
         args.setAbbreviation(abbreviation);
-        Tenant tenant = entityFactory.tenant(args, i18nReader);
+        long id = idGenerator.generate();
+        Tenant tenant = entityFactory.tenant(id, args, i18nReader);
         return tenantRepository.insert(tenant);
     }
 

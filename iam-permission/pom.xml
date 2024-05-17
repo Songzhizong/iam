@@ -13,6 +13,7 @@
 
     <modules>
         <module>iam-permission-api</module>
+        <module>iam-permission-rbac</module>
         <module>iam-permission-tbac</module>
         <module>iam-permission-front</module>
     </modules>

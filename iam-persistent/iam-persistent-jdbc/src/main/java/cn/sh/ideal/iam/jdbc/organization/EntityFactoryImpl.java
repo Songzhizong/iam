@@ -18,9 +18,9 @@ import javax.annotation.Nullable;
 public class EntityFactoryImpl implements EntityFactory {
     @Nonnull
     @Override
-    public Tenant tenant(@Nonnull CreateTenantArgs args,
+    public Tenant tenant(long id, @Nonnull CreateTenantArgs args,
                          @Nonnull OrganizationI18nReader i18nReader) {
-        return TenantDO.create(args, i18nReader);
+        return TenantDO.create(id, args, i18nReader);
     }
 
     @Nonnull

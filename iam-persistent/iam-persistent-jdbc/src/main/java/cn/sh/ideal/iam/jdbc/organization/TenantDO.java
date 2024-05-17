@@ -68,13 +68,14 @@ public class TenantDO implements Tenant {
     private long version = 0;
 
     @Nonnull
-    public static TenantDO create(@Nonnull CreateTenantArgs args,
+    public static TenantDO create(long id, @Nonnull CreateTenantArgs args,
                                   @Nonnull OrganizationI18nReader i18nReader) {
         String name = args.getName();
         String abbreviation = args.getAbbreviation();
         Asserts.notBlank(name, () -> i18nReader.getMessage("tenant.name.blank"));
         Asserts.notBlank(abbreviation, () -> i18nReader.getMessage("tenant.abbreviation.blank"));
         TenantDO tenantDO = new TenantDO();
+        tenantDO.setId(id);
         tenantDO.setContainerId(args.getContainerId());
         tenantDO.setName(name);
         tenantDO.setAbbreviation(abbreviation);

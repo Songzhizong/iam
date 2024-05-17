@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 public interface EntityFactory {
 
     @Nonnull
-    Tenant tenant(@Nonnull CreateTenantArgs args,
+    Tenant tenant(long id, @Nonnull CreateTenantArgs args,
                   @Nonnull OrganizationI18nReader i18nReader);
 
     @Nonnull
