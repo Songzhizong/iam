@@ -1,5 +1,6 @@
 package cn.sh.ideal.iam.permission.tbac.application.impl;
 
+import cn.idealio.framework.lang.Tuple;
 import cn.sh.ideal.iam.permission.tbac.application.TbacHandler;
 import cn.sh.ideal.iam.permission.tbac.configure.TbacProperties;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,15 @@ public class CompositeTbacHandler implements TbacHandler {
     private final TbacProperties properties;
     private final CachelessTbacHandler cachelessTbacHandler;
     private final CacheableTbacHandler cacheableTbacHandler;
+
+    @Nonnull
+    @Override
+    public Map<Long, Tuple<Boolean, Boolean>> authorityContainerAssignMap(long userId, @Nonnull String authority) {
+        if (properties.isEnableCache()) {
+            return cacheableTbacHandler.authorityContainerAssignMap(userId, authority);
+        }
+        return cachelessTbacHandler.authorityContainerAssignMap(userId, authority);
+    }
 
     @Nonnull
     @Override
@@ -65,7 +75,8 @@ public class CompositeTbacHandler implements TbacHandler {
 
     @Nonnull
     @Override
-    public Set<Long> containerPermissionIds(long userId, long containerId, @Nonnull Set<Long> permissionIds) {
+    public Set<Long> containerPermissionIds(long userId, long containerId,
+                                            @Nonnull Set<Long> permissionIds) {
         if (properties.isEnableCache()) {
             return cacheableTbacHandler.containerPermissionIds(userId, containerId, permissionIds);
         }
@@ -119,7 +130,8 @@ public class CompositeTbacHandler implements TbacHandler {
     }
 
     @Override
-    public boolean hasAnyAuthority(long userId, long containerId, @Nonnull Collection<String> authorities) {
+    public boolean hasAnyAuthority(long userId, long containerId,
+                                   @Nonnull Collection<String> authorities) {
         if (properties.isEnableCache()) {
             return cacheableTbacHandler.hasAnyAuthority(userId, containerId, authorities);
         }
@@ -136,7 +148,8 @@ public class CompositeTbacHandler implements TbacHandler {
     }
 
     @Override
-    public boolean hasAllAuthority(long userId, long containerId, @Nonnull Collection<String> authorities) {
+    public boolean hasAllAuthority(long userId, long containerId,
+                                   @Nonnull Collection<String> authorities) {
         if (properties.isEnableCache()) {
             return cacheableTbacHandler.hasAllAuthority(userId, containerId, authorities);
         }

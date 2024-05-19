@@ -1,17 +1,23 @@
 package cn.sh.ideal.iam.permission.tbac.port.web;
 
 import cn.idealio.framework.lang.StringUtils;
+import cn.idealio.framework.transmission.ListResult;
 import cn.idealio.framework.transmission.Result;
 import cn.idealio.framework.util.Asserts;
+import cn.sh.ideal.iam.permission.tbac.application.SecurityContainerService;
 import cn.sh.ideal.iam.permission.tbac.application.TbacHandler;
+import cn.sh.ideal.iam.permission.tbac.application.impl.CacheableTbacHandler;
+import cn.sh.ideal.iam.permission.tbac.dto.resp.SecurityContainerTreeNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,6 +33,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/iam/tbac/test")
 public class TbacTestController {
     private final TbacHandler tbacHandler;
+    private final CacheableTbacHandler cacheableTbacHandler;
+    private final SecurityContainerService securityContainerService;
 
     /** 获取用户在指定安全容器上所有可见的权限ID */
     @GetMapping("/visible_permission_ids")
@@ -134,5 +142,39 @@ public class TbacTestController {
         Asserts.nonnull(path, "path");
         boolean hasApiPermission = tbacHandler.hasApiPermission(userId, containerId, method, path);
         return Result.success(hasApiPermission);
+    }
+
+    /** 更新用户缓存刷新时间 */
+    @PostMapping("/update_user_auth_latest_refresh_timestamp")
+    public Result<Void> updateUserAuthLatestRefreshTimestamp(@Nullable Long userId) {
+        Asserts.nonnull(userId, "userId");
+        long currentTimeMillis = System.currentTimeMillis();
+        cacheableTbacHandler.updateUserAuthLatestRefreshTimestamp(userId, currentTimeMillis);
+        return Result.success();
+    }
+
+
+    /** 获取用户可见安全容器树 */
+    @GetMapping("/visible_container_tree")
+    public ListResult<SecurityContainerTreeNode> visibleContainerTree(@Nullable Long userId,
+                                                                      @Nullable String authority) {
+        Asserts.nonnull(userId, "userId");
+        Asserts.nonnull(authority, "authority");
+        List<SecurityContainerTreeNode> tree = securityContainerService.visibleContainerTree(userId, authority);
+        return ListResult.of(tree);
+    }
+
+
+    /** 获取用户在指定安全容器之上的所有可见父容器 */
+    @GetMapping("/visible_container_parent_tree")
+    public ListResult<SecurityContainerTreeNode> visibleContainerParentTree(@Nullable Long userId,
+                                                                            @Nullable Long containerId,
+                                                                            @Nullable String authority) {
+        Asserts.nonnull(userId, "userId");
+        Asserts.nonnull(authority, "authority");
+        Asserts.nonnull(containerId, "containerId");
+        List<SecurityContainerTreeNode> tree = securityContainerService
+                .visibleContainerParentTree(userId, containerId, authority);
+        return ListResult.of(tree);
     }
 }

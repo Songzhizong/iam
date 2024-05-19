@@ -1,9 +1,10 @@
-package cn.sh.ideal.iam.organization.domain.model;
+package cn.sh.ideal.iam.permission.tbac.domain.model;
 
 import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.lang.StringUtils;
-import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
-import cn.sh.ideal.iam.organization.dto.resp.SecurityContainerInfo;
+import cn.sh.ideal.iam.permission.tbac.configure.TbacI18nReader;
+import cn.sh.ideal.iam.permission.tbac.dto.resp.SecurityContainerInfo;
+import cn.sh.ideal.iam.permission.tbac.dto.resp.SecurityContainerTreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +39,7 @@ public interface SecurityContainer {
     void setName(@Nonnull String name);
 
     default void changeParent(@Nullable SecurityContainer parent,
-                              @Nonnull OrganizationI18nReader i18nReader) {
+                              @Nonnull TbacI18nReader i18nReader) {
         if (parent == null) {
             setParentId(null);
             setParentRoute("");
@@ -83,5 +84,14 @@ public interface SecurityContainer {
         securityContainerInfo.setParentId(getParentId());
         securityContainerInfo.setName(getName());
         return securityContainerInfo;
+    }
+
+    @Nonnull
+    default SecurityContainerTreeNode toTreeNode() {
+        SecurityContainerTreeNode securityContainerTreeNode = new SecurityContainerTreeNode();
+        securityContainerTreeNode.setId(getId());
+        securityContainerTreeNode.setParentId(getParentId());
+        securityContainerTreeNode.setName(getName());
+        return securityContainerTreeNode;
     }
 }

@@ -1,16 +1,19 @@
-package cn.sh.ideal.iam.organization.application;
+package cn.sh.ideal.iam.permission.tbac.application;
 
 import cn.idealio.framework.audit.Audits;
 import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.exception.ResourceNotFoundException;
+import cn.idealio.framework.lang.StringUtils;
+import cn.idealio.framework.lang.TreeNode;
+import cn.idealio.framework.lang.Tuple;
 import cn.idealio.framework.lock.GlobalLock;
 import cn.idealio.framework.lock.GlobalLockFactory;
 import cn.idealio.framework.util.Asserts;
-import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
-import cn.sh.ideal.iam.organization.domain.model.EntityFactory;
-import cn.sh.ideal.iam.organization.domain.model.SecurityContainer;
-import cn.sh.ideal.iam.organization.domain.model.SecurityContainerRepository;
-import cn.sh.ideal.iam.organization.dto.args.CreateSecurityContainerArgs;
+import cn.sh.ideal.iam.permission.tbac.application.impl.CachelessTbacHandler;
+import cn.sh.ideal.iam.permission.tbac.configure.TbacI18nReader;
+import cn.sh.ideal.iam.permission.tbac.domain.model.*;
+import cn.sh.ideal.iam.permission.tbac.dto.args.CreateSecurityContainerArgs;
+import cn.sh.ideal.iam.permission.tbac.dto.resp.SecurityContainerTreeNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -21,10 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -36,9 +36,12 @@ import java.util.stream.Collectors;
 public class SecurityContainerService implements ApplicationRunner {
     private static final Duration CHANGE_PARENT_LOCK_TIMEOUT = Duration.ofSeconds(30);
     private final String lockValue = UUID.randomUUID().toString().replace("-", "");
+    private final TbacHandler tbacHandler;
+    private final TbacI18nReader i18nReader;
     private final EntityFactory entityFactory;
-    private final OrganizationI18nReader i18nReader;
     private final GlobalLockFactory globalLockFactory;
+    private final CachelessTbacHandler cachelessTbacHandler;
+    private final SecurityContainerCache securityContainerCache;
     private final SecurityContainerRepository securityContainerRepository;
 
 
@@ -49,7 +52,8 @@ public class SecurityContainerService implements ApplicationRunner {
         if (parentId != null) {
             parent = securityContainerRepository.findById(parentId).orElseThrow(() -> {
                 log.info("创建安全容器失败, 指定的父容器不存在: {}", parentId);
-                return new ResourceNotFoundException(i18nReader.getMessage("sc.parent.not_found"));
+                String message = i18nReader.getMessage("sc.parent.not_found");
+                return new ResourceNotFoundException(message);
             });
         }
         String name = args.getName();
@@ -58,14 +62,16 @@ public class SecurityContainerService implements ApplicationRunner {
             log.info("创建安全容器失败, 安全容器名称已被使用: [{} {}]", parentId, name);
             throw new BadRequestException(i18nReader.getMessage("sc.name.exists"));
         }
-        SecurityContainer securityContainer = entityFactory.securityContainer(parent, args, i18nReader);
+        SecurityContainer securityContainer =
+                entityFactory.securityContainer(parent, args, i18nReader);
         return securityContainerRepository.insert(securityContainer);
     }
 
     @Transactional(rollbackFor = Throwable.class)
     public SecurityContainer rename(long id, @Nullable String name) {
         Asserts.notBlank(name, () -> i18nReader.getMessage("sc.name.blank"));
-        SecurityContainer securityContainer = securityContainerRepository.requireById(id, i18nReader);
+        SecurityContainer securityContainer =
+                securityContainerRepository.requireById(id, i18nReader);
         if (name.equalsIgnoreCase(securityContainer.getName())) {
             log.info("安全容器名称未发生变更");
             Audits.remove();
@@ -105,7 +111,8 @@ public class SecurityContainerService implements ApplicationRunner {
         lock.renewal();
         Map<Long, SecurityContainer> parentMap = parents.stream()
                 .collect(Collectors.toMap(SecurityContainer::getId, v -> v));
-        List<SecurityContainer> children = securityContainerRepository.findAllByParentIdIn(parentMap.keySet());
+        List<SecurityContainer> children =
+                securityContainerRepository.findAllByParentIdIn(parentMap.keySet());
         if (children.isEmpty()) {
             return;
         }
@@ -124,9 +131,90 @@ public class SecurityContainerService implements ApplicationRunner {
             log.info("删除安全容器失败, 安全容器[{}]无法被删除", id);
             throw new BadRequestException(i18nReader.getMessage("sc.delete.not_allowed"));
         }
-        SecurityContainer securityContainer = securityContainerRepository.requireById(id, i18nReader);
+        SecurityContainer securityContainer =
+                securityContainerRepository.requireById(id, i18nReader);
         securityContainerRepository.delete(securityContainer);
         // TODO 发布事件, 删除关联数据
+    }
+
+    /**
+     * 获取用户所有可见的安全容器树
+     *
+     * @param userId    用户id
+     * @param authority 权限标识
+     */
+    @Nonnull
+    public List<SecurityContainerTreeNode> visibleContainerTree(long userId,
+                                                                @Nonnull String authority) {
+        // 先刷新安全容器缓存
+        securityContainerCache.refresh();
+
+        // 获取所有权限的容器ID列表. 不能走缓存, 因为通过缓存获取的容器ID列表可能不包含最新的
+        Set<Long> assignedContainerIds =
+                cachelessTbacHandler.authorityContainerIds(userId, authority);
+        if (assignedContainerIds.isEmpty()) {
+            return List.of();
+        }
+        Collection<Object> visibleContainerIds = new HashSet<>(assignedContainerIds);
+
+        Map<Long, Tuple<Boolean, Boolean>> containerAssignMap =
+                tbacHandler.authorityContainerAssignMap(userId, authority);
+        Set<Long> containerIds = new HashSet<>();
+        containerAssignMap.forEach((containerId, tuple) -> {
+            if (tuple.getFirst()) {
+                containerIds.add(containerId);
+            }
+        });
+        List<AnalyzedSecurityContainer> analyzedContainers =
+                securityContainerCache.findAllById(containerIds);
+        List<AnalyzedSecurityContainer> roots =
+                AnalyzedSecurityContainer.filterRoots(analyzedContainers);
+        List<SecurityContainer> containers = TreeNode.flatten(roots)
+                .stream().map(AnalyzedSecurityContainer::getContainer).toList();
+        List<SecurityContainerTreeNode> treeNodeList =
+                containers.stream().map(SecurityContainer::toTreeNode).toList();
+
+        return TreeNode.toTreeList(treeNodeList, visibleContainerIds);
+    }
+
+    /** 获取用户在指定安全容器之上的所有可见父容器 */
+    @Nonnull
+    public List<SecurityContainerTreeNode> visibleContainerParentTree(long userId,
+                                                                      long containerId,
+                                                                      @Nullable String authority) {
+        SecurityContainer container =
+                securityContainerRepository.requireById(containerId, i18nReader);
+        SecurityContainerTreeNode node = container.toTreeNode();
+        SequencedSet<Long> parentIds = container.parentIds();
+        if (parentIds.isEmpty()) {
+            return List.of(node);
+        }
+
+        // 获取从根节点到指定节点的全量节点列表
+        List<SecurityContainer> parents = securityContainerRepository.findAllById(parentIds);
+        List<SecurityContainerTreeNode> allNodes = new ArrayList<>(parents.size() + 1);
+        for (SecurityContainer parent : parents) {
+            SecurityContainerTreeNode parentNode = parent.toTreeNode();
+            allNodes.add(parentNode);
+        }
+        allNodes.add(node);
+
+        if (StringUtils.isBlank(authority)) {
+            return TreeNode.toTreeList(allNodes);
+        }
+
+        // 获取所有权限的容器ID列表. 不能走缓存, 因为通过缓存获取的容器ID列表可能不包含最新的
+        Set<Long> assignedContainerIds =
+                cachelessTbacHandler.authorityContainerIds(userId, authority);
+        if (assignedContainerIds.isEmpty()) {
+            return List.of(node);
+        }
+        Collection<Object> retainContainerIds = new HashSet<>(assignedContainerIds);
+        if (!assignedContainerIds.contains(containerId)) {
+            retainContainerIds.add(containerId);
+        }
+
+        return TreeNode.toTreeList(allNodes, retainContainerIds);
     }
 
     public boolean deletable(long id) {
@@ -151,7 +239,8 @@ public class SecurityContainerService implements ApplicationRunner {
         }
         CreateSecurityContainerArgs createSecurityContainerArgs = new CreateSecurityContainerArgs();
         createSecurityContainerArgs.setName("Root Container");
-        SecurityContainer container = entityFactory.securityContainer(null, createSecurityContainerArgs, i18nReader);
+        SecurityContainer container =
+                entityFactory.securityContainer(createSecurityContainerArgs, i18nReader);
         securityContainerRepository.insert(container);
         log.info("表里没有任何安全容器信息, 初始化根安全容器");
     }

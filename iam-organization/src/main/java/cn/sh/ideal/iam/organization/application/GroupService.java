@@ -22,7 +22,6 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final TenantRepository tenantRepository;
     private final OrganizationI18nReader i18nReader;
-    private final SecurityContainerRepository securityContainerRepository;
 
     @Nonnull
     @Transactional(rollbackFor = Throwable.class)
@@ -34,9 +33,9 @@ public class GroupService {
             // 如果未指定安全容器ID, 则直接使用所属租户的安全容器ID
             containerId = tenantContainerId;
         }
-        if (containerId != null) {
-            securityContainerRepository.requireById(containerId, i18nReader);
-        }
+//        if (containerId != null) {
+//            securityContainerRepository.requireById(containerId, i18nReader);
+//        }
         args.setContainerId(containerId);
         Group group = entityFactory.group(tenantId, args, i18nReader);
         return groupRepository.insert(group);

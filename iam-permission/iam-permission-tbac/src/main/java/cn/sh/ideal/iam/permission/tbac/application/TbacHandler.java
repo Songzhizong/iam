@@ -1,5 +1,7 @@
 package cn.sh.ideal.iam.permission.tbac.application;
 
+import cn.idealio.framework.lang.Tuple;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -10,6 +12,17 @@ import java.util.Set;
  * @author 宋志宗 on 2024/5/18
  */
 public interface TbacHandler {
+
+    /**
+     * 指定权限标识, 获取这个权限标识在各个容器节点上的权限配置信息
+     *
+     * @param userId    用户ID
+     * @param authority 权限标识
+     * @return [authority]有权限配置的containerId -> 是否分配 -> 是否继承
+     */
+    @Nonnull
+    Map<Long, Tuple<Boolean, Boolean>> authorityContainerAssignMap(long userId,
+                                                                   @Nonnull String authority);
 
     /**
      * 获取用户在指定安全容器上所有可见的权限ID
@@ -23,6 +36,21 @@ public interface TbacHandler {
      */
     @Nonnull
     Set<Long> visiblePermissionIds(long userId, long containerId);
+
+
+    /**
+     * 获取用户拥有指定权限的容器id列表
+     *
+     * @param userId    用户ID
+     * @param authority 权限标识
+     * @return 有指定权限的容器ID列表
+     * @author 宋志宗 on 2024/5/18
+     */
+    @Nonnull
+    default Set<Long> authorityContainerIds(long userId,
+                                            @Nonnull String authority) {
+        return authorityContainerIds(userId, authority, null);
+    }
 
     /**
      * 获取用户拥有指定权限的容器id列表

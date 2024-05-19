@@ -1,7 +1,7 @@
-package cn.sh.ideal.iam.organization.domain.model;
+package cn.sh.ideal.iam.permission.tbac.domain.model;
 
 import cn.idealio.framework.exception.ResourceNotFoundException;
-import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
+import cn.sh.ideal.iam.permission.tbac.configure.TbacI18nReader;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,7 +45,7 @@ public interface SecurityContainerRepository {
     boolean existsByUpdatedTimeGte(long updatedTimeGte);
 
     @Nonnull
-    default SecurityContainer requireById(long id, @Nonnull OrganizationI18nReader i18nReader) {
+    default SecurityContainer requireById(long id, @Nonnull TbacI18nReader i18nReader) {
         return findById(id).orElseThrow(() -> {
             String[] args = {String.valueOf(id)};
             return new ResourceNotFoundException(i18nReader.getMessage("sc.notfound", args));

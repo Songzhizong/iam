@@ -1,4 +1,4 @@
-package cn.sh.ideal.iam.organization.dto.args;
+package cn.sh.ideal.iam.permission.tbac.dto.args;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,6 +1,5 @@
 package cn.sh.ideal.iam.organization.configure;
 
-import cn.sh.ideal.iam.organization.domain.model.AnalyzedSecurityContainer;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
@@ -17,7 +16,6 @@ public class OrganizationRuntimeHints implements RuntimeHintsRegistrar {
     @Override
     public void registerHints(@Nonnull RuntimeHints hints, ClassLoader classLoader) {
         List<TypeReference> references = List.of(
-                TypeReference.of(AnalyzedSecurityContainer.class)
         );
         hints.reflection().registerTypes(references, b -> b.withMembers(MemberCategory.values()));
         hints.resources().registerPattern("i18n/**");

@@ -5,15 +5,10 @@ import cn.idealio.framework.lang.Sets;
 import cn.idealio.framework.lang.StringUtils;
 import cn.idealio.framework.lang.Tuple;
 import cn.idealio.framework.spring.matcher.PathMatchers;
-import cn.sh.ideal.iam.organization.domain.model.AnalyzedSecurityContainer;
-import cn.sh.ideal.iam.organization.domain.model.SecurityContainer;
-import cn.sh.ideal.iam.organization.domain.model.SecurityContainerCache;
 import cn.sh.ideal.iam.organization.domain.model.UserRepository;
 import cn.sh.ideal.iam.permission.front.domain.model.Permission;
 import cn.sh.ideal.iam.permission.front.domain.model.PermissionCache;
-import cn.sh.ideal.iam.permission.tbac.domain.model.AssignedPermission;
-import cn.sh.ideal.iam.permission.tbac.domain.model.PermissionAssignDetail;
-import cn.sh.ideal.iam.permission.tbac.domain.model.PermissionAssignRepository;
+import cn.sh.ideal.iam.permission.tbac.domain.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -30,10 +25,10 @@ import java.util.*;
 @Component
 public class CachelessTbacHandler extends AbstractTbacHandler {
 
-    public CachelessTbacHandler(UserRepository userRepository,
-                                PermissionCache permissionCache,
-                                SecurityContainerCache securityContainerCache,
-                                PermissionAssignRepository permissionAssignRepository) {
+    public CachelessTbacHandler(@Nonnull UserRepository userRepository,
+                                @Nonnull PermissionCache permissionCache,
+                                @Nonnull SecurityContainerCache securityContainerCache,
+                                @Nonnull PermissionAssignRepository permissionAssignRepository) {
         super(userRepository, permissionCache, securityContainerCache, permissionAssignRepository);
     }
 
@@ -59,58 +54,29 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
     public Set<Long> authorityContainerIds(long userId,
                                            @Nonnull String authority,
                                            @Nullable Long baseContainerId) {
-        Map<Long, List<PermissionAssignDetail>> assignDetails = getPermissionAssignDetails(userId);
-        Set<Long> containerIds = assignDetails.keySet();
-        List<AnalyzedSecurityContainer> analyzedContainers = securityContainerCache.findAllById(containerIds);
-        // 筛选出所有的顶层容器
-        List<AnalyzedSecurityContainer> filteredContainers = new ArrayList<>(analyzedContainers);
-        filteredContainers.removeIf(analyzedContainer -> {
-            SecurityContainer container = analyzedContainer.getContainer();
-            long containerId = container.getId();
-            if (containerIds.contains(containerId)) {
-                return false;
-            }
-            SequencedSet<Long> parentIds = analyzedContainer.getParentIds();
-            if (parentIds.isEmpty()) {
-                return true;
-            }
-            return !Sets.containsAny(containerIds, parentIds);
-        });
-        if (baseContainerId != null) {
-            filteredContainers = cutContainers(baseContainerId, filteredContainers);
-        }
-        if (filteredContainers.isEmpty()) {
+        // [authority]有权限配置的containerId -> 是否分配 -> 是否继承
+        Map<Long, Tuple<Boolean, Boolean>> containerAssignMap =
+                authorityContainerAssignMap(userId, authority);
+        if (containerAssignMap.isEmpty()) {
             return Set.of();
         }
-        // 直接分配了权限的containerId -> 是否分配 -> 是否继承
-        Map<Long, Tuple<Boolean, Boolean>> containerAssignMap = new HashMap<>();
-        assignDetails.forEach((containerId, details) -> {
-            for (PermissionAssignDetail detail : details) {
-                Set<String> authorities = detail.getPermission().getAuthorities();
-                if (!authorities.contains(authority)) {
-                    continue;
-                }
-                boolean assigned = detail.isAssigned();
-                boolean inheritable = detail.isInheritable();
 
-                Tuple<Boolean, Boolean> tuple = containerAssignMap.get(containerId);
-                if (tuple == null) {
-                    containerAssignMap.put(containerId, Tuple.of(assigned, inheritable));
-                } else {
-                    assigned = tuple.getFirst() || assigned;
-                    inheritable = tuple.getSecond() || inheritable;
-                    tuple.setFirst(assigned);
-                    tuple.setSecond(inheritable);
-                }
-                // 如果分配和继承都为true, 则跳过循环.
-                // 因为分配和继承相对禁用和不继承优先级更高, 这两者都是true就没必要继续算下去了
-                if (assigned && inheritable) {
-                    break;
-                }
-            }
-        });
+        Set<Long> containerIds = containerAssignMap.keySet();
+        List<AnalyzedSecurityContainer> analyzedContainers =
+                securityContainerCache.findAllById(containerIds);
+        // 筛选出所有的顶层容器
+        List<AnalyzedSecurityContainer> rootContainers =
+                AnalyzedSecurityContainer.filterRoots(analyzedContainers);
+        if (baseContainerId != null) {
+            rootContainers = cutContainers(baseContainerId, rootContainers);
+        }
+        if (rootContainers.isEmpty()) {
+            return Set.of();
+        }
+
+        // 安全容器ID -> 是否分配 -> 是否继承
         Map<Long, Tuple<Boolean, Boolean>> analyzedMap = new HashMap<>();
-        analyzeAuthorityContainers(filteredContainers, containerAssignMap, analyzedMap);
+        analyzeAuthorityContainers(rootContainers, containerAssignMap, analyzedMap);
         Set<Long> result = new HashSet<>();
         analyzedMap.forEach((containerId, tuple) -> {
             boolean assigned = tuple.getFirst();
@@ -121,20 +87,31 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
         return result;
     }
 
+    /**
+     * 分析权限容器，根据父容器的权限分配情况来确定子容器的权限状态。
+     *
+     * @param analyzedContainers 需要分析的权限容器列表，每个容器包含了权限分析结果。
+     * @param containerAssignMap 容器分配映射，记录了容器ID与权限分配（是否分配，是否可继承）的对应关系。
+     * @param analyzedMap        分析结果映射，记录了容器ID与权限分析结果（是否分配，是否可继承）的对应关系。
+     */
     private void analyzeAuthorityContainers(@Nonnull List<AnalyzedSecurityContainer> analyzedContainers,
                                             @Nonnull Map<Long, Tuple<Boolean, Boolean>> containerAssignMap,
                                             @Nonnull Map<Long, Tuple<Boolean, Boolean>> analyzedMap) {
+        // 遍历每个分析过的安全容器，以确定其权限状态
         for (AnalyzedSecurityContainer analyzedContainer : analyzedContainers) {
             SecurityContainer container = analyzedContainer.getContainer();
             Long containerId = container.getId();
             SequencedSet<Long> parentIds = container.parentIds();
             Tuple<Boolean, Boolean> containerTuple = containerAssignMap.get(containerId);
+            // 如果当前容器直接在分配映射中存在，则将其状态直接复制到分析结果映射中
             if (containerTuple != null) {
                 analyzedMap.put(containerId, containerTuple);
             } else if (Sets.isNotEmpty(parentIds)) {
+                // 如果当前容器没有直接的权限分配信息，但是存在父容器，则尝试从父容器继承权限
                 SequencedSet<Long> reversed = parentIds.reversed();
                 for (Long parentId : reversed) {
                     Tuple<Boolean, Boolean> parentConfig = containerAssignMap.get(parentId);
+                    // 如果父容器不存在分配信息，则跳过当前循环迭代
                     if (parentConfig == null) {
                         continue;
                     }
@@ -147,10 +124,11 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
                     } else {
                         analyzedMap.put(containerId, Tuple.of(false, false));
                     }
+                    // 在确定了当前容器的权限状态后，跳出循环，不再向上继续继承权限
                     break;
                 }
             }
-            // 如果有子级树, 则递归执行权限关联安全容器分析
+            // 如果当前容器存在子容器，则递归分析子容器的权限状态
             List<AnalyzedSecurityContainer> childTree = analyzedContainer.getChildTree();
             if (Lists.isNotEmpty(childTree)) {
                 analyzeAuthorityContainers(childTree, containerAssignMap, analyzedMap);
@@ -159,8 +137,8 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
     }
 
     @Nonnull
-    private List<AnalyzedSecurityContainer> cutContainers(long baseContainerId,
-                                                          @Nonnull List<AnalyzedSecurityContainer> containers) {
+    private List<AnalyzedSecurityContainer>
+    cutContainers(long baseContainerId, @Nonnull List<AnalyzedSecurityContainer> containers) {
         if (containers.isEmpty()) {
             return List.of();
         }

@@ -44,4 +44,8 @@ GET {{base_url}}/iam/tbac/test/has_api_permission
     ?userId=622790509043122176
     &containerId=1
     &method=GET
-    &path=/cmdb/resource/admin/test
+    &path=/cmdb/model
+
+### 刷新用户权限缓存
+POST {{base_url}}/iam/tbac/test/update_user_auth_latest_refresh_timestamp
+    ?userId=622790509043122176

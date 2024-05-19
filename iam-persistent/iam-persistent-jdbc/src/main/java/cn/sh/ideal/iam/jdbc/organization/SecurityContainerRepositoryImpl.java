@@ -1,7 +1,7 @@
 package cn.sh.ideal.iam.jdbc.organization;
 
-import cn.sh.ideal.iam.organization.domain.model.SecurityContainer;
-import cn.sh.ideal.iam.organization.domain.model.SecurityContainerRepository;
+import cn.sh.ideal.iam.permission.tbac.domain.model.SecurityContainer;
+import cn.sh.ideal.iam.permission.tbac.domain.model.SecurityContainerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

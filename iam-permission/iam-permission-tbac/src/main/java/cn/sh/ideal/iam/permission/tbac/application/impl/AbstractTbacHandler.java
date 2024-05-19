@@ -1,16 +1,12 @@
 package cn.sh.ideal.iam.permission.tbac.application.impl;
 
 import cn.idealio.framework.lang.Lists;
-import cn.sh.ideal.iam.organization.domain.model.AnalyzedSecurityContainer;
-import cn.sh.ideal.iam.organization.domain.model.SecurityContainerCache;
+import cn.idealio.framework.lang.Tuple;
 import cn.sh.ideal.iam.organization.domain.model.UserRepository;
 import cn.sh.ideal.iam.permission.front.domain.model.Permission;
 import cn.sh.ideal.iam.permission.front.domain.model.PermissionCache;
 import cn.sh.ideal.iam.permission.tbac.application.TbacHandler;
-import cn.sh.ideal.iam.permission.tbac.domain.model.AssignedPermission;
-import cn.sh.ideal.iam.permission.tbac.domain.model.PermissionAssign;
-import cn.sh.ideal.iam.permission.tbac.domain.model.PermissionAssignDetail;
-import cn.sh.ideal.iam.permission.tbac.domain.model.PermissionAssignRepository;
+import cn.sh.ideal.iam.permission.tbac.domain.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,7 +30,8 @@ public abstract class AbstractTbacHandler implements TbacHandler {
      * @param userId 用户ID
      * @author 宋志宗 on 2024/5/18
      */
-    protected List<PermissionAssign> getAllAssigns(long userId) {
+    @Nonnull
+    public List<PermissionAssign> getAllAssigns(long userId) {
         List<Long> userGroupIds = userRepository.getGroupIds(userId);
         if (userGroupIds.isEmpty()) {
             log.info("用户[{}]未关联任何用户组", userId);
@@ -87,6 +84,43 @@ public abstract class AbstractTbacHandler implements TbacHandler {
             Collection<PermissionAssignDetail> details = assignMap.values();
             List<PermissionAssignDetail> detailList = new ArrayList<>(details);
             containerAssignMap.put(containerId, detailList);
+        });
+        return containerAssignMap;
+    }
+
+    @Nonnull
+    @Override
+    public Map<Long, Tuple<Boolean, Boolean>> authorityContainerAssignMap(long userId, @Nonnull String authority) {
+        Map<Long, List<PermissionAssignDetail>> assignDetails = getPermissionAssignDetails(userId);
+        if (assignDetails.isEmpty()) {
+            return Map.of();
+        }
+        // 直接分配了权限的containerId -> 是否分配 -> 是否继承
+        Map<Long, Tuple<Boolean, Boolean>> containerAssignMap = new HashMap<>();
+        assignDetails.forEach((containerId, details) -> {
+            for (PermissionAssignDetail detail : details) {
+                Set<String> authorities = detail.getPermission().getAuthorities();
+                if (!authorities.contains(authority)) {
+                    continue;
+                }
+                boolean assigned = detail.isAssigned();
+                boolean inheritable = detail.isInheritable();
+
+                Tuple<Boolean, Boolean> tuple = containerAssignMap.get(containerId);
+                if (tuple == null) {
+                    containerAssignMap.put(containerId, Tuple.of(assigned, inheritable));
+                } else {
+                    assigned = tuple.getFirst() || assigned;
+                    inheritable = tuple.getSecond() || inheritable;
+                    tuple.setFirst(assigned);
+                    tuple.setSecond(inheritable);
+                }
+                // 如果分配和继承都为true, 则跳过循环.
+                // 因为分配和继承相对禁用和不继承优先级更高, 这两者都是true就没必要继续算下去了
+                if (assigned && inheritable) {
+                    break;
+                }
+            }
         });
         return containerAssignMap;
     }

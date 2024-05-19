@@ -1,9 +1,9 @@
 package cn.sh.ideal.iam.jdbc.organization;
 
 import cn.idealio.framework.util.Asserts;
-import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
-import cn.sh.ideal.iam.organization.domain.model.SecurityContainer;
-import cn.sh.ideal.iam.organization.dto.args.CreateSecurityContainerArgs;
+import cn.sh.ideal.iam.permission.tbac.configure.TbacI18nReader;
+import cn.sh.ideal.iam.permission.tbac.domain.model.SecurityContainer;
+import cn.sh.ideal.iam.permission.tbac.dto.args.CreateSecurityContainerArgs;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -67,7 +67,7 @@ public class SecurityContainerDO implements SecurityContainer {
     @Nonnull
     public static SecurityContainerDO create(@Nullable SecurityContainer parent,
                                              @Nonnull CreateSecurityContainerArgs args,
-                                             @Nonnull OrganizationI18nReader i18nReader) {
+                                             @Nonnull TbacI18nReader i18nReader) {
         String name = args.getName();
         Asserts.notBlank(name, () -> i18nReader.getMessage("sc.name.blank"));
         SecurityContainerDO securityContainerDO = new SecurityContainerDO();

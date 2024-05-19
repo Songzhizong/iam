@@ -26,7 +26,6 @@ public class UserService {
     private final GroupRepository groupRepository;
     private final TenantRepository tenantRepository;
     private final OrganizationI18nReader i18nReader;
-    private final SecurityContainerRepository securityContainerRepository;
 
     @Nonnull
     @Transactional(rollbackFor = Throwable.class)
@@ -40,9 +39,9 @@ public class UserService {
             containerId = tenantContainerId;
         }
         args.setContainerId(containerId);
-        if (containerId != null) {
-            securityContainerRepository.requireById(containerId, i18nReader);
-        }
+//        if (containerId != null) {
+//            securityContainerRepository.requireById(containerId, i18nReader);
+//        }
 
         // 验证账号是否已被使用
         String account = args.getAccount();
