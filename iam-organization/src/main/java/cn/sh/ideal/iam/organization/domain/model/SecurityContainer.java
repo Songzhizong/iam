@@ -37,16 +37,6 @@ public interface SecurityContainer {
 
     void setName(@Nonnull String name);
 
-    @Nonnull
-    default String generateRoute() {
-        String parentRoute = getParentRoute();
-        long id = getId();
-        if (StringUtils.isBlank(parentRoute)) {
-            return id + ":";
-        }
-        return parentRoute + id + ":";
-    }
-
     default void changeParent(@Nullable SecurityContainer parent,
                               @Nonnull OrganizationI18nReader i18nReader) {
         if (parent == null) {
@@ -64,6 +54,16 @@ public interface SecurityContainer {
         String parentRoute = parent.generateRoute();
         setParentId(parentId);
         setParentRoute(parentRoute);
+    }
+
+    @Nonnull
+    default String generateRoute() {
+        String parentRoute = getParentRoute();
+        long id = getId();
+        if (StringUtils.isBlank(parentRoute)) {
+            return id + ":";
+        }
+        return parentRoute + id + ":";
     }
 
     @Nonnull

@@ -13,6 +13,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.annotation.Nonnull;
@@ -32,6 +34,7 @@ import java.util.Set;
                 @Index(name = "idx01_" + PermissionDO.TABLE_NAME, columnList = "app_id_"),
                 @Index(name = "idx02_" + PermissionDO.TABLE_NAME, columnList = "item_id_"),
                 @Index(name = "idx03_" + PermissionDO.TABLE_NAME, columnList = "group_id_"),
+                @Index(name = "idx04_" + PermissionDO.TABLE_NAME, columnList = "updated_time_"),
         })
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression", "NullableProblems"})
 public class PermissionDO implements Permission {
@@ -108,6 +111,14 @@ public class PermissionDO implements Permission {
     @Version
     @Column(nullable = false, name = "version_")
     private long version = 0;
+
+    @CreatedDate
+    @Column(nullable = false, name = "created_time_")
+    private long createdTime = 0;
+
+    @LastModifiedDate
+    @Column(nullable = false, name = "updated_time_")
+    private long updatedTime = 0;
 
     @Nonnull
     public static PermissionDO create(long id, @Nonnull PermissionItem item,

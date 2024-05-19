@@ -153,5 +153,6 @@ public class SecurityContainerService implements ApplicationRunner {
         createSecurityContainerArgs.setName("Root Container");
         SecurityContainer container = entityFactory.securityContainer(null, createSecurityContainerArgs, i18nReader);
         securityContainerRepository.insert(container);
+        log.info("表里没有任何安全容器信息, 初始化根安全容器");
     }
 }

@@ -12,4 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "ideal-iam.permission.tbac")
 public class TbacProperties {
 
+    /** 是否启用权限缓存, 默认是 */
+    private boolean enableCache = true;
+
 }

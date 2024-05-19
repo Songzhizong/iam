@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -38,13 +39,47 @@ public class PermissionRepositoryImpl implements PermissionRepository {
 
     @Nonnull
     @Override
+    public List<Permission> findAll() {
+        return permissionJpaRepository.findAll()
+                .stream().map(e -> (Permission) e).toList();
+    }
+
+    @Nonnull
+    @Override
     public List<Permission> findAllByAppId(long appId) {
         return permissionJpaRepository.findAllByAppId(appId)
                 .stream().map(e -> (Permission) e).toList();
     }
 
+    @Nonnull
+    @Override
+    public List<Permission> findAllById(@Nonnull Collection<Long> ids) {
+        if (ids.isEmpty()) {
+            return List.of();
+        }
+        return permissionJpaRepository.findAllById(ids)
+                .stream().map(e -> (Permission) e).toList();
+
+    }
+
+    @Nonnull
+    @Override
+    public List<Permission> findAllByItemIdIn(@Nonnull Collection<Long> itemIds) {
+        if (itemIds.isEmpty()) {
+            return List.of();
+        }
+        return permissionJpaRepository.findAllByItemIdIn(itemIds)
+                .stream().map(e -> (Permission) e).toList();
+
+    }
+
     @Override
     public boolean existsByAppId(long appId) {
         return permissionJpaRepository.existsByAppId(appId);
+    }
+
+    @Override
+    public boolean existsByUpdatedTimeGte(long updatedTimeGte) {
+        return permissionJpaRepository.existsByUpdatedTimeGreaterThanEqual(updatedTimeGte);
     }
 }

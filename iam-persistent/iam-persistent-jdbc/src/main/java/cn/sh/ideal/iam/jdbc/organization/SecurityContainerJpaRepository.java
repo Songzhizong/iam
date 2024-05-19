@@ -1,7 +1,6 @@
 package cn.sh.ideal.iam.jdbc.organization;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -14,7 +13,11 @@ public interface SecurityContainerJpaRepository extends JpaRepository<SecurityCo
 
     boolean existsByParentId(long parentId);
 
+    boolean existsByIdGreaterThanEqual(long id);
+
     boolean existsByParentIdAndName(long parentId, @Nonnull String name);
+
+    boolean existsByUpdatedTimeGreaterThanEqual(long updatedTimeGte);
 
 
     @Nonnull

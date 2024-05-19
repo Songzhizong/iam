@@ -1,0 +1,47 @@
+### 获取用户在指定安全容器上所有可见的权限ID
+GET {{base_url}}/iam/tbac/test/visible_permission_ids
+    ?userId=622790509043122176
+    &containerId=2
+
+### 获取用户拥有指定权限的容器id列表
+GET {{base_url}}/iam/tbac/test/authority_container_ids
+    ?userId=622790509043122176
+    &authority=cmdb.resource.update
+    &baseContainerId=2
+
+### 过滤用户在指定安全容器上有权限的权限ID列表
+GET {{base_url}}/iam/tbac/test/container_permission_ids
+    ?userId=622790509043122176
+    &containerId=2
+    &permissionIds=622430129179590656,622429912589926400
+
+### 批量过滤用户在指定安全容器上有权限的权限ID列表
+GET {{base_url}}/iam/tbac/test/container_permission_ids/batch
+    ?userId=622790509043122176
+    &containerIds=1,2
+    &permissionIds=622430129179590656,622429912589926400
+
+### 判断用户在指定安全容器上是否拥有指定权限
+GET {{base_url}}/iam/tbac/test/has_authority
+    ?userId=622790509043122176
+    &containerId=2
+    &authority=cmdb.resource.update
+
+### 判断用户在指定安全容器上是否拥有任一权限
+GET {{base_url}}/iam/tbac/test/has_any_authority
+    ?userId=622790509043122176
+    &containerId=52
+    &authorities=cmdb.resource.read,cmdb.resource.update
+
+### 判断用户在指定安全容器上是否拥有所有权限
+GET {{base_url}}/iam/tbac/test/has_all_authority
+    ?userId=622790509043122176
+    &containerId=2
+    &authorities=cmdb.resource.read,cmdb.resource.update
+
+### 判断用户是否拥有API接口的访问权限
+GET {{base_url}}/iam/tbac/test/has_api_permission
+    ?userId=622790509043122176
+    &containerId=1
+    &method=GET
+    &path=/cmdb/resource/admin/test

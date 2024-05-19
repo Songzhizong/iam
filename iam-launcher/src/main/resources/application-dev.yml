@@ -21,6 +21,14 @@ spring:
     hibernate:
       ddl-auto: update
 
+ideal-iam:
+  permission:
+    tbac:
+      enable-cache: true
+
+ideal:
+  namespace: iam6
+
 logging:
   charset:
     file: utf-8

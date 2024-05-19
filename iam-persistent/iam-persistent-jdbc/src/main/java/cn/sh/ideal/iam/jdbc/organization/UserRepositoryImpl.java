@@ -77,6 +77,13 @@ public class UserRepositoryImpl implements UserRepository {
                 .stream().map(e -> (Group) e).toList();
     }
 
+    @Nonnull
+    @Override
+    public List<Long> getGroupIds(long userId) {
+        List<UserGroupRelDO> relList = userGroupRelJpaRepository.findAllByUserId(userId);
+        return relList.stream().map(UserGroupRelDO::getGroupId).toList();
+    }
+
     @Override
     public void saveGroups(long userId, @Nonnull Collection<Group> groups) {
         userGroupRelJpaRepository.deleteAllByUserId(userId);

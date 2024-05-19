@@ -24,6 +24,10 @@
             <groupId>cn.idealio.framework</groupId>
             <artifactId>ideal-starter-trace-webmvc</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.idealio.framework</groupId>
+            <artifactId>ideal-starter-redis</artifactId>
+        </dependency>
     </dependencies>
 
     <profiles>

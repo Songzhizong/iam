@@ -3,8 +3,6 @@ package cn.sh.ideal.iam.jdbc.organization;
 import cn.sh.ideal.iam.organization.domain.model.SecurityContainer;
 import cn.sh.ideal.iam.organization.domain.model.SecurityContainerRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Nonnull;
@@ -54,6 +52,13 @@ public class SecurityContainerRepositoryImpl implements SecurityContainerReposit
 
     @Nonnull
     @Override
+    public List<SecurityContainer> findAll() {
+        return securityContainerJpaRepository.findAll()
+                .stream().map(e -> (SecurityContainer) e).toList();
+    }
+
+    @Nonnull
+    @Override
     public List<SecurityContainer> findAllById(@Nonnull Collection<Long> ids) {
         if (ids.isEmpty()) {
             return List.of();
@@ -71,9 +76,7 @@ public class SecurityContainerRepositoryImpl implements SecurityContainerReposit
 
     @Override
     public boolean exists() {
-        Page<SecurityContainerDO> page = securityContainerJpaRepository.findAll(Pageable.ofSize(1));
-        List<SecurityContainerDO> content = page.getContent();
-        return !content.isEmpty();
+        return securityContainerJpaRepository.existsByIdGreaterThanEqual(0);
     }
 
     @Override
@@ -87,5 +90,10 @@ public class SecurityContainerRepositoryImpl implements SecurityContainerReposit
             parentId = -1L;
         }
         return securityContainerJpaRepository.existsByParentIdAndName(parentId, name);
+    }
+
+    @Override
+    public boolean existsByUpdatedTimeGte(long updatedTimeGte) {
+        return securityContainerJpaRepository.existsByUpdatedTimeGreaterThanEqual(updatedTimeGte);
     }
 }

@@ -1,6 +1,5 @@
 package cn.sh.ideal.iam.organization.application;
 
-import cn.idealio.framework.exception.BadRequestException;
 import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.*;
 import cn.sh.ideal.iam.organization.dto.args.CreateGroupArgs;
@@ -34,11 +33,6 @@ public class GroupService {
         if (containerId == null) {
             // 如果未指定安全容器ID, 则直接使用所属租户的安全容器ID
             containerId = tenantContainerId;
-        } else if (tenantContainerId != null
-                && !containerId.equals(tenantContainerId)
-                && !securityContainerRepository.isChild(containerId, tenantContainerId, i18nReader)) {
-            log.info("创建用户组失败, 安全容器不在所属租户之下");
-            throw new BadRequestException(i18nReader.getMessage("user_group.container_not_child"));
         }
         if (containerId != null) {
             securityContainerRepository.requireById(containerId, i18nReader);

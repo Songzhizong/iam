@@ -28,6 +28,9 @@ public interface TenantRepository {
 
     @Nonnull
     default Tenant requireById(long id, @Nonnull OrganizationI18nReader i18nReader) {
-        return findById(id).orElseThrow(() -> new ResourceNotFoundException(i18nReader.getMessage("tenant.notfound", new Object[]{id})));
+        return findById(id).orElseThrow(() -> {
+            String[] args = {String.valueOf(id)};
+            return new ResourceNotFoundException(i18nReader.getMessage("tenant.notfound", args));
+        });
     }
 }

@@ -14,7 +14,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.annotation.Nonnull;
@@ -82,13 +82,11 @@ public class UserDO implements User {
     @Column(nullable = false, name = "version_")
     private long version = 0;
 
-    @Version
     @CreatedDate
     @Column(nullable = false, name = "created_time_")
     private long createdTime = 0;
 
-    @Version
-    @LastModifiedBy
+    @LastModifiedDate
     @Column(nullable = false, name = "updated_time_")
     private long updatedTime = 0;
 

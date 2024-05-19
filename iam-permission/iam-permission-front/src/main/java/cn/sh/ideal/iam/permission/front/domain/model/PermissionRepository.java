@@ -1,6 +1,7 @@
 package cn.sh.ideal.iam.permission.front.domain.model;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -16,7 +17,18 @@ public interface PermissionRepository {
     int deleteAllByAppId(long appId);
 
     @Nonnull
+    List<Permission> findAll();
+
+    @Nonnull
     List<Permission> findAllByAppId(long appId);
 
+    @Nonnull
+    List<Permission> findAllById(@Nonnull Collection<Long> ids);
+
+    @Nonnull
+    List<Permission> findAllByItemIdIn(@Nonnull Collection<Long> itemIds);
+
     boolean existsByAppId(long appId);
+
+    boolean existsByUpdatedTimeGte(long updatedTimeGte);
 }

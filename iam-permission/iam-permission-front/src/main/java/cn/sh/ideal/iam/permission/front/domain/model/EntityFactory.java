@@ -40,4 +40,5 @@ public interface EntityFactory {
 
     @Nonnull
     PermissionGroup permissionGroup(long id, @Nonnull CreatePermissionGroupArgs args);
+
 }

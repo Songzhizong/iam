@@ -38,11 +38,6 @@ public class UserService {
         if (containerId == null) {
             // 如果未指定安全容器ID, 则直接使用所属租户的安全容器ID
             containerId = tenantContainerId;
-        } else if (tenantContainerId != null
-                && !containerId.equals(tenantContainerId)
-                && !securityContainerRepository.isChild(containerId, tenantContainerId, i18nReader)) {
-            log.info("新增用户失败, 安全容器不在所属租户之下");
-            throw new BadRequestException(i18nReader.getMessage("user.container_not_child"));
         }
         args.setContainerId(containerId);
         if (containerId != null) {

@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.annotation.Nonnull;
@@ -23,6 +25,7 @@ import javax.annotation.Nullable;
 @Table(name = SecurityContainerDO.TABLE_NAME,
         indexes = {
                 @Index(name = "idx01_" + SecurityContainerDO.TABLE_NAME, columnList = "parent_id_"),
+                @Index(name = "idx02_" + SecurityContainerDO.TABLE_NAME, columnList = "updated_time_"),
         })
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression", "NullableProblems"})
 public class SecurityContainerDO implements SecurityContainer {
@@ -52,6 +55,14 @@ public class SecurityContainerDO implements SecurityContainer {
     @Version
     @Column(nullable = false, name = "version_")
     private long version = 0;
+
+    @CreatedDate
+    @Column(nullable = false, name = "created_time_")
+    private long createdTime = 0;
+
+    @LastModifiedDate
+    @Column(nullable = false, name = "updated_time_")
+    private long updatedTime = 0;
 
     @Nonnull
     public static SecurityContainerDO create(@Nullable SecurityContainer parent,

@@ -56,6 +56,10 @@ public interface Permission {
 
     int getOrderNum();
 
+    default boolean available() {
+        return isEnabled();
+    }
+
     @Nonnull
     default Set<String> mergeApis() {
         Set<String> apiPatterns = getApiPatterns();
@@ -73,8 +77,9 @@ public interface Permission {
         for (String api : apis) {
             String[] split = StringUtils.split(api, " ");
             if (split.length > 2) {
-                log.info("非法的api地址: " + api);
-                throw new BadRequestException("非法的api地址: " + api);
+                String message = "非法的api地址: " + api;
+                log.info(message);
+                throw new BadRequestException(message);
             }
             String path;
             if (split.length == 1) {

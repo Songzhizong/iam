@@ -1,5 +1,5 @@
 ### 新增用户
-POST {{base_url}}/iam/users?tenantId=622606755238510592
+POST {{base_url}}/iam/users?tenantId=622057660241412096
 Content-Type: application/json
 
 {

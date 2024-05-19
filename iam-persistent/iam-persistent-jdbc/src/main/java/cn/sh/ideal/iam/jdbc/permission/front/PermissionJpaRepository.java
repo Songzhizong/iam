@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -17,10 +18,15 @@ public interface PermissionJpaRepository extends JpaRepository<PermissionDO, Lon
     @Nonnull
     List<PermissionDO> findAllByAppId(long appId);
 
+    @Nonnull
+    List<PermissionDO> findAllByItemIdIn(@Nonnull Collection<Long> itemIds);
+
     @Modifying
     @Transactional(rollbackFor = Throwable.class)
     @Query(value = "DELETE FROM iam_permission AS e WHERE e.app_id_ = :appId", nativeQuery = true)
     int deleteAllByAppId(@Param("appId") long appId);
 
     boolean existsByAppId(long appId);
+
+    boolean existsByUpdatedTimeGreaterThanEqual(long updatedTimeGte);
 }
