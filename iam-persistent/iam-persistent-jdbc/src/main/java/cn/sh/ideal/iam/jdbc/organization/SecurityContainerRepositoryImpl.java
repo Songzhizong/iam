@@ -1,12 +1,15 @@
 package cn.sh.ideal.iam.jdbc.organization;
 
+import cn.idealio.framework.concurrent.Asyncs;
 import cn.sh.ideal.iam.permission.tbac.domain.model.SecurityContainer;
 import cn.sh.ideal.iam.permission.tbac.domain.model.SecurityContainerRepository;
+import cn.sh.ideal.iam.permission.tbac.domain.model.SecurityContainerRepositoryListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -23,25 +26,47 @@ public class SecurityContainerRepositoryImpl implements SecurityContainerReposit
     @Override
     public SecurityContainer insert(@Nonnull SecurityContainer securityContainer) {
         SecurityContainerDO entity = (SecurityContainerDO) securityContainer;
-        return securityContainerJpaRepository.saveAndFlush(entity);
+        SecurityContainerDO saved = securityContainerJpaRepository.saveAndFlush(entity);
+        Asyncs.delayExec(Duration.ofSeconds(1), () -> {
+            for (SecurityContainerRepositoryListener listener : listeners) {
+                listener.onSecurityContainerTableChanged();
+            }
+        });
+        return saved;
     }
 
     @Nonnull
     @Override
     public SecurityContainer save(@Nonnull SecurityContainer securityContainer) {
         SecurityContainerDO entity = (SecurityContainerDO) securityContainer;
-        return securityContainerJpaRepository.saveAndFlush(entity);
+        SecurityContainerDO saved = securityContainerJpaRepository.saveAndFlush(entity);
+        Asyncs.delayExec(Duration.ofSeconds(1), () -> {
+            for (SecurityContainerRepositoryListener listener : listeners) {
+                listener.onSecurityContainerTableChanged();
+            }
+        });
+        return saved;
     }
 
     @Override
     public void save(@Nonnull Collection<SecurityContainer> securityContainers) {
         securityContainers.forEach(this::save);
+        Asyncs.delayExec(Duration.ofSeconds(1), () -> {
+            for (SecurityContainerRepositoryListener listener : listeners) {
+                listener.onSecurityContainerTableChanged();
+            }
+        });
     }
 
     @Override
     public void delete(@Nonnull SecurityContainer securityContainer) {
         SecurityContainerDO entity = (SecurityContainerDO) securityContainer;
         securityContainerJpaRepository.delete(entity);
+        Asyncs.delayExec(Duration.ofSeconds(1), () -> {
+            for (SecurityContainerRepositoryListener listener : listeners) {
+                listener.onSecurityContainerTableChanged();
+            }
+        });
     }
 
     @Nonnull
@@ -90,10 +115,5 @@ public class SecurityContainerRepositoryImpl implements SecurityContainerReposit
             parentId = -1L;
         }
         return securityContainerJpaRepository.existsByParentIdAndName(parentId, name);
-    }
-
-    @Override
-    public boolean existsByUpdatedTimeGte(long updatedTimeGte) {
-        return securityContainerJpaRepository.existsByUpdatedTimeGreaterThanEqual(updatedTimeGte);
     }
 }

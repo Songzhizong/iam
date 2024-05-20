@@ -17,9 +17,9 @@ public interface EntityFactory {
                   @Nonnull OrganizationI18nReader i18nReader);
 
     @Nonnull
-    Group group(long tenantId,
-                @Nonnull CreateGroupArgs args,
-                @Nonnull OrganizationI18nReader i18nReader);
+    UserGroup group(long tenantId,
+                    @Nonnull CreateGroupArgs args,
+                    @Nonnull OrganizationI18nReader i18nReader);
 
     @Nonnull
     User user(long tenantId,

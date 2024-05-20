@@ -36,6 +36,10 @@ public class CreateAppArgs {
     @Nullable
     private String name;
 
+    /** 备注信息 */
+    @Nullable
+    private String note;
+
     /** 排序值 */
     @Nullable
     private Integer orderNum;

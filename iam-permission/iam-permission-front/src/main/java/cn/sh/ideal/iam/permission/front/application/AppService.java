@@ -119,9 +119,9 @@ public class AppService {
         List<PermissionGroup> permissionGroups = permissionGroupInfos.stream().map(entityFactory::permissionGroup).toList();
 
         appRepository.insert(app);
-        permissionRepository.insert(permissions);
         permissionItemRepository.insert(permissionItems);
         permissionGroupRepository.insert(permissionGroups);
+        permissionRepository.insert(permissions);
         log.info("应用[{}]导入成功, 导入权限: {}条, 权限项: {}条, 权限组: {}条",
                 appId, permissions.size(), permissionItems.size(), permissionGroups.size());
     }

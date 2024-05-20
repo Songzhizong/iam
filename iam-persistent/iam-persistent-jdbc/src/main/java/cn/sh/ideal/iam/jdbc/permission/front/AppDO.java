@@ -57,6 +57,11 @@ public class AppDO implements App {
     @Column(nullable = false, name = "name_")
     private String name = "";
 
+    @Nonnull
+    @Comment("备注")
+    @Column(nullable = false, name = "note_")
+    private String note = "";
+
     @Comment("排序值")
     @Column(nullable = false, name = "order_num_")
     private int orderNum = 0;
@@ -83,6 +88,7 @@ public class AppDO implements App {
         appDO.setTerminal(terminal);
         appDO.setRootPath(rootPath);
         appDO.setName(name);
+        appDO.setNote(args.getNote());
         appDO.setOrderNum(args.getOrderNum());
         appDO.setConfig(args.getConfig());
         return appDO;
@@ -95,9 +101,17 @@ public class AppDO implements App {
         appDO.setTerminal(info.getTerminal());
         appDO.setRootPath(info.getRootPath());
         appDO.setName(info.getName());
+        appDO.setNote(info.getNote());
         appDO.setOrderNum(info.getOrderNum());
         appDO.setConfig(info.getConfig());
         return appDO;
+    }
+
+    public void setNote(@Nullable String note) {
+        if (note == null) {
+            note = "";
+        }
+        this.note = note;
     }
 
     public void setConfig(@Nullable String config) {

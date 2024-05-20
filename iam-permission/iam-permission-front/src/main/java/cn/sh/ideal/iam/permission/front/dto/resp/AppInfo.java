@@ -27,6 +27,10 @@ public class AppInfo {
     @Nonnull
     private String name = "";
 
+    /** 备注 */
+    @Nonnull
+    private String note = "";
+
     /** 排序值 */
     private int orderNum = 0;
 

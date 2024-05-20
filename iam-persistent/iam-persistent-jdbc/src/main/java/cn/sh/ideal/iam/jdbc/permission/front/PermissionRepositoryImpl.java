@@ -1,11 +1,14 @@
 package cn.sh.ideal.iam.jdbc.permission.front;
 
+import cn.idealio.framework.concurrent.Asyncs;
 import cn.sh.ideal.iam.permission.front.domain.model.Permission;
 import cn.sh.ideal.iam.permission.front.domain.model.PermissionRepository;
+import cn.sh.ideal.iam.permission.front.domain.model.PermissionRepositoryListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Nonnull;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,20 +24,37 @@ public class PermissionRepositoryImpl implements PermissionRepository {
     @Override
     public Permission insert(@Nonnull Permission permission) {
         PermissionDO entity = (PermissionDO) permission;
-        return permissionJpaRepository.save(entity);
+        PermissionDO saved = permissionJpaRepository.saveAndFlush(entity);
+        Asyncs.delayExec(Duration.ofSeconds(1), () -> {
+            for (PermissionRepositoryListener listener : listeners) {
+                listener.onPermissionTableChanged();
+            }
+        });
+        return saved;
     }
 
     @Override
     public void insert(@Nonnull List<Permission> permissions) {
         for (Permission permission : permissions) {
             PermissionDO entity = (PermissionDO) permission;
-            permissionJpaRepository.save(entity);
+            permissionJpaRepository.saveAndFlush(entity);
         }
+        Asyncs.delayExec(Duration.ofSeconds(1), () -> {
+            for (PermissionRepositoryListener listener : listeners) {
+                listener.onPermissionTableChanged();
+            }
+        });
     }
 
     @Override
     public int deleteAllByAppId(long appId) {
-        return permissionJpaRepository.deleteAllByAppId(appId);
+        int deleted = permissionJpaRepository.deleteAllByAppId(appId);
+        Asyncs.delayExec(Duration.ofSeconds(1), () -> {
+            for (PermissionRepositoryListener listener : listeners) {
+                listener.onPermissionTableChanged();
+            }
+        });
+        return deleted;
     }
 
     @Nonnull
@@ -76,10 +96,5 @@ public class PermissionRepositoryImpl implements PermissionRepository {
     @Override
     public boolean existsByAppId(long appId) {
         return permissionJpaRepository.existsByAppId(appId);
-    }
-
-    @Override
-    public boolean existsByUpdatedTimeGte(long updatedTimeGte) {
-        return permissionJpaRepository.existsByUpdatedTimeGreaterThanEqual(updatedTimeGte);
     }
 }

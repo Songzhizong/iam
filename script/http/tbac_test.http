@@ -1,13 +1,13 @@
 ### 获取用户在指定安全容器上所有可见的权限ID
 GET {{base_url}}/iam/tbac/test/visible_permission_ids
     ?userId=622790509043122176
-    &containerId=2
+    &containerId=1
 
 ### 获取用户拥有指定权限的容器id列表
 GET {{base_url}}/iam/tbac/test/authority_container_ids
     ?userId=622790509043122176
-    &authority=cmdb.resource.update
-    &baseContainerId=2
+    &authority=cmdb.group:edit
+    &baseContainerId=1
 
 ### 过滤用户在指定安全容器上有权限的权限ID列表
 GET {{base_url}}/iam/tbac/test/container_permission_ids
@@ -49,3 +49,14 @@ GET {{base_url}}/iam/tbac/test/has_api_permission
 ### 刷新用户权限缓存
 POST {{base_url}}/iam/tbac/test/update_user_auth_latest_refresh_timestamp
     ?userId=622790509043122176
+
+### 获取用户可见安全容器树
+GET {{base_url}}/iam/tbac/test/visible_container_tree
+    ?userId=622790509043122176
+    &authority=cmdb.group:edit
+
+### 获取用户在指定安全容器之上的所有可见父容器
+GET {{base_url}}/iam/tbac/test/visible_container_parent_tree
+    ?userId=622790509043122176
+    &containerId=112
+    &authority=cmdb.group:edit

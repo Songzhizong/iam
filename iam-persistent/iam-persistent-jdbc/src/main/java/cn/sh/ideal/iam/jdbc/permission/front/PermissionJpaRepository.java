@@ -27,6 +27,4 @@ public interface PermissionJpaRepository extends JpaRepository<PermissionDO, Lon
     int deleteAllByAppId(@Param("appId") long appId);
 
     boolean existsByAppId(long appId);
-
-    boolean existsByUpdatedTimeGreaterThanEqual(long updatedTimeGte);
 }

@@ -53,4 +53,9 @@ public class PermissionAssignRepositoryImpl implements PermissionAssignRepositor
         return permissionAssignJpaRepository.findAllByUserGroupIdIn(userGroupIds)
                 .stream().map(e -> (PermissionAssign) e).toList();
     }
+
+    @Override
+    public void deleteAllByAppIdAndContainerIdAndUserGroupId(long appId, long containerId, long userGroupId) {
+        permissionAssignJpaRepository.deleteAllByAppIdAndContainerIdAndUserGroupId(appId, containerId, userGroupId);
+    }
 }

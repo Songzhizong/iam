@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 /**
  * @author 宋志宗 on 2024/5/14
  */
-public interface Group {
+public interface UserGroup {
 
     Long getId();
 

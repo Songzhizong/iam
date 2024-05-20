@@ -3,7 +3,7 @@ package cn.sh.ideal.iam.jdbc.organization;
 import cn.idealio.framework.util.Asserts;
 import cn.idealio.framework.util.data.hibernate.JpaIDGenerator;
 import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
-import cn.sh.ideal.iam.organization.domain.model.Group;
+import cn.sh.ideal.iam.organization.domain.model.UserGroup;
 import cn.sh.ideal.iam.organization.dto.args.CreateGroupArgs;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,15 +20,15 @@ import javax.annotation.Nullable;
  */
 @Getter
 @Setter
-@Entity(name = GroupDO.TABLE_NAME)
+@Entity(name = UserGroupDO.TABLE_NAME)
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = GroupDO.TABLE_NAME,
+@Table(name = UserGroupDO.TABLE_NAME,
         indexes = {
-                @Index(name = "idx01_" + GroupDO.TABLE_NAME, columnList = "tenant_id_"),
-                @Index(name = "idx02_" + GroupDO.TABLE_NAME, columnList = "container_id_"),
+                @Index(name = "idx01_" + UserGroupDO.TABLE_NAME, columnList = "tenant_id_"),
+                @Index(name = "idx02_" + UserGroupDO.TABLE_NAME, columnList = "container_id_"),
         })
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression", "NullableProblems"})
-public class GroupDO implements Group {
+public class UserGroupDO implements UserGroup {
     public static final String TABLE_NAME = "iam_user_group";
 
     @Id
@@ -61,14 +61,14 @@ public class GroupDO implements Group {
     private long version = 0;
 
     @Nonnull
-    public static GroupDO create(long tenantId,
-                                 @Nonnull CreateGroupArgs args,
-                                 @Nonnull OrganizationI18nReader i18nReader) {
+    public static UserGroupDO create(long tenantId,
+                                     @Nonnull CreateGroupArgs args,
+                                     @Nonnull OrganizationI18nReader i18nReader) {
         Long containerId = args.getContainerId();
         String name = args.getName();
         String note = args.getNote();
         Asserts.notBlank(name, () -> i18nReader.getMessage("user_group.name.blank"));
-        GroupDO groupDO = new GroupDO();
+        UserGroupDO groupDO = new UserGroupDO();
         groupDO.setTenantId(tenantId);
         groupDO.setContainerId(containerId);
         groupDO.setName(name);

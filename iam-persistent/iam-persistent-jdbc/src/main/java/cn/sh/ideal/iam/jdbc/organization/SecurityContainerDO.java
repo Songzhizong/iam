@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
 @Table(name = SecurityContainerDO.TABLE_NAME,
         indexes = {
                 @Index(name = "idx01_" + SecurityContainerDO.TABLE_NAME, columnList = "parent_id_"),
-                @Index(name = "idx02_" + SecurityContainerDO.TABLE_NAME, columnList = "updated_time_"),
         })
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression", "NullableProblems"})
 public class SecurityContainerDO implements SecurityContainer {
@@ -35,7 +34,7 @@ public class SecurityContainerDO implements SecurityContainer {
     @Nullable
     @Comment("主键")
     @Column(nullable = false, name = "id_")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id = null;
 
     @Comment("父ID")

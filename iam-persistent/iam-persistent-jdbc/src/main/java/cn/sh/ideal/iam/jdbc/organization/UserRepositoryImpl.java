@@ -1,6 +1,6 @@
 package cn.sh.ideal.iam.jdbc.organization;
 
-import cn.sh.ideal.iam.organization.domain.model.Group;
+import cn.sh.ideal.iam.organization.domain.model.UserGroup;
 import cn.sh.ideal.iam.organization.domain.model.User;
 import cn.sh.ideal.iam.organization.domain.model.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
     private final UserJpaRepository userJpaRepository;
-    private final GroupJpaRepository groupJpaRepository;
+    private final UserGroupJpaRepository userGroupJpaRepository;
     private final UserGroupRelJpaRepository userGroupRelJpaRepository;
 
     @Nonnull
@@ -67,14 +67,14 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Nonnull
     @Override
-    public List<Group> getGroups(long userId) {
+    public List<UserGroup> getGroups(long userId) {
         List<UserGroupRelDO> relList = userGroupRelJpaRepository.findAllByUserId(userId);
         if (relList.isEmpty()) {
             return List.of();
         }
         Set<Long> groupIds = relList.stream().map(UserGroupRelDO::getGroupId).collect(Collectors.toSet());
-        return groupJpaRepository.findAllById(groupIds)
-                .stream().map(e -> (Group) e).toList();
+        return userGroupJpaRepository.findAllById(groupIds)
+                .stream().map(e -> (UserGroup) e).toList();
     }
 
     @Nonnull
@@ -85,7 +85,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void saveGroups(long userId, @Nonnull Collection<Group> groups) {
+    public void saveGroups(long userId, @Nonnull Collection<UserGroup> groups) {
         userGroupRelJpaRepository.deleteAllByUserId(userId);
         if (groups.isEmpty()) {
             return;

@@ -2,17 +2,24 @@ package cn.sh.ideal.iam.permission.tbac.port.web;
 
 import cn.idealio.framework.audit.Audit;
 import cn.idealio.framework.audit.AuditAction;
+import cn.idealio.framework.exception.ForbiddenException;
+import cn.idealio.framework.spring.ServletUtils;
 import cn.idealio.framework.transmission.Result;
+import cn.idealio.framework.util.Asserts;
 import cn.idealio.security.api.annotation.HasAuthority;
 import cn.sh.ideal.iam.infrastructure.constant.AuditConstants;
 import cn.sh.ideal.iam.permission.tbac.application.AssignService;
 import cn.sh.ideal.iam.permission.tbac.dto.args.AssignPermissionArgs;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author 宋志宗 on 2024/2/5
@@ -69,6 +76,30 @@ public class TbacAssignController {
             action = AuditAction.PERMISSION_CONFIG, classification = AuditConstants.AUTHORITY_MANAGEMENT)
     public Result<Void> assignPermissions(@RequestBody AssignPermissionArgs args) {
         assignService.assign(args);
+        return Result.success();
+    }
+
+    /** 分配所有权限 */
+    @PostMapping("/assign_all_permissions")
+    public Result<Void> assignAllPermission(@Nullable Long appId,
+                                            @Nullable Long containerId,
+                                            @Nullable Long userGroupId,
+                                            @Nullable Boolean inheritable,
+                                            @Nonnull HttpServletRequest request) {
+        String address = ServletUtils.getFirstRemoteAddress(request);
+        if (address == null) {
+            address = "";
+        }
+        if (!address.startsWith("127.0.") && !address.startsWith("172.17.")) {
+            throw new ForbiddenException("非法的请求来源");
+        }
+        Asserts.nonnull(appId, "应用ID为空");
+        Asserts.nonnull(containerId, "安全容器ID为空");
+        Asserts.nonnull(userGroupId, "用户组ID为空");
+        if (inheritable == null) {
+            inheritable = true;
+        }
+        assignService.assignAllPermission(appId, containerId, userGroupId, inheritable);
         return Result.success();
     }
 }

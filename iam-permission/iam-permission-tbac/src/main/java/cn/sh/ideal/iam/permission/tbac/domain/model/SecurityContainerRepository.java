@@ -5,6 +5,7 @@ import cn.sh.ideal.iam.permission.tbac.configure.TbacI18nReader;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,11 @@ import java.util.Optional;
  * @author 宋志宗 on 2024/5/14
  */
 public interface SecurityContainerRepository {
+    List<SecurityContainerRepositoryListener> listeners = new ArrayList<>();
+
+    default void addListener(@Nonnull SecurityContainerRepositoryListener listener) {
+        listeners.add(listener);
+    }
 
     @Nonnull
     SecurityContainer insert(@Nonnull SecurityContainer securityContainer);
@@ -41,8 +47,6 @@ public interface SecurityContainerRepository {
     boolean existsByParentId(long parentId);
 
     boolean existsByParentIdAndName(@Nullable Long parentId, @Nonnull String name);
-
-    boolean existsByUpdatedTimeGte(long updatedTimeGte);
 
     @Nonnull
     default SecurityContainer requireById(long id, @Nonnull TbacI18nReader i18nReader) {

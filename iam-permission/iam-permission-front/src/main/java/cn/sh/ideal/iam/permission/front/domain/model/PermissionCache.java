@@ -1,10 +1,14 @@
 package cn.sh.ideal.iam.permission.front.domain.model;
 
+import cn.idealio.framework.cache.Cache;
+import cn.idealio.framework.cache.CacheFactory;
+import cn.idealio.framework.cache.serialize.LongSerializer;
 import cn.idealio.framework.concurrent.Asyncs;
 import cn.idealio.framework.lang.Lists;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
@@ -20,13 +24,24 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 @Slf4j
 @Component
-@RequiredArgsConstructor
-public class PermissionCache implements InitializingBean {
+public class PermissionCache implements InitializingBean, ApplicationRunner, PermissionRepositoryListener {
+    private static final String PERMISSION_CHANGED_TIME_KEY = "iam:permission:change:time";
     private final Lock refreshLock = new ReentrantLock();
     private final AtomicLong lastRefreshTime = new AtomicLong(0);
     private final PermissionRepository permissionRepository;
+    private final Cache<String, Long> permissionChangedTimeCache;
+
     private volatile Map<Long, Permission> permissionMap = new HashMap<>();
     private volatile Map<Long, List<Permission>> itemPermissionsMap = new HashMap<>();
+
+    public PermissionCache(@Nonnull CacheFactory cacheFactory,
+                           @Nonnull PermissionRepository permissionRepository) {
+        this.permissionRepository = permissionRepository;
+        this.permissionChangedTimeCache = cacheFactory.
+                <String, Long>newBuilder(LongSerializer.instance())
+                .expireAfterWrite(Duration.ofHours(1))
+                .build("");
+    }
 
     @Nullable
     public Permission findById(long permissionId) {
@@ -96,17 +111,29 @@ public class PermissionCache implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
+        permissionRepository.addListener(this);
+    }
+
+    @Override
+    public void run(ApplicationArguments args) {
         refresh();
-        Duration duration = Duration.ofSeconds(10);
+        Duration duration = Duration.ofSeconds(5);
         Asyncs.scheduleAtFixedRate(duration, duration, () -> {
             try {
-                if (permissionRepository.existsByUpdatedTimeGte(lastRefreshTime.get())) {
-                    log.info("发现权限变更, 开始刷新权限缓存...");
-                    refresh();
+                Long permissionChangedTime = permissionChangedTimeCache.getIfPresent(PERMISSION_CHANGED_TIME_KEY);
+                if (permissionChangedTime == null || permissionChangedTime < lastRefreshTime.get()) {
+                    return;
                 }
+                log.info("发现权限变更, 开始刷新权限缓存...");
+                refresh();
             } catch (Exception exception) {
                 log.warn("刷新权限缓存出现异常: ", exception);
             }
         });
+    }
+
+    @Override
+    public void onPermissionTableChanged() {
+        permissionChangedTimeCache.put(PERMISSION_CHANGED_TIME_KEY, System.currentTimeMillis());
     }
 }

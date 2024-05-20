@@ -1,13 +1,15 @@
 package cn.sh.ideal.iam.permission.tbac.application;
 
+import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.lang.Sets;
 import cn.idealio.framework.util.Asserts;
+import cn.sh.ideal.iam.organization.domain.model.UserGroup;
+import cn.sh.ideal.iam.organization.domain.model.UserGroupRepository;
 import cn.sh.ideal.iam.permission.front.domain.model.Permission;
 import cn.sh.ideal.iam.permission.front.domain.model.PermissionCache;
+import cn.sh.ideal.iam.permission.front.domain.model.PermissionRepository;
 import cn.sh.ideal.iam.permission.tbac.configure.TbacI18nReader;
-import cn.sh.ideal.iam.permission.tbac.domain.model.EntityFactory;
-import cn.sh.ideal.iam.permission.tbac.domain.model.PermissionAssign;
-import cn.sh.ideal.iam.permission.tbac.domain.model.PermissionAssignRepository;
+import cn.sh.ideal.iam.permission.tbac.domain.model.*;
 import cn.sh.ideal.iam.permission.tbac.dto.args.AssignPermissionArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +29,10 @@ public class AssignService {
     private final TbacI18nReader i18nReader;
     private final EntityFactory entityFactory;
     private final PermissionCache permissionCache;
+    private final UserGroupRepository userGroupRepository;
+    private final PermissionRepository permissionRepository;
     private final PermissionAssignRepository permissionAssignRepository;
+    private final SecurityContainerRepository securityContainerRepository;
 
     @Transactional(rollbackFor = Throwable.class)
     public void assign(@Nonnull AssignPermissionArgs args) {
@@ -77,6 +82,21 @@ public class AssignService {
         }
         List<PermissionAssign> assigns = entityFactory.assignPermissions(
                 containerId, userGroupId, assign, inheritable, mfa, assignPermissions);
+        permissionAssignRepository.insert(assigns);
+    }
+
+    @Transactional(rollbackFor = Throwable.class)
+    public void assignAllPermission(long appId, long containerId, long userGroupId, boolean inheritable) {
+        SecurityContainer container = securityContainerRepository.requireById(containerId, i18nReader);
+        UserGroup userGroup = userGroupRepository.findById(userGroupId).orElseThrow(() -> {
+            log.info("分配所有权限失败用户组不存在, id: {}", userGroupId);
+            return new BadRequestException("用户组不存在");
+        });
+        permissionAssignRepository.deleteAllByAppIdAndContainerIdAndUserGroupId(appId, containerId, userGroupId);
+        List<Permission> permissions = permissionRepository.findAllByAppId(appId);
+        List<Permission> filter = permissions.stream().filter(Permission::available).toList();
+        List<PermissionAssign> assigns = entityFactory.assignPermissions(
+                containerId, userGroupId, true, inheritable, false, filter);
         permissionAssignRepository.insert(assigns);
     }
 }

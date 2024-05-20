@@ -1,5 +1,6 @@
 package cn.sh.ideal.iam.jdbc.permission.front;
 
+import cn.idealio.framework.lang.StringUtils;
 import cn.idealio.framework.util.Asserts;
 import cn.idealio.framework.util.data.hibernate.ManualIDGenerator;
 import cn.idealio.framework.util.data.jpa.LongSetConverter;
@@ -13,8 +14,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.annotation.Nonnull;
@@ -34,7 +33,6 @@ import java.util.Set;
                 @Index(name = "idx01_" + PermissionDO.TABLE_NAME, columnList = "app_id_"),
                 @Index(name = "idx02_" + PermissionDO.TABLE_NAME, columnList = "item_id_"),
                 @Index(name = "idx03_" + PermissionDO.TABLE_NAME, columnList = "group_id_"),
-                @Index(name = "idx04_" + PermissionDO.TABLE_NAME, columnList = "updated_time_"),
         })
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression", "NullableProblems"})
 public class PermissionDO implements Permission {
@@ -63,6 +61,11 @@ public class PermissionDO implements Permission {
     @Comment("名称")
     @Column(nullable = false, name = "name_")
     private String name = "";
+
+    @Nonnull
+    @Comment("唯一标识符, 应用下唯一")
+    @Column(nullable = false, name = "ident_")
+    private String ident = "";
 
     @Nonnull
     @Comment("api pattern清单")
@@ -112,14 +115,6 @@ public class PermissionDO implements Permission {
     @Column(nullable = false, name = "version_")
     private long version = 0;
 
-    @CreatedDate
-    @Column(nullable = false, name = "created_time_")
-    private long createdTime = 0;
-
-    @LastModifiedDate
-    @Column(nullable = false, name = "updated_time_")
-    private long updatedTime = 0;
-
     @Nonnull
     public static PermissionDO create(long id, @Nonnull PermissionItem item,
                                       @Nonnull CreatePermissionArgs args) {
@@ -159,6 +154,7 @@ public class PermissionDO implements Permission {
         permissionDO.setGroupId(item.getGroupId());
         permissionDO.setItemId(item.getId());
         permissionDO.setName(name);
+        permissionDO.setIdent(args.getIdent());
         permissionDO.setApis(apis);
         permissionDO.setAuthorities(authorities);
         permissionDO.setChildIds(childIds);
@@ -178,6 +174,7 @@ public class PermissionDO implements Permission {
         permissionDO.setGroupId(info.getGroupId());
         permissionDO.setItemId(info.getItemId());
         permissionDO.setName(info.getName());
+        permissionDO.setIdent(info.getIdent());
         permissionDO.setApis(info.getApis());
         permissionDO.setAuthorities(info.getAuthorities());
         permissionDO.setChildIds(info.getChildIds());
@@ -187,6 +184,13 @@ public class PermissionDO implements Permission {
         permissionDO.setEnabled(info.isEnabled());
         permissionDO.setOrderNum(info.getOrderNum());
         return permissionDO;
+    }
+
+    public void setIdent(@Nullable String ident) {
+        if (StringUtils.isBlank(ident)) {
+            ident = "";
+        }
+        this.ident = ident;
     }
 
     public void setOrderNum(@Nullable Integer orderNum) {

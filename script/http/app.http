@@ -11,16 +11,16 @@ Content-Type: application/json
 }
 
 ### 导出应用配置信息
-GET {{base_url}}/iam/front/apps/622416657016422400/export
+GET {{base_url}}/iam/front/apps/508081442220146688/export
 
 ### 导入应用配置
 POST {{base_url}}/iam/front/apps/import
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary
-Content-Disposition: form-data; name="file"; filename="app_config_622416657016422400.json"
+Content-Disposition: form-data; name="file"; filename="app_config_508081442220146688.json"
 Content-Type: application/json
 
-< ../app_configs/app_config_622416657016422400.json
+< ../app_configs/app_config_508081442220146688.json
 
 ###

@@ -44,4 +44,16 @@ public interface PermissionAssignJpaRepository extends JpaRepository<PermissionA
 
     @Nonnull
     List<PermissionAssignDO> findAllByUserGroupIdIn(@Nonnull Collection<Long> userGroupIds);
+
+    @Modifying
+    @Transactional(rollbackFor = Throwable.class)
+    @Query(value = """
+            DELETE FROM iam_tbac_permission_assign AS e
+                   WHERE e.app_id_ = :appId
+                     AND e.container_id_ = :containerId
+                     AND e.user_group_id_ in (:userGroupId)
+            """, nativeQuery = true)
+    void deleteAllByAppIdAndContainerIdAndUserGroupId(@Param("appId") long appId,
+                                                      @Param("containerId") long containerId,
+                                                      @Param("userGroupId") long userGroupId);
 }

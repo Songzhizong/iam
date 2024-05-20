@@ -3,8 +3,8 @@ POST {{base_url}}/iam/security_containers
 Content-Type: application/json
 
 {
-  "parentId": 2,
-  "name": "南京研发中心"
+  "parentId": 1,
+  "name": "小米公司"
 }
 
 ### 重命名安全容器

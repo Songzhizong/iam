@@ -23,7 +23,7 @@ import java.util.Set;
 public class UserService {
     private final EntityFactory entityFactory;
     private final UserRepository userRepository;
-    private final GroupRepository groupRepository;
+    private final UserGroupRepository userGroupRepository;
     private final TenantRepository tenantRepository;
     private final OrganizationI18nReader i18nReader;
 
@@ -55,7 +55,7 @@ public class UserService {
 
         Set<Long> groupIds = args.getUserGroupIds();
         if (groupIds != null) {
-            List<Group> groups = groupRepository.findAllById(groupIds);
+            List<UserGroup> groups = userGroupRepository.findAllById(groupIds);
             userRepository.saveGroups(user.getId(), groups);
         }
         return user;

@@ -23,10 +23,10 @@ public class EntityFactoryImpl implements EntityFactory {
 
     @Nonnull
     @Override
-    public Group group(long tenantId,
-                       @Nonnull CreateGroupArgs args,
-                       @Nonnull OrganizationI18nReader i18nReader) {
-        return GroupDO.create(tenantId, args, i18nReader);
+    public UserGroup group(long tenantId,
+                           @Nonnull CreateGroupArgs args,
+                           @Nonnull OrganizationI18nReader i18nReader) {
+        return UserGroupDO.create(tenantId, args, i18nReader);
     }
 
     @Nonnull

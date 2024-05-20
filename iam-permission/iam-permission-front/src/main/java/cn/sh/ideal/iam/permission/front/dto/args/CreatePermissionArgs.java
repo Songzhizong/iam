@@ -29,6 +29,10 @@ public class CreatePermissionArgs {
     @Nullable
     private String name;
 
+    /** 唯一标识符, 应用下唯一 (可选) */
+    @Nullable
+    private String ident;
+
     @Nullable
     private Set<String> apis;
 

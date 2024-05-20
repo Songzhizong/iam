@@ -17,8 +17,6 @@ public interface SecurityContainerJpaRepository extends JpaRepository<SecurityCo
 
     boolean existsByParentIdAndName(long parentId, @Nonnull String name);
 
-    boolean existsByUpdatedTimeGreaterThanEqual(long updatedTimeGte);
-
 
     @Nonnull
     List<SecurityContainerDO> findAllByParentIdIn(@Nonnull Collection<Long> parentIds);

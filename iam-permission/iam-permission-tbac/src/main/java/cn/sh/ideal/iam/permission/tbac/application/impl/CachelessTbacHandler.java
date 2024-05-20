@@ -57,6 +57,30 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
         // [authority]有权限配置的containerId -> 是否分配 -> 是否继承
         Map<Long, Tuple<Boolean, Boolean>> containerAssignMap =
                 authorityContainerAssignMap(userId, authority);
+        return authorityContainerIds(baseContainerId, containerAssignMap);
+    }
+
+    /**
+     * 通过权限配置信息分析出所有有权限的容器ID
+     *
+     * @param containerAssignMap containerId -> 是否分配 -> 是否继承
+     * @return 容器ID列表
+     */
+    @Nonnull
+    public Set<Long> authorityContainerIds(@Nonnull Map<Long, Tuple<Boolean, Boolean>> containerAssignMap) {
+        return authorityContainerIds(null, containerAssignMap);
+    }
+
+    /**
+     * 通过权限配置信息分析出所有有权限的容器ID
+     *
+     * @param baseContainerId    基础容器ID, 只分析这个节点及其下所有节点的容器
+     * @param containerAssignMap containerId -> 是否分配 -> 是否继承
+     * @return 容器ID列表
+     */
+    @Nonnull
+    public Set<Long> authorityContainerIds(@Nullable Long baseContainerId,
+                                           @Nonnull Map<Long, Tuple<Boolean, Boolean>> containerAssignMap) {
         if (containerAssignMap.isEmpty()) {
             return Set.of();
         }

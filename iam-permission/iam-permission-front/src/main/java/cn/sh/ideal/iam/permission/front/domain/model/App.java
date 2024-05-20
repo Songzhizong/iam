@@ -23,6 +23,9 @@ public interface App {
     @Nonnull
     String getName();
 
+    @Nonnull
+    String getNote();
+
     int getOrderNum();
 
     @Nonnull
@@ -35,6 +38,7 @@ public interface App {
         appInfo.setTerminal(getTerminal());
         appInfo.setRootPath(getRootPath());
         appInfo.setName(getName());
+        appInfo.setNote(getNote());
         appInfo.setOrderNum(getOrderNum());
         appInfo.setConfig(getConfig());
         return appInfo;

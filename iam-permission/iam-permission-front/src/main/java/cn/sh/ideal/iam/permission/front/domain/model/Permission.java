@@ -30,6 +30,10 @@ public interface Permission {
     @Nonnull
     String getName();
 
+    /** 唯一标识符, 应用下唯一 */
+    @Nonnull
+    String getIdent();
+
     @Nonnull
     Set<String> getApiPatterns();
 
@@ -85,7 +89,10 @@ public interface Permission {
             if (split.length == 1) {
                 path = split[0];
             } else {
+                String method = split[0];
                 path = split[1];
+                method = method.toUpperCase();
+                api = method + " " + path;
             }
             if (PathMatchers.isPattern(path)) {
                 apiPatterns.add(api);
@@ -105,6 +112,7 @@ public interface Permission {
         permissionInfo.setGroupId(getGroupId());
         permissionInfo.setItemId(getItemId());
         permissionInfo.setName(getName());
+        permissionInfo.setIdent(getIdent());
         permissionInfo.setApis(mergeApis());
         permissionInfo.setAuthorities(getAuthorities());
         permissionInfo.setChildIds(getChildIds());

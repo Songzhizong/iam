@@ -19,13 +19,13 @@ import javax.annotation.Nullable;
 @RequiredArgsConstructor
 public class GroupService {
     private final EntityFactory entityFactory;
-    private final GroupRepository groupRepository;
+    private final UserGroupRepository userGroupRepository;
     private final TenantRepository tenantRepository;
     private final OrganizationI18nReader i18nReader;
 
     @Nonnull
     @Transactional(rollbackFor = Throwable.class)
-    public Group create(long tenantId, @Nonnull CreateGroupArgs args) {
+    public UserGroup create(long tenantId, @Nonnull CreateGroupArgs args) {
         Tenant tenant = tenantRepository.requireById(tenantId, i18nReader);
         Long tenantContainerId = tenant.getContainerId();
         Long containerId = args.getContainerId();
@@ -37,19 +37,19 @@ public class GroupService {
 //            securityContainerRepository.requireById(containerId, i18nReader);
 //        }
         args.setContainerId(containerId);
-        Group group = entityFactory.group(tenantId, args, i18nReader);
-        return groupRepository.insert(group);
+        UserGroup group = entityFactory.group(tenantId, args, i18nReader);
+        return userGroupRepository.insert(group);
     }
 
     @Nullable
     @Transactional(rollbackFor = Throwable.class)
-    public Group delete(long id) {
-        Group group = groupRepository.findById(id).orElse(null);
+    public UserGroup delete(long id) {
+        UserGroup group = userGroupRepository.findById(id).orElse(null);
         if (group == null) {
             log.info("删除的用户组[{}]不存在", id);
             return null;
         }
-        groupRepository.delete(group);
+        userGroupRepository.delete(group);
         return group;
     }
 }

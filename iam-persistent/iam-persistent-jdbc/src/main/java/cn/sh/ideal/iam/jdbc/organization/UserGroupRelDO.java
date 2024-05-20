@@ -1,9 +1,11 @@
 package cn.sh.ideal.iam.jdbc.organization;
 
+import cn.idealio.framework.util.data.hibernate.JpaIDGenerator;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.annotation.Nonnull;
@@ -29,7 +31,8 @@ public class UserGroupRelDO {
     @Nullable
     @Comment("主键")
     @Column(nullable = false, name = "id_")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(generator = TABLE_NAME)
+    @GenericGenerator(name = TABLE_NAME, type = JpaIDGenerator.class)
     private Long id = null;
 
     @Comment("用户ID")

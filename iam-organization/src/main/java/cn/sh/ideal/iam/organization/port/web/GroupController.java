@@ -8,7 +8,7 @@ import cn.idealio.security.api.annotation.HasAuthority;
 import cn.sh.ideal.iam.infrastructure.constant.AuditConstants;
 import cn.sh.ideal.iam.organization.application.GroupService;
 import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
-import cn.sh.ideal.iam.organization.domain.model.Group;
+import cn.sh.ideal.iam.organization.domain.model.UserGroup;
 import cn.sh.ideal.iam.organization.dto.args.CreateGroupArgs;
 import cn.sh.ideal.iam.organization.dto.resp.GroupInfo;
 import lombok.RequiredArgsConstructor;
@@ -70,7 +70,7 @@ public class GroupController {
     public Result<GroupInfo> create(@Nullable Long tenantId,
                                     @RequestBody CreateGroupArgs args) {
         Asserts.nonnull(tenantId, () -> i18nReader.getMessage("tenant.id.null"));
-        Group group = groupService.create(tenantId, args);
+        UserGroup group = groupService.create(tenantId, args);
         GroupInfo info = group.toInfo();
         return Result.success(info);
     }
@@ -94,7 +94,7 @@ public class GroupController {
     @HasAuthority("iam:user_group:delete")
     @DeleteMapping("/user_groups/{id}")
     public Result<GroupInfo> delete(@PathVariable long id) {
-        Group group = groupService.delete(id);
+        UserGroup group = groupService.delete(id);
         if (group == null) {
             return Result.success();
         }

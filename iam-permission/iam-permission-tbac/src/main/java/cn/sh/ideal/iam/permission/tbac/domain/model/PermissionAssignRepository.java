@@ -21,4 +21,6 @@ public interface PermissionAssignRepository {
 
     @Nonnull
     List<PermissionAssign> findAllByUserGroupIdIn(@Nonnull Collection<Long> userGroupIds);
+
+    void deleteAllByAppIdAndContainerIdAndUserGroupId(long appId, long containerId, long userGroupId);
 }

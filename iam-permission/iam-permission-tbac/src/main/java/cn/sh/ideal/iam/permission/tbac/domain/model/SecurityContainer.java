@@ -2,6 +2,7 @@ package cn.sh.ideal.iam.permission.tbac.domain.model;
 
 import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.lang.StringUtils;
+import cn.idealio.framework.util.NumberSystemConverter;
 import cn.sh.ideal.iam.permission.tbac.configure.TbacI18nReader;
 import cn.sh.ideal.iam.permission.tbac.dto.resp.SecurityContainerInfo;
 import cn.sh.ideal.iam.permission.tbac.dto.resp.SecurityContainerTreeNode;
@@ -61,10 +62,12 @@ public interface SecurityContainer {
     default String generateRoute() {
         String parentRoute = getParentRoute();
         long id = getId();
+        // 将数字转成36进制拼接, 36进制只有数字和小写字母可以防止索引冲突
+        String convert = NumberSystemConverter.to36(id);
         if (StringUtils.isBlank(parentRoute)) {
-            return id + ":";
+            return convert + ":";
         }
-        return parentRoute + id + ":";
+        return parentRoute + convert + ":";
     }
 
     @Nonnull
@@ -74,7 +77,9 @@ public interface SecurityContainer {
             return new LinkedHashSet<>();
         }
         String[] split = StringUtils.split(parentRoute, ":");
-        return Arrays.stream(split).map(Long::parseLong).collect(Collectors.toCollection(LinkedHashSet::new));
+        // 分解路由, 获取父容器id有序列表. 需要将36进制字符串重新转换为十进制数字
+        return Arrays.stream(split).map(NumberSystemConverter::from36)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Nonnull
@@ -94,4 +99,6 @@ public interface SecurityContainer {
         securityContainerTreeNode.setName(getName());
         return securityContainerTreeNode;
     }
+
+
 }

@@ -19,4 +19,11 @@ Content-Type: application/json
   "mfa": false
 }
 
+### 分配所有权限
+POST {{base_url}}/iam/tbac/assign_all_permissions
+    ?appId=508081442220146688
+    &containerId=1
+    &userGroupId=622070529905393664
+    &inheritable=false
+
 ###

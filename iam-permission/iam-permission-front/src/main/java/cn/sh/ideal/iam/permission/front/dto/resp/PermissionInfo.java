@@ -27,6 +27,9 @@ public class PermissionInfo {
     /** 名称 */
     private String name = "";
 
+    /** 唯一标识符, 应用下唯一 */
+    private String ident = "";
+
     /** API列表 */
     private Set<String> apis = new LinkedHashSet<>();
 
