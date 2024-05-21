@@ -1,4 +1,4 @@
-package cn.sh.ideal.iam.jdbc.organization;
+package cn.sh.ideal.iam.jdbc.permission.tbac;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

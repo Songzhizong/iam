@@ -29,6 +29,11 @@
         </dependency>
         <dependency>
             <groupId>cn.sh.ideal.iam</groupId>
+            <artifactId>iam-permission-rbac</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.sh.ideal.iam</groupId>
             <artifactId>iam-permission-tbac</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>

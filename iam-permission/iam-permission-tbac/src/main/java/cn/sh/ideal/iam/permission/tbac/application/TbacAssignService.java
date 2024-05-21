@@ -1,15 +1,17 @@
 package cn.sh.ideal.iam.permission.tbac.application;
 
-import cn.idealio.framework.exception.BadRequestException;
+import cn.idealio.framework.exception.ResourceNotFoundException;
 import cn.idealio.framework.lang.Sets;
 import cn.idealio.framework.util.Asserts;
-import cn.sh.ideal.iam.organization.domain.model.UserGroup;
 import cn.sh.ideal.iam.organization.domain.model.UserGroupRepository;
 import cn.sh.ideal.iam.permission.front.domain.model.Permission;
 import cn.sh.ideal.iam.permission.front.domain.model.PermissionCache;
 import cn.sh.ideal.iam.permission.front.domain.model.PermissionRepository;
 import cn.sh.ideal.iam.permission.tbac.configure.TbacI18nReader;
-import cn.sh.ideal.iam.permission.tbac.domain.model.*;
+import cn.sh.ideal.iam.permission.tbac.domain.model.EntityFactory;
+import cn.sh.ideal.iam.permission.tbac.domain.model.PermissionAssign;
+import cn.sh.ideal.iam.permission.tbac.domain.model.PermissionAssignRepository;
+import cn.sh.ideal.iam.permission.tbac.domain.model.SecurityContainerRepository;
 import cn.sh.ideal.iam.permission.tbac.dto.args.AssignPermissionArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +27,7 @@ import java.util.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AssignService {
+public class TbacAssignService {
     private final TbacI18nReader i18nReader;
     private final EntityFactory entityFactory;
     private final PermissionCache permissionCache;
@@ -85,14 +87,27 @@ public class AssignService {
         permissionAssignRepository.insert(assigns);
     }
 
+    /**
+     * 为用户组在指定安全容器上分配所有权限
+     *
+     * @param appId       应用ID
+     * @param containerId 安全容器ID
+     * @param userGroupId 用户组ID
+     * @param inheritable 分配的权限是否可被继承
+     */
     @Transactional(rollbackFor = Throwable.class)
-    public void assignAllPermission(long appId, long containerId, long userGroupId, boolean inheritable) {
-        SecurityContainer container = securityContainerRepository.requireById(containerId, i18nReader);
-        UserGroup userGroup = userGroupRepository.findById(userGroupId).orElseThrow(() -> {
-            log.info("分配所有权限失败用户组不存在, id: {}", userGroupId);
-            return new BadRequestException("用户组不存在");
+    public void assignAllPermission(long appId, long containerId,
+                                    long userGroupId, boolean inheritable) {
+        securityContainerRepository.findById(containerId).orElseThrow(() -> {
+            log.info("分配所有权限失败, 安全容器不存在, id: {}", containerId);
+            return new ResourceNotFoundException("安全容器不存在");
         });
-        permissionAssignRepository.deleteAllByAppIdAndContainerIdAndUserGroupId(appId, containerId, userGroupId);
+        userGroupRepository.findById(userGroupId).orElseThrow(() -> {
+            log.info("分配所有权限失败, 用户组不存在, id: {}", userGroupId);
+            return new ResourceNotFoundException("用户组不存在");
+        });
+        permissionAssignRepository
+                .deleteAllByAppIdAndContainerIdAndUserGroupId(appId, containerId, userGroupId);
         List<Permission> permissions = permissionRepository.findAllByAppId(appId);
         List<Permission> filter = permissions.stream().filter(Permission::available).toList();
         List<PermissionAssign> assigns = entityFactory.assignPermissions(

@@ -1,16 +1,22 @@
 package cn.sh.ideal.iam.organization.application;
 
+import cn.idealio.framework.audit.Audits;
+import cn.idealio.framework.audit.Fields;
 import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.lang.StringUtils;
+import cn.sh.ideal.iam.infrastructure.constant.AuditConstants;
+import cn.sh.ideal.iam.infrastructure.permission.tbac.SecurityContainerValidator;
 import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.*;
 import cn.sh.ideal.iam.organization.dto.args.CreateUserArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 
@@ -23,9 +29,13 @@ import java.util.Set;
 public class UserService {
     private final EntityFactory entityFactory;
     private final UserRepository userRepository;
-    private final UserGroupRepository userGroupRepository;
-    private final TenantRepository tenantRepository;
     private final OrganizationI18nReader i18nReader;
+    private final TenantRepository tenantRepository;
+    private final UserGroupRepository userGroupRepository;
+    @Nullable
+    @Autowired(required = false)
+    @SuppressWarnings("SpringJavaAutowiredFieldsWarningInspection")
+    private final SecurityContainerValidator securityContainerValidator;
 
     @Nonnull
     @Transactional(rollbackFor = Throwable.class)
@@ -39,13 +49,16 @@ public class UserService {
             containerId = tenantContainerId;
         }
         args.setContainerId(containerId);
-//        if (containerId != null) {
-//            securityContainerRepository.requireById(containerId, i18nReader);
-//        }
+        if (containerId != null) {
+            if (securityContainerValidator != null) {
+                securityContainerValidator.requireExits(containerId);
+            }
+        }
 
         // 验证账号是否已被使用
         String account = args.getAccount();
-        if (StringUtils.isNotBlank(account) && userRepository.existsByTenantIdAndAccount(tenantId, account)) {
+        if (StringUtils.isNotBlank(account)
+                && userRepository.existsByTenantIdAndAccount(tenantId, account)) {
             log.info("新增用户失败, 账号已被使用: {}", account);
             throw new BadRequestException(i18nReader.getMessage("user.account_used"));
         }
@@ -58,6 +71,23 @@ public class UserService {
             List<UserGroup> groups = userGroupRepository.findAllById(groupIds);
             userRepository.saveGroups(user.getId(), groups);
         }
+        entityAudit(user);
         return user;
+    }
+
+    private static void entityAudit(@Nonnull User user) {
+        Audits.modify(audit -> {
+            String name = user.getName();
+            String account = user.getAccount();
+            Fields fields = Fields.of().add("姓名", "name", name);
+            if (StringUtils.isNotBlank(account)) {
+                fields.add("账号", "account", account);
+            }
+            audit.containerId(user.getContainerId());
+            audit.resourceType(AuditConstants.USER);
+            audit.resourceName(name);
+            audit.resourceTenantId(user.getTenantId());
+            audit.auditInfo(fields);
+        });
     }
 }

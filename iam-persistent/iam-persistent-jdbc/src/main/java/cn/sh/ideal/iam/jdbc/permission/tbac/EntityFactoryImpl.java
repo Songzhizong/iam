@@ -1,7 +1,5 @@
 package cn.sh.ideal.iam.jdbc.permission.tbac;
 
-import cn.sh.ideal.iam.jdbc.organization.SecurityContainerDO;
-import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
 import cn.sh.ideal.iam.permission.tbac.configure.TbacI18nReader;
 import cn.sh.ideal.iam.permission.tbac.domain.model.SecurityContainer;
 import cn.sh.ideal.iam.permission.tbac.dto.args.CreateSecurityContainerArgs;
@@ -38,7 +36,7 @@ public class EntityFactoryImpl implements EntityFactory {
                                                     @Nonnull List<Permission> permissions) {
         List<PermissionAssign> assigns = new ArrayList<>();
         for (Permission permission : permissions) {
-            PermissionAssign permissionAssign = PermissionAssignDO.create(
+            PermissionAssign permissionAssign = TbacPermissionAssignDO.create(
                     containerId, userGroupId, assign, inheritable, mfa, permission);
             assigns.add(permissionAssign);
         }

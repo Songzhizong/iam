@@ -2,6 +2,7 @@ package cn.sh.ideal.iam.organization.port.web;
 
 import cn.idealio.framework.audit.Audit;
 import cn.idealio.framework.audit.AuditAction;
+import cn.idealio.framework.audit.Audits;
 import cn.idealio.framework.transmission.Result;
 import cn.idealio.framework.util.Asserts;
 import cn.idealio.security.api.annotation.HasAuthority;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 
 /**
  * 用户组管理
@@ -72,7 +74,12 @@ public class GroupController {
         Asserts.nonnull(tenantId, () -> i18nReader.getMessage("tenant.id.null"));
         UserGroup group = groupService.create(tenantId, args);
         GroupInfo info = group.toInfo();
-        return Result.success(info);
+        Result<GroupInfo> success = Result.success(info);
+        Audits.modify(audit -> {
+            audit.request(Map.of("tenantId", tenantId, "args", args));
+            audit.response(success);
+        });
+        return success;
     }
 
     /**
@@ -95,10 +102,17 @@ public class GroupController {
     @DeleteMapping("/user_groups/{id}")
     public Result<GroupInfo> delete(@PathVariable long id) {
         UserGroup group = groupService.delete(id);
+        Result<GroupInfo> result;
         if (group == null) {
-            return Result.success();
+            result = Result.success();
+        } else {
+            GroupInfo info = group.toInfo();
+            result = Result.success(info);
         }
-        GroupInfo info = group.toInfo();
-        return Result.success(info);
+        Audits.modify(audit -> {
+            audit.request(Map.of("id", id));
+            audit.response(result);
+        });
+        return result;
     }
 }

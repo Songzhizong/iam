@@ -149,19 +149,19 @@ public class SecurityContainerService implements ApplicationRunner {
         // 先刷新安全容器缓存
         securityContainerCache.refresh();
 
-        // 获取用户对应[authority]有直接权限配置的容器分配情况
-        Map<Long, Tuple<Boolean, Boolean>> containerAssignMap =
-                tbacHandler.authorityContainerAssignMap(userId, authority);
+        // 获取用户对应[authority]有直接权限配置的容器分配情况, containerId -> 是否分配 -> 是否继承
+        Map<Long, Tuple<Boolean, Boolean>> containerAssignInfo =
+                tbacHandler.authorityContainerAssignInfo(userId, authority);
         // 获取所有权限的容器ID列表. 不能走缓存, 因为通过缓存获取的容器ID列表可能不包含最新的
         Set<Long> authorityContainerIds =
-                cachelessTbacHandler.authorityContainerIds(containerAssignMap);
+                cachelessTbacHandler.authorityContainerIds(containerAssignInfo);
         if (authorityContainerIds.isEmpty()) {
             return List.of();
         }
         Collection<Object> visibleContainerIds = new HashSet<>(authorityContainerIds);
 
         Set<Long> containerIds = new HashSet<>();
-        containerAssignMap.forEach((containerId, tuple) -> {
+        containerAssignInfo.forEach((containerId, tuple) -> {
             if (tuple.getFirst()) {
                 containerIds.add(containerId);
             }

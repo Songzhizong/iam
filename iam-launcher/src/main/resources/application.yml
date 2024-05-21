@@ -11,7 +11,7 @@ spring:
   #    virtual:
   #      enabled: true
   messages:
-    basename: 'i18n/iam-organization,i18n/iam-tbac,i18n/iam-front'
+    basename: 'i18n/iam-organization,i18n/iam-front,i18n/iam-rbac,i18n/iam-tbac'
   servlet:
     multipart:
       max-file-size: 1GB

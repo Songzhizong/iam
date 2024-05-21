@@ -1,4 +1,4 @@
-package cn.sh.ideal.iam.jdbc.organization;
+package cn.sh.ideal.iam.jdbc.permission.tbac;
 
 import cn.idealio.framework.util.Asserts;
 import cn.sh.ideal.iam.permission.tbac.configure.TbacI18nReader;

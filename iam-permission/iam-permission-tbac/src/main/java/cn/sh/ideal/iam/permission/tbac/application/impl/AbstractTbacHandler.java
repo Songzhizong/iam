@@ -88,9 +88,17 @@ public abstract class AbstractTbacHandler implements TbacHandler {
         return containerAssignMap;
     }
 
+    /**
+     * 指定权限标识, 获取这个权限标识在各个容器节点上的权限配置信息
+     *
+     * @param userId    用户ID
+     * @param authority 权限标识
+     * @return [authority]有权限配置的containerId -> 是否分配 -> 是否继承
+     */
     @Nonnull
     @Override
-    public Map<Long, Tuple<Boolean, Boolean>> authorityContainerAssignMap(long userId, @Nonnull String authority) {
+    public Map<Long, Tuple<Boolean, Boolean>>
+    authorityContainerAssignInfo(long userId, @Nonnull String authority) {
         Map<Long, List<PermissionAssignDetail>> assignDetails = getPermissionAssignDetails(userId);
         if (assignDetails.isEmpty()) {
             return Map.of();

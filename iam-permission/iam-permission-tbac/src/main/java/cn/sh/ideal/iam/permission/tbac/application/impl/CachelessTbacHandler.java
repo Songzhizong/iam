@@ -56,7 +56,7 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
                                            @Nullable Long baseContainerId) {
         // [authority]有权限配置的containerId -> 是否分配 -> 是否继承
         Map<Long, Tuple<Boolean, Boolean>> containerAssignMap =
-                authorityContainerAssignMap(userId, authority);
+                authorityContainerAssignInfo(userId, authority);
         return authorityContainerIds(baseContainerId, containerAssignMap);
     }
 
@@ -67,7 +67,8 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
      * @return 容器ID列表
      */
     @Nonnull
-    public Set<Long> authorityContainerIds(@Nonnull Map<Long, Tuple<Boolean, Boolean>> containerAssignMap) {
+    public Set<Long> authorityContainerIds(
+            @Nonnull Map<Long, Tuple<Boolean, Boolean>> containerAssignMap) {
         return authorityContainerIds(null, containerAssignMap);
     }
 
@@ -79,8 +80,9 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
      * @return 容器ID列表
      */
     @Nonnull
-    public Set<Long> authorityContainerIds(@Nullable Long baseContainerId,
-                                           @Nonnull Map<Long, Tuple<Boolean, Boolean>> containerAssignMap) {
+    public Set<Long> authorityContainerIds(
+            @Nullable Long baseContainerId,
+            @Nonnull Map<Long, Tuple<Boolean, Boolean>> containerAssignMap) {
         if (containerAssignMap.isEmpty()) {
             return Set.of();
         }
@@ -118,9 +120,10 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
      * @param containerAssignMap 容器分配映射，记录了容器ID与权限分配（是否分配，是否可继承）的对应关系。
      * @param analyzedMap        分析结果映射，记录了容器ID与权限分析结果（是否分配，是否可继承）的对应关系。
      */
-    private void analyzeAuthorityContainers(@Nonnull List<AnalyzedSecurityContainer> analyzedContainers,
-                                            @Nonnull Map<Long, Tuple<Boolean, Boolean>> containerAssignMap,
-                                            @Nonnull Map<Long, Tuple<Boolean, Boolean>> analyzedMap) {
+    private void analyzeAuthorityContainers(
+            @Nonnull List<AnalyzedSecurityContainer> analyzedContainers,
+            @Nonnull Map<Long, Tuple<Boolean, Boolean>> containerAssignMap,
+            @Nonnull Map<Long, Tuple<Boolean, Boolean>> analyzedMap) {
         // 遍历每个分析过的安全容器，以确定其权限状态
         for (AnalyzedSecurityContainer analyzedContainer : analyzedContainers) {
             SecurityContainer container = analyzedContainer.getContainer();

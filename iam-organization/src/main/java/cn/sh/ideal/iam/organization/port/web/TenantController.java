@@ -2,6 +2,7 @@ package cn.sh.ideal.iam.organization.port.web;
 
 import cn.idealio.framework.audit.Audit;
 import cn.idealio.framework.audit.AuditAction;
+import cn.idealio.framework.audit.Audits;
 import cn.idealio.framework.transmission.Result;
 import cn.idealio.security.api.annotation.HasAuthority;
 import cn.sh.ideal.iam.infrastructure.constant.AuditConstants;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 /**
  * 租户管理
@@ -70,6 +73,11 @@ public class TenantController {
     public Result<TenantInfo> create(@RequestBody CreateTenantArgs args) {
         Tenant tenant = tenantService.create(args);
         TenantInfo tenantInfo = tenant.toInfo();
-        return Result.success(tenantInfo);
+        Result<TenantInfo> result = Result.success(tenantInfo);
+        Audits.modify(audit -> {
+            audit.request(Map.of("args", args));
+            audit.response(result);
+        });
+        return result;
     }
 }

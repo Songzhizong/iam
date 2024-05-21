@@ -25,10 +25,6 @@ public class PermissionAssignDetail {
     @Nonnull
     private final Permission permission;
 
-    public PermissionAssignDetail(@Nonnull Permission permission) {
-        this.permission = permission;
-    }
-
     public PermissionAssignDetail(boolean mfa,
                                   boolean assigned,
                                   boolean inheritable,

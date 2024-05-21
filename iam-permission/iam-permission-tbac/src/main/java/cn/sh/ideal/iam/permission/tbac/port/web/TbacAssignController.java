@@ -8,7 +8,7 @@ import cn.idealio.framework.transmission.Result;
 import cn.idealio.framework.util.Asserts;
 import cn.idealio.security.api.annotation.HasAuthority;
 import cn.sh.ideal.iam.infrastructure.constant.AuditConstants;
-import cn.sh.ideal.iam.permission.tbac.application.AssignService;
+import cn.sh.ideal.iam.permission.tbac.application.TbacAssignService;
 import cn.sh.ideal.iam.permission.tbac.dto.args.AssignPermissionArgs;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +22,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
+ * TBAC权限分配管理
+ *
  * @author 宋志宗 on 2024/2/5
  */
 @Slf4j
@@ -29,7 +31,7 @@ import javax.annotation.Nullable;
 @RequiredArgsConstructor
 @RequestMapping("/iam/tbac")
 public class TbacAssignController {
-    private final AssignService assignService;
+    private final TbacAssignService tbacAssignService;
 
     /**
      * 批量分配权限
@@ -75,7 +77,7 @@ public class TbacAssignController {
     @Audit(name = "分配权限", code = "iam:sc:assign_permission",
             action = AuditAction.PERMISSION_CONFIG, classification = AuditConstants.AUTHORITY_MANAGEMENT)
     public Result<Void> assignPermissions(@RequestBody AssignPermissionArgs args) {
-        assignService.assign(args);
+        tbacAssignService.assign(args);
         return Result.success();
     }
 
@@ -99,7 +101,7 @@ public class TbacAssignController {
         if (inheritable == null) {
             inheritable = true;
         }
-        assignService.assignAllPermission(appId, containerId, userGroupId, inheritable);
+        tbacAssignService.assignAllPermission(appId, containerId, userGroupId, inheritable);
         return Result.success();
     }
 }

@@ -1,4 +1,4 @@
-package cn.sh.ideal.iam.jdbc.organization;
+package cn.sh.ideal.iam.jdbc.permission.tbac;
 
 import cn.idealio.framework.concurrent.Asyncs;
 import cn.sh.ideal.iam.permission.tbac.domain.model.SecurityContainer;

@@ -17,19 +17,19 @@ import javax.annotation.Nonnull;
  */
 @Getter
 @Setter
-@Entity(name = PermissionAssignDO.TABLE_NAME)
+@Entity(name = TbacPermissionAssignDO.TABLE_NAME)
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = PermissionAssignDO.TABLE_NAME,
+@Table(name = TbacPermissionAssignDO.TABLE_NAME,
         indexes = {
-                @Index(name = "uidx01_" + PermissionAssignDO.TABLE_NAME,
+                @Index(name = "uidx01_" + TbacPermissionAssignDO.TABLE_NAME,
                         columnList = "container_id_,user_group_id_,permission_id_", unique = true),
-                @Index(name = "idx01_" + PermissionAssignDO.TABLE_NAME, columnList = "app_id_"),
-                @Index(name = "idx02_" + PermissionAssignDO.TABLE_NAME, columnList = "user_group_id_"),
-                @Index(name = "idx03_" + PermissionAssignDO.TABLE_NAME, columnList = "permission_item_id_"),
-                @Index(name = "idx04_" + PermissionAssignDO.TABLE_NAME, columnList = "permission_group_id_"),
+                @Index(name = "idx01_" + TbacPermissionAssignDO.TABLE_NAME, columnList = "app_id_"),
+                @Index(name = "idx02_" + TbacPermissionAssignDO.TABLE_NAME, columnList = "user_group_id_"),
+                @Index(name = "idx03_" + TbacPermissionAssignDO.TABLE_NAME, columnList = "permission_item_id_"),
+                @Index(name = "idx04_" + TbacPermissionAssignDO.TABLE_NAME, columnList = "permission_group_id_"),
         })
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression", "NullableProblems"})
-public class PermissionAssignDO implements PermissionAssign {
+public class TbacPermissionAssignDO implements PermissionAssign {
     public static final String TABLE_NAME = "iam_tbac_permission_assign";
 
     @Id
@@ -76,13 +76,13 @@ public class PermissionAssignDO implements PermissionAssign {
     private boolean mfa = false;
 
     @Nonnull
-    public static PermissionAssignDO create(long containerId,
-                                            long userGroupId,
-                                            boolean assign,
-                                            boolean inheritable,
-                                            boolean mfa,
-                                            @Nonnull Permission permission) {
-        PermissionAssignDO permissionAssignDO = new PermissionAssignDO();
+    public static TbacPermissionAssignDO create(long containerId,
+                                                long userGroupId,
+                                                boolean assign,
+                                                boolean inheritable,
+                                                boolean mfa,
+                                                @Nonnull Permission permission) {
+        TbacPermissionAssignDO permissionAssignDO = new TbacPermissionAssignDO();
         permissionAssignDO.setAppId(permission.getAppId());
         permissionAssignDO.setContainerId(containerId);
         permissionAssignDO.setUserGroupId(userGroupId);

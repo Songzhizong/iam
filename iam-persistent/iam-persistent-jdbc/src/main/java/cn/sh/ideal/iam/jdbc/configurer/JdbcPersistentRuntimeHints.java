@@ -1,6 +1,5 @@
 package cn.sh.ideal.iam.jdbc.configurer;
 
-import cn.sh.ideal.iam.jdbc.organization.SecurityContainerDO;
 import cn.sh.ideal.iam.jdbc.organization.TenantDO;
 import cn.sh.ideal.iam.jdbc.organization.UserDO;
 import cn.sh.ideal.iam.jdbc.organization.UserGroupDO;
@@ -8,7 +7,8 @@ import cn.sh.ideal.iam.jdbc.permission.front.AppDO;
 import cn.sh.ideal.iam.jdbc.permission.front.PermissionDO;
 import cn.sh.ideal.iam.jdbc.permission.front.PermissionGroupDO;
 import cn.sh.ideal.iam.jdbc.permission.front.PermissionItemDO;
-import cn.sh.ideal.iam.jdbc.permission.tbac.PermissionAssignDO;
+import cn.sh.ideal.iam.jdbc.permission.tbac.TbacPermissionAssignDO;
+import cn.sh.ideal.iam.jdbc.permission.tbac.SecurityContainerDO;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
@@ -27,7 +27,6 @@ public class JdbcPersistentRuntimeHints implements RuntimeHintsRegistrar {
         List<TypeReference> references = List.of(
                 // organization
                 TypeReference.of(UserGroupDO.class),
-                TypeReference.of(SecurityContainerDO.class),
                 TypeReference.of(TenantDO.class),
                 TypeReference.of(UserDO.class),
                 // permission.front
@@ -36,7 +35,8 @@ public class JdbcPersistentRuntimeHints implements RuntimeHintsRegistrar {
                 TypeReference.of(PermissionGroupDO.class),
                 TypeReference.of(PermissionItemDO.class),
                 // permission.tbac
-                TypeReference.of(PermissionAssignDO.class)
+                TypeReference.of(TbacPermissionAssignDO.class),
+                TypeReference.of(SecurityContainerDO.class)
         );
         hints.reflection().registerTypes(
                 references, builder -> builder.withMembers(MemberCategory.values())

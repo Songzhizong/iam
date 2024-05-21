@@ -16,15 +16,26 @@ import java.util.stream.Collectors;
 @Getter
 @RequiredArgsConstructor
 public class AnalyzedSecurityContainer implements TreeNode<AnalyzedSecurityContainer> {
+    /** 安全容器信息 */
     @Nonnull
     private final SecurityContainer container;
+    /** 父节点id列表 */
     @Nonnull
     private final SequencedSet<Long> parentIds;
+    /** 子节点列表树 */
     @Nullable
     private List<AnalyzedSecurityContainer> childTree = null;
 
+    /**
+     * 从容器信息列表中筛选出各个顶级节点(没有父节点或者父节点不在给定列表中的)
+     *
+     * @param containers 容器信息列表
+     * @return 顶级节点列表
+     * @author 宋志宗 on 2024/5/21
+     */
     @Nonnull
-    public static List<AnalyzedSecurityContainer> filterRoots(@Nonnull List<AnalyzedSecurityContainer> containers) {
+    public static List<AnalyzedSecurityContainer> filterRoots(
+            @Nonnull List<AnalyzedSecurityContainer> containers) {
         if (containers.isEmpty()) {
             return List.of();
         }

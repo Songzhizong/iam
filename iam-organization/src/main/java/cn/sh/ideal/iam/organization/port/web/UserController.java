@@ -2,6 +2,7 @@ package cn.sh.ideal.iam.organization.port.web;
 
 import cn.idealio.framework.audit.Audit;
 import cn.idealio.framework.audit.AuditAction;
+import cn.idealio.framework.audit.Audits;
 import cn.idealio.framework.transmission.Result;
 import cn.idealio.framework.util.Asserts;
 import cn.idealio.security.api.annotation.HasAuthority;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 
 /**
  * 用户管理
@@ -81,6 +83,11 @@ public class UserController {
     public Result<User> create(@Nullable Long tenantId, @RequestBody CreateUserArgs args) {
         Asserts.nonnull(tenantId, () -> i18nReader.getMessage("tenant.id.null"));
         User user = userService.create(tenantId, args);
-        return Result.success(user);
+        Result<User> result = Result.success(user);
+        Audits.modify(audit -> {
+            audit.request(Map.of("args", args));
+            audit.response(result);
+        });
+        return result;
     }
 }

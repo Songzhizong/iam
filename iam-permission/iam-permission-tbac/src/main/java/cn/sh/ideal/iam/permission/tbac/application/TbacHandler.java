@@ -14,17 +14,6 @@ import java.util.Set;
 public interface TbacHandler {
 
     /**
-     * 指定权限标识, 获取这个权限标识在各个容器节点上的权限配置信息
-     *
-     * @param userId    用户ID
-     * @param authority 权限标识
-     * @return [authority]有权限配置的containerId -> 是否分配 -> 是否继承
-     */
-    @Nonnull
-    Map<Long, Tuple<Boolean, Boolean>> authorityContainerAssignMap(long userId,
-                                                                   @Nonnull String authority);
-
-    /**
      * 获取用户在指定安全容器上所有可见的权限ID
      * <p>
      * 这个方法主要用于前端渲染用户有权限的页面元素
@@ -67,6 +56,17 @@ public interface TbacHandler {
                                     @Nullable Long baseContainerId);
 
     /**
+     * 指定权限标识, 获取这个权限标识在各个容器节点上的权限配置信息
+     *
+     * @param userId    用户ID
+     * @param authority 权限标识
+     * @return [authority]有权限配置的containerId -> 是否分配 -> 是否继承
+     */
+    @Nonnull
+    Map<Long, Tuple<Boolean, Boolean>> authorityContainerAssignInfo(long userId,
+                                                                    @Nonnull String authority);
+
+    /**
      * 过滤用户在指定安全容器上有权限的权限ID列表
      *
      * @param userId        用户ID
@@ -76,7 +76,8 @@ public interface TbacHandler {
      * @author 宋志宗 on 2024/5/18
      */
     @Nonnull
-    Set<Long> containerPermissionIds(long userId, long containerId, @Nonnull Set<Long> permissionIds);
+    Set<Long> containerPermissionIds(long userId, long containerId,
+                                     @Nonnull Set<Long> permissionIds);
 
     /**
      * 批量过滤用户在指定安全容器上有权限的权限ID列表
@@ -116,7 +117,8 @@ public interface TbacHandler {
      * @return 是否拥有任一权限
      * @author 宋志宗 on 2024/5/18
      */
-    boolean hasAnyAuthority(long userId, long containerId, @Nonnull Collection<String> authorities);
+    boolean hasAnyAuthority(long userId, long containerId,
+                            @Nonnull Collection<String> authorities);
 
     /**
      * 判断用户在指定安全容器上是否拥有所有权限
@@ -129,7 +131,8 @@ public interface TbacHandler {
      * @return 是否拥有所有权限
      * @author 宋志宗 on 2024/5/18
      */
-    boolean hasAllAuthority(long userId, long containerId, @Nonnull Collection<String> authorities);
+    boolean hasAllAuthority(long userId, long containerId,
+                            @Nonnull Collection<String> authorities);
 
     /**
      * 判断用户是否拥有API接口的访问权限

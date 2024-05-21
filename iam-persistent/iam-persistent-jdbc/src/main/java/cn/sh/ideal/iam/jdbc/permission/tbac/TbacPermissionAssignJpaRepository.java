@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * @author 宋志宗 on 2024/2/5
  */
-public interface PermissionAssignJpaRepository extends JpaRepository<PermissionAssignDO, Long> {
+public interface TbacPermissionAssignJpaRepository extends JpaRepository<TbacPermissionAssignDO, Long> {
 
 
     @Modifying
@@ -43,7 +43,7 @@ public interface PermissionAssignJpaRepository extends JpaRepository<PermissionA
                                                                @Nonnull List<Long> permissionIds);
 
     @Nonnull
-    List<PermissionAssignDO> findAllByUserGroupIdIn(@Nonnull Collection<Long> userGroupIds);
+    List<TbacPermissionAssignDO> findAllByUserGroupIdIn(@Nonnull Collection<Long> userGroupIds);
 
     @Modifying
     @Transactional(rollbackFor = Throwable.class)

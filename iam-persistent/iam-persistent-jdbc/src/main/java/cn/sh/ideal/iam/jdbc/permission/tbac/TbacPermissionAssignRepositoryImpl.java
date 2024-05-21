@@ -14,13 +14,13 @@ import java.util.List;
  */
 @Repository
 @RequiredArgsConstructor
-public class PermissionAssignRepositoryImpl implements PermissionAssignRepository {
-    private final PermissionAssignJpaRepository permissionAssignJpaRepository;
+public class TbacPermissionAssignRepositoryImpl implements PermissionAssignRepository {
+    private final TbacPermissionAssignJpaRepository permissionAssignJpaRepository;
 
     @Override
     public void insert(@Nonnull List<PermissionAssign> assigns) {
         for (PermissionAssign assign : assigns) {
-            PermissionAssignDO entity = (PermissionAssignDO) assign;
+            TbacPermissionAssignDO entity = (TbacPermissionAssignDO) assign;
             permissionAssignJpaRepository.save(entity);
         }
     }

@@ -1,9 +1,13 @@
 package cn.sh.ideal.iam.organization.application;
 
+import cn.idealio.framework.audit.Audits;
+import cn.idealio.framework.audit.Fields;
 import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.lang.StringUtils;
 import cn.idealio.framework.util.NumberSystemConverter;
 import cn.sh.ideal.iam.infrastructure.configure.IamIDGenerator;
+import cn.sh.ideal.iam.infrastructure.constant.AuditConstants;
+import cn.sh.ideal.iam.infrastructure.permission.tbac.SecurityContainerValidator;
 import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.EntityFactory;
 import cn.sh.ideal.iam.organization.domain.model.Tenant;
@@ -11,10 +15,12 @@ import cn.sh.ideal.iam.organization.domain.model.TenantRepository;
 import cn.sh.ideal.iam.organization.dto.args.CreateTenantArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author 宋志宗 on 2024/5/14
@@ -28,6 +34,10 @@ public class TenantService {
     private final EntityFactory entityFactory;
     private final TenantRepository tenantRepository;
     private final OrganizationI18nReader i18nReader;
+    @Nullable
+    @Autowired(required = false)
+    @SuppressWarnings("SpringJavaAutowiredFieldsWarningInspection")
+    private final SecurityContainerValidator securityContainerValidator;
 
     @Transactional(rollbackFor = Throwable.class)
     public Tenant create(@Nonnull CreateTenantArgs args) {
@@ -40,10 +50,24 @@ public class TenantService {
         } else {
             abbreviation = generateAbbreviation();
         }
+        Long containerId = args.getContainerId();
+        if (containerId != null) {
+            if (securityContainerValidator != null) {
+                securityContainerValidator.requireExits(containerId);
+            }
+        }
         args.setAbbreviation(abbreviation);
         long id = idGenerator.generate();
         Tenant tenant = entityFactory.tenant(id, args, i18nReader);
-        return tenantRepository.insert(tenant);
+        Tenant insert = tenantRepository.insert(tenant);
+        Audits.modify(audit -> {
+            audit.containerId(insert.getContainerId());
+            audit.resourceType(AuditConstants.TENANT);
+            audit.resourceName(insert.getName());
+            audit.resourceTenantId(insert.getId());
+            audit.auditInfo(Fields.of().add("名称", "name", insert.getName()));
+        });
+        return insert;
     }
 
     @Nonnull
