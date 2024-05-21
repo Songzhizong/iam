@@ -86,13 +86,15 @@ public class CacheableTbacHandler extends CachelessTbacHandler {
     }
 
     @Override
-    public boolean hasAnyAuthority(long userId, long containerId, @Nonnull Collection<String> authorities) {
+    public boolean hasAnyAuthority(long userId, long containerId,
+                                   @Nonnull Collection<String> authorities) {
         Set<String> userAuthorities = getAuthorities(userId, containerId);
         return Sets.containsAny(userAuthorities, authorities);
     }
 
     @Override
-    public boolean hasAllAuthority(long userId, long containerId, @Nonnull Collection<String> authorities) {
+    public boolean hasAllAuthority(long userId, long containerId,
+                                   @Nonnull Collection<String> authorities) {
         Set<String> userAuthorities = getAuthorities(userId, containerId);
         return Sets.containsAll(userAuthorities, authorities);
     }
