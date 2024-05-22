@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -139,7 +138,7 @@ public class CompositeTbacHandler implements TbacHandler {
 
     @Override
     public boolean hasAnyAuthority(long userId, long containerId,
-                                   @Nonnull Collection<String> authorities) {
+                                   @Nonnull Set<String> authorities) {
         if (properties.isEnableCache()) {
             return cacheableTbacHandler.hasAnyAuthority(userId, containerId, authorities);
         }
@@ -151,24 +150,6 @@ public class CompositeTbacHandler implements TbacHandler {
                 long micros = (System.nanoTime() - nanoTime) / 1000;
                 double millis = micros / 1000D;
                 log.debug("非缓存执行[判断用户在指定安全容器上是否拥有任一权限]耗时 {}ms", millis);
-            }
-        }
-    }
-
-    @Override
-    public boolean hasAllAuthority(long userId, long containerId,
-                                   @Nonnull Collection<String> authorities) {
-        if (properties.isEnableCache()) {
-            return cacheableTbacHandler.hasAllAuthority(userId, containerId, authorities);
-        }
-        long nanoTime = System.nanoTime();
-        try {
-            return cachelessTbacHandler.hasAllAuthority(userId, containerId, authorities);
-        } finally {
-            if (log.isDebugEnabled()) {
-                long micros = (System.nanoTime() - nanoTime) / 1000;
-                double millis = micros / 1000D;
-                log.debug("非缓存执行[判断用户在指定安全容器上是否拥有所有权限]耗时 {}ms", millis);
             }
         }
     }

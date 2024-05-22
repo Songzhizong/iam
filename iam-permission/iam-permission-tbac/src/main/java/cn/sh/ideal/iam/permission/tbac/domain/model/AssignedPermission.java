@@ -19,18 +19,9 @@ public class AssignedPermission {
     @Nonnull
     private final Permission permission;
 
-    public AssignedPermission(@Nonnull Permission permission) {
-        this.permission = permission;
-    }
-
     public AssignedPermission(@Nonnull PermissionAssignDetail assignDetail) {
         this.mfa = assignDetail.isMfa();
         this.permission = assignDetail.getPermission();
-    }
-
-    public AssignedPermission(boolean mfa, @Nonnull Permission permission) {
-        this.mfa = mfa;
-        this.permission = permission;
     }
 
     public void updateMfa(boolean mfa) {

@@ -87,16 +87,9 @@ public class CacheableTbacHandler extends CachelessTbacHandler {
 
     @Override
     public boolean hasAnyAuthority(long userId, long containerId,
-                                   @Nonnull Collection<String> authorities) {
+                                   @Nonnull Set<String> authorities) {
         Set<String> userAuthorities = getAuthorities(userId, containerId);
         return Sets.containsAny(userAuthorities, authorities);
-    }
-
-    @Override
-    public boolean hasAllAuthority(long userId, long containerId,
-                                   @Nonnull Collection<String> authorities) {
-        Set<String> userAuthorities = getAuthorities(userId, containerId);
-        return Sets.containsAll(userAuthorities, authorities);
     }
 
     @Nonnull
@@ -110,7 +103,7 @@ public class CacheableTbacHandler extends CachelessTbacHandler {
             log.info("用户权限发生变更, 清空用户所有权限标识缓存");
         }
         return wrapper.authoritiesMap().computeIfAbsent(containerId, k -> {
-            List<AssignedPermission> assignedPermissions =
+            Collection<AssignedPermission> assignedPermissions =
                     getAssignedPermissions(userId, containerId, true);
             if (assignedPermissions.isEmpty()) {
                 return Set.of();
@@ -148,7 +141,7 @@ public class CacheableTbacHandler extends CachelessTbacHandler {
                                                    @Nonnull ApiPermissionCacheWrapper wrapper) {
         ConcurrentMap<Long, MethodPathMatcher> map = wrapper.matcherMap();
         return map.computeIfAbsent(containerId, key -> {
-            List<AssignedPermission> assignedPermissions =
+            Collection<AssignedPermission> assignedPermissions =
                     getAssignedPermissions(userId, containerId, true);
             if (assignedPermissions.isEmpty()) {
                 return AlwaysFalseMethodPathMatcher.getInstance();
@@ -163,12 +156,6 @@ public class CacheableTbacHandler extends CachelessTbacHandler {
             }
             return MethodPathMatcher.create(strategies);
         });
-    }
-
-    public void invalidateCache() {
-        AUTHORITIES_CACHE.invalidateAll();
-        API_PERMISSION_CACHE.invalidateAll();
-        PERMISSION_ASSIGN_CACHE.invalidateAll();
     }
 
     public void updateUserAuthLatestRefreshTimestamp(long userId, long timestamp) {

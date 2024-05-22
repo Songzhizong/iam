@@ -30,10 +30,16 @@
         <hutool.version>5.8.27</hutool.version>
         <pinyin4j.version>2.5.1</pinyin4j.version>
         <java-jwt.version>4.4.0</java-jwt.version>
+        <fastutil.version>8.5.13</fastutil.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>it.unimi.dsi</groupId>
+                <artifactId>fastutil</artifactId>
+                <version>${fastutil.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.auth0</groupId>
                 <artifactId>java-jwt</artifactId>

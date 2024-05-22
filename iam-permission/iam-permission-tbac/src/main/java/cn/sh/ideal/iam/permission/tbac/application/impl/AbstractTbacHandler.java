@@ -1,12 +1,14 @@
 package cn.sh.ideal.iam.permission.tbac.application.impl;
 
-import cn.idealio.framework.lang.Lists;
+import cn.idealio.framework.lang.CollectionUtils;
 import cn.idealio.framework.lang.Tuple;
 import cn.sh.ideal.iam.organization.domain.model.UserRepository;
 import cn.sh.ideal.iam.permission.front.domain.model.Permission;
 import cn.sh.ideal.iam.permission.front.domain.model.PermissionCache;
 import cn.sh.ideal.iam.permission.tbac.application.TbacHandler;
 import cn.sh.ideal.iam.permission.tbac.domain.model.*;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,14 +49,15 @@ public abstract class AbstractTbacHandler implements TbacHandler {
      * @return 容器ID -> 权限配置信息
      */
     @Nonnull
-    public Map<Long, List<PermissionAssignDetail>> getPermissionAssignDetails(long userId) {
+    public Map<Long, Collection<PermissionAssignDetail>> getPermissionAssignDetails(long userId) {
         List<PermissionAssign> assigns = getAllAssigns(userId);
         if (assigns.isEmpty()) {
             log.info("用户[{}]未配置任何权限", userId);
             return Map.of();
         }
-        // 按安全容器ID分组
-        Map<Long, Map<Long, PermissionAssignDetail>> containerAssigndPermissionMap = new HashMap<>();
+        // 按安全容器ID分组 containerId -> permissionId -> 权限分配信息
+        Long2ObjectMap<Long2ObjectMap<PermissionAssignDetail>>
+                containerPermissionAssignMap = new Long2ObjectOpenHashMap<>();
         for (PermissionAssign permissionAssign : assigns) {
             long containerId = permissionAssign.getContainerId();
             long permissionId = permissionAssign.getPermissionId();
@@ -66,8 +69,8 @@ public abstract class AbstractTbacHandler implements TbacHandler {
             boolean mfa = permissionAssign.isMfa();
             boolean assigned = permissionAssign.isAssigned();
             boolean inheritable = permissionAssign.isInheritable();
-            Map<Long, PermissionAssignDetail> permissionMap =
-                    containerAssigndPermissionMap.computeIfAbsent(containerId, k -> new HashMap<>());
+            Map<Long, PermissionAssignDetail> permissionMap = containerPermissionAssignMap
+                    .computeIfAbsent(containerId, k -> new Long2ObjectOpenHashMap<>());
             PermissionAssignDetail detail = permissionMap.get(permissionId);
             if (detail == null) {
                 PermissionAssignDetail assignDetail =
@@ -79,11 +82,10 @@ public abstract class AbstractTbacHandler implements TbacHandler {
                 detail.setInheritable(inheritable);
             }
         }
-        Map<Long, List<PermissionAssignDetail>> containerAssignMap = new HashMap<>();
-        containerAssigndPermissionMap.forEach((containerId, assignMap) -> {
+        Map<Long, Collection<PermissionAssignDetail>> containerAssignMap = new HashMap<>();
+        containerPermissionAssignMap.forEach((containerId, assignMap) -> {
             Collection<PermissionAssignDetail> details = assignMap.values();
-            List<PermissionAssignDetail> detailList = new ArrayList<>(details);
-            containerAssignMap.put(containerId, detailList);
+            containerAssignMap.put(containerId, details);
         });
         return containerAssignMap;
     }
@@ -99,7 +101,7 @@ public abstract class AbstractTbacHandler implements TbacHandler {
     @Override
     public Map<Long, Tuple<Boolean, Boolean>>
     authorityContainerAssignInfo(long userId, @Nonnull String authority) {
-        Map<Long, List<PermissionAssignDetail>> assignDetails = getPermissionAssignDetails(userId);
+        Map<Long, Collection<PermissionAssignDetail>> assignDetails = getPermissionAssignDetails(userId);
         if (assignDetails.isEmpty()) {
             return Map.of();
         }
@@ -143,18 +145,18 @@ public abstract class AbstractTbacHandler implements TbacHandler {
      * @author 宋志宗 on 2024/5/18
      */
     @Nonnull
-    public List<AssignedPermission> getAssignedPermissions(long userId,
-                                                           long containerId,
-                                                           boolean includeChildren) {
+    public Collection<AssignedPermission> getAssignedPermissions(long userId,
+                                                                 long containerId,
+                                                                 boolean includeChildren) {
+        // containerId -> 权限分配信息列表
+        Map<Long, Collection<PermissionAssignDetail>> assignMap = getPermissionAssignDetails(userId);
+        if (assignMap.isEmpty()) {
+            log.info("用户[{}]在任何安全容器节点上都没有分配权限", userId);
+            return List.of();
+        }
         AnalyzedSecurityContainer container = securityContainerCache.findById(containerId);
         if (container == null) {
             log.warn("获取用户指定节点上的拥有的所有权限失败, 安全容器[{}]不存在", containerId);
-            return List.of();
-        }
-        // containerId -> 权限分配信息列表
-        Map<Long, List<PermissionAssignDetail>> assignMap = getPermissionAssignDetails(userId);
-        if (assignMap.isEmpty()) {
-            log.info("用户[{}]在任何安全容器节点上都没有分配权限", userId);
             return List.of();
         }
         // 权限ID -> 权限分配信息
@@ -162,9 +164,9 @@ public abstract class AbstractTbacHandler implements TbacHandler {
         SequencedSet<Long> containerParentIds = container.getParentIds();
         LinkedHashSet<Long> containerIds = new LinkedHashSet<>(containerParentIds);
         containerIds.add(containerId);
-        for (Long loopContainerId : containerIds) {
-            List<PermissionAssignDetail> details = assignMap.get(loopContainerId);
-            if (Lists.isEmpty(details)) {
+        for (long loopContainerId : containerIds) {
+            Collection<PermissionAssignDetail> details = assignMap.get(loopContainerId);
+            if (CollectionUtils.isEmpty(details)) {
                 continue;
             }
             for (PermissionAssignDetail detail : details) {
@@ -173,10 +175,13 @@ public abstract class AbstractTbacHandler implements TbacHandler {
                 // 如果是不授权, 则移除
                 if (!detail.isAssigned()) {
                     assignedPermissionMap.remove(permissionId);
+                    continue;
                 }
                 // 父节点且不继承, 则直接跳过, 不需要加入到权限列表
                 boolean inheritable = detail.isInheritable();
                 if (!inheritable && loopContainerId != containerId) {
+                    // 中间变成了不继承, 那么权限到这一步也就中断了
+                    assignedPermissionMap.remove(permissionId);
                     continue;
                 }
                 AssignedPermission exists = assignedPermissionMap.get(permissionId);
@@ -197,8 +202,8 @@ public abstract class AbstractTbacHandler implements TbacHandler {
                     continue;
                 }
                 long analyzedContainerId = analyzedSecurityContainer.getContainer().getId();
-                List<PermissionAssignDetail> details = assignMap.get(analyzedContainerId);
-                if (Lists.isEmpty(details)) {
+                Collection<PermissionAssignDetail> details = assignMap.get(analyzedContainerId);
+                if (CollectionUtils.isEmpty(details)) {
                     continue;
                 }
                 for (PermissionAssignDetail detail : details) {
@@ -214,10 +219,6 @@ public abstract class AbstractTbacHandler implements TbacHandler {
                 }
             }
         }
-        Collection<AssignedPermission> values = assignedPermissionMap.values();
-        if (values.isEmpty()) {
-            return List.of();
-        }
-        return new ArrayList<>(values);
+        return assignedPermissionMap.values();
     }
 }

@@ -4,7 +4,6 @@ import cn.idealio.framework.lang.Tuple;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -118,21 +117,7 @@ public interface TbacHandler {
      * @author 宋志宗 on 2024/5/18
      */
     boolean hasAnyAuthority(long userId, long containerId,
-                            @Nonnull Collection<String> authorities);
-
-    /**
-     * 判断用户在指定安全容器上是否拥有所有权限
-     * <p>
-     * 权限判断包括指定安全容器及其下所有安全容器的权限
-     *
-     * @param userId      用户ID
-     * @param containerId 安全容器ID
-     * @param authorities 权限标识列表
-     * @return 是否拥有所有权限
-     * @author 宋志宗 on 2024/5/18
-     */
-    boolean hasAllAuthority(long userId, long containerId,
-                            @Nonnull Collection<String> authorities);
+                            @Nonnull Set<String> authorities);
 
     /**
      * 判断用户是否拥有API接口的访问权限

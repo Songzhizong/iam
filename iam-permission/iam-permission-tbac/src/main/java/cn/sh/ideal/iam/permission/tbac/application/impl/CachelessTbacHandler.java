@@ -1,9 +1,6 @@
 package cn.sh.ideal.iam.permission.tbac.application.impl;
 
-import cn.idealio.framework.lang.Lists;
-import cn.idealio.framework.lang.Sets;
-import cn.idealio.framework.lang.StringUtils;
-import cn.idealio.framework.lang.Tuple;
+import cn.idealio.framework.lang.*;
 import cn.idealio.framework.spring.matcher.PathMatchers;
 import cn.sh.ideal.iam.organization.domain.model.UserRepository;
 import cn.sh.ideal.iam.permission.front.domain.model.Permission;
@@ -15,6 +12,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * 不适用缓存加速
@@ -35,18 +34,11 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
     @Nonnull
     @Override
     public Set<Long> visiblePermissionIds(long userId, long containerId) {
-        List<AssignedPermission> assignedPermissions =
+        Collection<AssignedPermission> assignedPermissions =
                 getAssignedPermissions(userId, containerId, true);
-        if (assignedPermissions.isEmpty()) {
-            return Set.of();
-        }
-        Set<Long> permissionIds = new HashSet<>();
-        for (AssignedPermission assignedPermission : assignedPermissions) {
-            Permission permission = assignedPermission.getPermission();
-            Long permissionId = permission.getId();
-            permissionIds.add(permissionId);
-        }
-        return permissionIds;
+        return assignedPermissions.stream()
+                .map(assignedPermission -> assignedPermission.getPermission().getId())
+                .collect(Collectors.toSet());
     }
 
     @Nonnull
@@ -190,20 +182,9 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
     @Override
     public Set<Long> containerPermissionIds(long userId, long containerId,
                                             @Nonnull Set<Long> permissionIds) {
-        List<AssignedPermission> assignedPermissions =
-                getAssignedPermissions(userId, containerId, false);
-        if (assignedPermissions.isEmpty()) {
-            return Set.of();
-        }
-        Set<Long> filteredPermissionIds = new HashSet<>();
-        for (AssignedPermission assignedPermission : assignedPermissions) {
-            Permission permission = assignedPermission.getPermission();
-            Long permissionId = permission.getId();
-            if (permissionIds.contains(permissionId)) {
-                filteredPermissionIds.add(permissionId);
-            }
-        }
-        return filteredPermissionIds;
+
+        Map<Long, Set<Long>> map = containerPermissionIds(userId, Set.of(containerId), permissionIds);
+        return map.getOrDefault(containerId, Set.of());
     }
 
     @Nonnull
@@ -211,118 +192,111 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
     public Map<Long, Set<Long>> containerPermissionIds(long userId,
                                                        @Nonnull Set<Long> containerIds,
                                                        @Nonnull Set<Long> permissionIds) {
+        // containerId -> 权限分配信息列表
+        Map<Long, Collection<PermissionAssignDetail>> assignMap = getPermissionAssignDetails(userId);
+        if (assignMap.isEmpty()) {
+            log.info("用户[{}]在任何安全容器节点上都没有分配权限", userId);
+            HashMap<Long, Set<Long>> result = new HashMap<>();
+            for (Long containerId : containerIds) {
+                result.put(containerId, Set.of());
+            }
+            return result;
+        }
         Map<Long, Set<Long>> result = new HashMap<>();
-        for (Long containerId : containerIds) {
-            Set<Long> filtered = containerPermissionIds(userId, containerId, permissionIds);
-            result.put(containerId, filtered);
+        for (long containerId : containerIds) {
+            AnalyzedSecurityContainer container = securityContainerCache.findById(containerId);
+            if (container == null) {
+                log.warn("获取用户指定节点上的拥有的所有权限失败, 安全容器[{}]不存在", containerId);
+                result.put(containerId, Set.of());
+                continue;
+            }
+            Set<Long> hasPermissionIds = new HashSet<>();
+            SequencedSet<Long> containerParentIds = container.getParentIds();
+            LinkedHashSet<Long> containerIdChain = new LinkedHashSet<>(containerParentIds);
+            containerIdChain.add(containerId);
+            for (long loopContainerId : containerIdChain) {
+                Collection<PermissionAssignDetail> details = assignMap.get(loopContainerId);
+                if (CollectionUtils.isEmpty(details)) {
+                    continue;
+                }
+                for (PermissionAssignDetail detail : details) {
+                    Permission permission = detail.getPermission();
+                    Long permissionId = permission.getId();
+                    if (!permissionIds.contains(permissionId)) {
+                        continue;
+                    }
+                    // 如果是不授权, 则移除
+                    if (!detail.isAssigned()) {
+                        hasPermissionIds.remove(permissionId);
+                        continue;
+                    }
+                    // 父节点且不继承, 那么权限到这一步也就中断了
+                    boolean inheritable = detail.isInheritable();
+                    if (!inheritable && loopContainerId != containerId) {
+                        hasPermissionIds.remove(permissionId);
+                        continue;
+                    }
+                    // 最后留下来的就是有权限的
+                    hasPermissionIds.add(permissionId);
+                }
+            }
+            result.put(containerId, hasPermissionIds);
         }
         return result;
     }
 
     @Override
     public boolean hasAuthority(long userId, long containerId, @Nonnull String authority) {
-        List<AssignedPermission> assignedPermissions =
-                getAssignedPermissions(userId, containerId, true);
-        if (assignedPermissions.isEmpty()) {
-            return false;
-        }
-        for (AssignedPermission assignedPermission : assignedPermissions) {
-            Permission permission = assignedPermission.getPermission();
-            Set<String> authorities = permission.getAuthorities();
-            if (authorities.contains(authority)) {
-                return true;
-            }
-        }
-        return false;
+        return checkAuthority(userId, containerId, permission ->
+                permission.getAuthorities().contains(authority)
+        );
     }
 
     @Override
     public boolean hasAnyAuthority(long userId, long containerId,
-                                   @Nonnull Collection<String> authorities) {
-        List<AssignedPermission> assignedPermissions =
-                getAssignedPermissions(userId, containerId, true);
-        if (assignedPermissions.isEmpty()) {
-            return false;
-        }
-        if (!(authorities instanceof Set<String>)) {
-            authorities = new HashSet<>(authorities);
-        }
-        for (AssignedPermission assignedPermission : assignedPermissions) {
-            Permission permission = assignedPermission.getPermission();
-            Set<String> permissionAuthorities = permission.getAuthorities();
-            if (Sets.containsAny(permissionAuthorities, authorities)) {
-                return true;
-            }
-        }
-        return false;
+                                   @Nonnull Set<String> authorities) {
+        return checkAuthority(userId, containerId, permission ->
+                permission.getAuthorities().stream().anyMatch(authorities::contains)
+        );
     }
 
-    @Override
-    public boolean hasAllAuthority(long userId, long containerId,
-                                   @Nonnull Collection<String> authorities) {
-        if (authorities.size() == 1) {
-            for (String authority : authorities) {
-                return hasAuthority(userId, containerId, authority);
-            }
-            return false;
-        }
-        List<AssignedPermission> assignedPermissions =
-                getAssignedPermissions(userId, containerId, true);
-        if (assignedPermissions.isEmpty()) {
-            return false;
-        }
-        if (!(authorities instanceof Set<String>)) {
-            authorities = new HashSet<>(authorities);
-        }
-        int authoritiesSize = authorities.size();
-        Set<String> existsAuthorities = new HashSet<>();
-        for (AssignedPermission assignedPermission : assignedPermissions) {
-            Permission permission = assignedPermission.getPermission();
-            Set<String> permissionAuthorities = permission.getAuthorities();
-            for (String authority : authorities) {
-                if (permissionAuthorities.contains(authority)) {
-                    existsAuthorities.add(authority);
-                    if (existsAuthorities.size() == authoritiesSize) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+    private boolean checkAuthority(long userId, long containerId, Predicate<Permission> predicate) {
+        return getAssignedPermissions(userId, containerId, true).stream()
+                .map(AssignedPermission::getPermission)
+                .anyMatch(predicate);
     }
+
 
     @Override
     public boolean hasApiPermission(long userId, long containerId,
                                     @Nonnull String method, @Nonnull String path) {
-        List<AssignedPermission> assignedPermissions =
+        Collection<AssignedPermission> assignedPermissions =
                 getAssignedPermissions(userId, containerId, true);
         if (assignedPermissions.isEmpty()) {
             return false;
         }
         String fullPath = method + " " + path;
         log.debug("Api权限校验fullPath = {}", fullPath);
-        Set<String> patterns = new HashSet<>();
         for (AssignedPermission assignedPermission : assignedPermissions) {
             Permission permission = assignedPermission.getPermission();
             Set<String> specificApis = permission.getSpecificApis();
             if (specificApis.contains(path) || specificApis.contains(fullPath)) {
                 return true;
             }
-            Set<String> apiPatterns = permission.getApiPatterns();
-            patterns.addAll(apiPatterns);
-        }
-        for (String pattern : patterns) {
-            String[] split = StringUtils.split(pattern, " ");
-            if (split.length == 1) {
-                if (PathMatchers.match(split[0], path)) {
+            Set<String> patterns = permission.getApiPatterns();
+            for (String pattern : patterns) {
+                String[] split = StringUtils.split(pattern, " ");
+                if (split.length == 1) {
+                    if (PathMatchers.match(split[0], path)) {
+                        return true;
+                    }
+                }
+                if (!method.equalsIgnoreCase(split[0])) {
+                    continue;
+                }
+                if (PathMatchers.match(split[1], path)) {
                     return true;
                 }
-            }
-            if (!method.equalsIgnoreCase(split[0])) {
-                continue;
-            }
-            if (PathMatchers.match(split[1], path)) {
-                return true;
             }
         }
         log.info("用户[{}]在安全容器[{}]上没有此api权限: [{} {}]", userId, containerId, method, path);
