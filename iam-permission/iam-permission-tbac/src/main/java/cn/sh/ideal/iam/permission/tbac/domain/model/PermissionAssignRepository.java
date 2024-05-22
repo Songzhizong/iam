@@ -11,13 +11,15 @@ public interface PermissionAssignRepository {
 
     void insert(@Nonnull List<PermissionAssign> assigns);
 
+    int deleteAllByContainerIdAndUserGroupId(long containerId, long userGroupId);
+
     void deleteAllByContainerIdAndUserGroupIdAndPermissionItemIdIn(long containerId,
                                                                    long userGroupId,
                                                                    @Nonnull Collection<Long> permissionItemIds);
 
-    void deleteAllByContainerIdAndUserGroupIdAndPermissionIdIn(long containerId,
+    int deleteAllByContainerIdAndUserGroupIdAndPermissionIdIn(long containerId,
                                                                long userGroupId,
-                                                               @Nonnull List<Long> permissionIds);
+                                                              @Nonnull Collection<Long> permissionIds);
 
     @Nonnull
     List<PermissionAssign> findAllByUserGroupIdIn(@Nonnull Collection<Long> userGroupIds);

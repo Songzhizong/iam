@@ -9,7 +9,7 @@ import cn.idealio.framework.util.Asserts;
 import cn.idealio.security.api.annotation.HasAuthority;
 import cn.sh.ideal.iam.infrastructure.constant.AuditConstants;
 import cn.sh.ideal.iam.permission.tbac.application.TbacAssignService;
-import cn.sh.ideal.iam.permission.tbac.dto.args.AssignPermissionArgs;
+import cn.sh.ideal.iam.permission.tbac.dto.args.AssignPermissionsArgs;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,7 +76,7 @@ public class TbacAssignController {
     @HasAuthority("iam:sc:assign_permission")
     @Audit(name = "分配权限", code = "iam:sc:assign_permission",
             action = AuditAction.PERMISSION_CONFIG, classification = AuditConstants.AUTHORITY_MANAGEMENT)
-    public Result<Void> assignPermissions(@RequestBody AssignPermissionArgs args) {
+    public Result<Void> assignPermissions(@RequestBody AssignPermissionsArgs args) {
         tbacAssignService.assign(args);
         return Result.success();
     }

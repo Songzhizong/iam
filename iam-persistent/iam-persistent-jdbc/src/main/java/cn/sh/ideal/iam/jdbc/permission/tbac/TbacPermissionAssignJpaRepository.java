@@ -15,6 +15,16 @@ import java.util.List;
  */
 public interface TbacPermissionAssignJpaRepository extends JpaRepository<TbacPermissionAssignDO, Long> {
 
+    @Modifying
+    @Transactional(rollbackFor = Throwable.class)
+    @Query(value = """
+            DELETE FROM iam_tbac_permission_assign AS e
+                   WHERE e.container_id_ = :containerId
+                     AND e.user_group_id_ = :userGroupId
+            """, nativeQuery = true)
+    int deleteAllByContainerIdAndUserGroupId(@Param("containerId") long containerId,
+                                             @Param("userGroupId") long userGroupId);
+
 
     @Modifying
     @Transactional(rollbackFor = Throwable.class)
@@ -37,10 +47,10 @@ public interface TbacPermissionAssignJpaRepository extends JpaRepository<TbacPer
                      AND e.user_group_id_ = :userGroupId
                      AND e.permission_id_ in (:permissionIds)
             """, nativeQuery = true)
-    void deleteAllByContainerIdAndUserGroupIdAndPermissionIdIn(@Param("containerId") long containerId,
+    int deleteAllByContainerIdAndUserGroupIdAndPermissionIdIn(@Param("containerId") long containerId,
                                                                @Param("userGroupId") long userGroupId,
                                                                @Param("permissionIds")
-                                                               @Nonnull List<Long> permissionIds);
+                                                              @Nonnull Collection<Long> permissionIds);
 
     @Nonnull
     List<TbacPermissionAssignDO> findAllByUserGroupIdIn(@Nonnull Collection<Long> userGroupIds);

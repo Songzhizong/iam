@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.annotation.Nullable;
-import java.util.Set;
+import java.util.Objects;
 
 /**
  * @author 宋志宗 on 2024/5/17
@@ -12,27 +12,14 @@ import java.util.Set;
 @Getter
 @Setter
 public class AssignPermissionArgs {
+
     /**
-     * 安全容器ID
+     * 权限ID
      *
      * @required
      */
     @Nullable
-    private Long containerId = null;
-
-    /**
-     * 用户组ID
-     *
-     * @required
-     */
-    @Nullable
-    private Long userGroupId = null;
-
-    /**
-     * 权限ID列表
-     */
-    @Nullable
-    private Set<Long> permissionIds = null;
+    private Long permissionId = null;
 
     /** 是否授权, 默认是 */
     @Nullable
@@ -45,4 +32,17 @@ public class AssignPermissionArgs {
     /** 是否启用双因素认证, 默认否 */
     @Nullable
     private Boolean mfa = null;
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        AssignPermissionArgs that = (AssignPermissionArgs) object;
+        return Objects.equals(permissionId, that.permissionId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(permissionId);
+    }
 }

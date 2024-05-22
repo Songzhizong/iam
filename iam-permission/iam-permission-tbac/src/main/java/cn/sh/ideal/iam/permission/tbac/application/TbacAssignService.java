@@ -13,6 +13,9 @@ import cn.sh.ideal.iam.permission.tbac.domain.model.PermissionAssign;
 import cn.sh.ideal.iam.permission.tbac.domain.model.PermissionAssignRepository;
 import cn.sh.ideal.iam.permission.tbac.domain.model.SecurityContainerRepository;
 import cn.sh.ideal.iam.permission.tbac.dto.args.AssignPermissionArgs;
+import cn.sh.ideal.iam.permission.tbac.dto.args.AssignPermissionsArgs;
+import cn.sh.ideal.iam.permission.tbac.dto.args.CoverPermissionsArgs;
+import cn.sh.ideal.iam.permission.tbac.dto.args.UnassignPermissionsArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author 宋志宗 on 2024/2/5
@@ -36,8 +40,14 @@ public class TbacAssignService {
     private final PermissionAssignRepository permissionAssignRepository;
     private final SecurityContainerRepository securityContainerRepository;
 
+    /**
+     * 分配权限, 传入的权限点会覆盖, 未传入的权限点继续保留.
+     * 这个方法用作新分配权限点, 不会删除已分配的权限点.
+     *
+     * @author 宋志宗 on 2024/5/22
+     */
     @Transactional(rollbackFor = Throwable.class)
-    public void assign(@Nonnull AssignPermissionArgs args) {
+    public void assign(@Nonnull AssignPermissionsArgs args) {
         Long containerId = args.getContainerId();
         Long userGroupId = args.getUserGroupId();
         Set<Long> permissionIds = args.getPermissionIds();
@@ -64,8 +74,6 @@ public class TbacAssignService {
         // 此外需要从传入的权限列表中过滤掉权限项ID在allPermissionItemIds集合中的权限
         // 最终合并出来的就是所有需要分配的权限
         if (Sets.isNotEmpty(allPermissionItemIds)) {
-            permissionAssignRepository.deleteAllByContainerIdAndUserGroupIdAndPermissionItemIdIn(
-                    containerId, userGroupId, allPermissionItemIds);
             List<Permission> itemPermissions = permissionCache.findAllByItemIdIn(allPermissionItemIds);
             assignPermissions = new ArrayList<>(itemPermissions);
             log.info("通过配置项所有权限分配权限点 {}条", assignPermissions.size());
@@ -78,12 +86,105 @@ public class TbacAssignService {
                     removePermissionIds.add(permission.getId());
                 }
             }
-            log.info("直接分配权限 {}条", removePermissionIds.size());
+            log.info("直接分配权限 {}条", assignPermissions.size());
+
+            // 分别删除权限项和权限点的分配关系, 避免重复分配也能减少in查询的条件数量
+            permissionAssignRepository.deleteAllByContainerIdAndUserGroupIdAndPermissionItemIdIn(
+                    containerId, userGroupId, allPermissionItemIds);
+            permissionAssignRepository.deleteAllByContainerIdAndUserGroupIdAndPermissionIdIn(
+                    containerId, userGroupId, removePermissionIds);
+        } else {
+            // 删除接下来需要分配的权限点的分配关系, 避免重复分配导致唯一索引冲突
+            Set<Long> removePermissionIds = assignPermissions.stream()
+                    .map(Permission::getId).collect(Collectors.toSet());
             permissionAssignRepository.deleteAllByContainerIdAndUserGroupIdAndPermissionIdIn(
                     containerId, userGroupId, removePermissionIds);
         }
         List<PermissionAssign> assigns = entityFactory.assignPermissions(
                 containerId, userGroupId, assign, inheritable, mfa, assignPermissions);
+        permissionAssignRepository.insert(assigns);
+    }
+
+    /**
+     * 取消分配权限点, 传入的权限点会从分配关系中删除
+     *
+     * @author 宋志宗 on 2024/5/22
+     */
+    @Transactional(rollbackFor = Throwable.class)
+    public void unassign(@Nonnull UnassignPermissionsArgs args) {
+        Long containerId = args.getContainerId();
+        Long userGroupId = args.getUserGroupId();
+        Set<Long> permissionIds = args.getPermissionIds();
+        Asserts.nonnull(containerId, () -> i18nReader.getMessage("container_id.required"));
+        Asserts.nonnull(userGroupId, () -> i18nReader.getMessage("user_group_id.required"));
+        Asserts.notEmpty(permissionIds, () -> i18nReader.getMessage("permission_ids.required"));
+        int count = permissionAssignRepository.deleteAllByContainerIdAndUserGroupIdAndPermissionIdIn(
+                containerId, userGroupId, permissionIds);
+        log.info("安全容器[{}]用户组[{}] 删除 {} 条权限分配记录", containerId, userGroupId, count);
+    }
+
+    @Transactional(rollbackFor = Throwable.class)
+    public void cover(@Nonnull CoverPermissionsArgs args) {
+        Long containerId = args.getContainerId();
+        Long userGroupId = args.getUserGroupId();
+        Set<AssignPermissionArgs> permissionArgsSet = args.getPermissions();
+        Asserts.nonnull(containerId, () -> i18nReader.getMessage("container_id.required"));
+        Asserts.nonnull(userGroupId, () -> i18nReader.getMessage("user_group_id.required"));
+        int deleteCount = permissionAssignRepository
+                .deleteAllByContainerIdAndUserGroupId(containerId, userGroupId);
+        log.info("覆盖权限分配: 安全容器[{}]用户组[{}] 删除 {} 条权限分配记录", containerId, userGroupId, deleteCount);
+        if (Sets.isEmpty(permissionArgsSet)) {
+            return;
+        }
+        Map<Long, AssignPermissionArgs> permissionArgsMap = new HashMap<>();
+        for (AssignPermissionArgs permissionArgs : permissionArgsSet) {
+            Long permissionId = permissionArgs.getPermissionId();
+            Asserts.nonnull(permissionId, () -> i18nReader.getMessage("permission_id.required"));
+            permissionArgsMap.put(permissionId, permissionArgs);
+        }
+        Set<Long> permissionIds = permissionArgsMap.keySet();
+        List<Permission> permissions = permissionCache.findAllById(permissionIds);
+        for (Permission permission : permissions) {
+            Long permissionId = permission.getId();
+            boolean available = permission.available();
+            if (!available) {
+                permissionArgsMap.remove(permissionId);
+                continue;
+            }
+            AssignPermissionArgs permissionArgs = permissionArgsMap.get(permissionId);
+            Set<Long> childIds = permission.getChildIds();
+            if (Sets.isNotEmpty(childIds)) {
+                for (Long childPermissionId : childIds) {
+                    Permission childPermission = permissionCache.findById(childPermissionId);
+                    if (childPermission == null || !childPermission.available()) {
+                        continue;
+                    }
+                    permissionArgsMap.put(childPermissionId, permissionArgs);
+                }
+            }
+            if (permission.isAllInItem()) {
+                long itemId = permission.getItemId();
+                List<Permission> itemPermissions = permissionCache.findAllByItemId(itemId);
+                for (Permission itemPermission : itemPermissions) {
+                    if (itemPermission.available()) {
+                        permissionArgsMap.put(itemPermission.getId(), permissionArgs);
+                    }
+                }
+            }
+        }
+        List<PermissionAssign> assigns = new ArrayList<>();
+        permissionArgsMap.forEach((permissionId, permissionArgs) -> {
+            Permission permission = permissionCache.findById(permissionId);
+            if (permission == null || !permission.available()) {
+                return;
+            }
+            Boolean assign = Objects.requireNonNullElse(permissionArgs.getAssign(), true);
+            Boolean mfa = Objects.requireNonNullElse(permissionArgs.getMfa(), false);
+            Boolean inheritable = Objects.requireNonNullElse(permissionArgs.getInheritable(), false);
+            PermissionAssign permissionAssign = entityFactory
+                    .assignPermission(containerId, userGroupId, assign, inheritable, mfa, permission);
+            assigns.add(permissionAssign);
+        });
         permissionAssignRepository.insert(assigns);
     }
 

@@ -24,10 +24,19 @@ public interface EntityFactory {
                                         @Nonnull CreateSecurityContainerArgs args,
                                         @Nonnull TbacI18nReader i18nReader);
 
+    @Nonnull
     List<PermissionAssign> assignPermissions(long containerId,
                                              long userGroupId,
                                              boolean assign,
-                                             boolean extend,
+                                             boolean inheritable,
                                              boolean mfa,
                                              @Nonnull List<Permission> permissions);
+
+    @Nonnull
+    PermissionAssign assignPermission(long containerId,
+                                       long userGroupId,
+                                       boolean assign,
+                                       boolean inheritable,
+                                       boolean mfa,
+                                       @Nonnull Permission permission);
 }

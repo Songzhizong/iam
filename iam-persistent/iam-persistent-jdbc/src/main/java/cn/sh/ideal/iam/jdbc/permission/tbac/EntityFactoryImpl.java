@@ -27,6 +27,7 @@ public class EntityFactoryImpl implements EntityFactory {
         return SecurityContainerDO.create(parent, args, i18nReader);
     }
 
+    @Nonnull
     @Override
     public List<PermissionAssign> assignPermissions(long containerId,
                                                     long userGroupId,
@@ -42,4 +43,16 @@ public class EntityFactoryImpl implements EntityFactory {
         }
         return assigns;
     }
+
+    @Nonnull
+    @Override
+    public PermissionAssign assignPermissions(long containerId,
+                                              long userGroupId,
+                                              boolean assign,
+                                              boolean inheritable,
+                                              boolean mfa,
+                                              @Nonnull Permission permission) {
+        return TbacPermissionAssignDO.create(containerId, userGroupId, assign, inheritable, mfa, permission);
+    }
+
 }

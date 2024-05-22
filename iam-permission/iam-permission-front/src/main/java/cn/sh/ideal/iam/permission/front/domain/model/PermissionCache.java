@@ -73,6 +73,11 @@ public class PermissionCache implements InitializingBean, ApplicationRunner, Per
         return permissions;
     }
 
+    @Nonnull
+    public List<Permission> findAllByItemId(long itemId) {
+        return itemPermissionsMap.getOrDefault(itemId, new ArrayList<>());
+    }
+
     private void refresh() {
         boolean tryLock = refreshLock.tryLock();
         if (!tryLock) {
