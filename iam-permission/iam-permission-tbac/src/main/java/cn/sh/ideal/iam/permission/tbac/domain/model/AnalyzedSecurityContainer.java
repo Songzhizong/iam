@@ -1,5 +1,6 @@
 package cn.sh.ideal.iam.permission.tbac.domain.model;
 
+import cn.idealio.framework.lang.Lists;
 import cn.idealio.framework.lang.Sets;
 import cn.idealio.framework.lang.TreeNode;
 import lombok.Getter;
@@ -58,6 +59,30 @@ public class AnalyzedSecurityContainer implements TreeNode<AnalyzedSecurityConta
             }
         }
         return filtered;
+    }
+
+    @Nonnull
+    public static List<AnalyzedSecurityContainer> cut(long baseContainerId,
+                                                      @Nonnull List<AnalyzedSecurityContainer> containers) {
+        if (containers.isEmpty()) {
+            return List.of();
+        }
+        for (AnalyzedSecurityContainer analyzedSecurityContainer : containers) {
+            long containerId = analyzedSecurityContainer.getContainer().getId();
+            if (containerId == baseContainerId) {
+                return List.of(analyzedSecurityContainer);
+            }
+            List<AnalyzedSecurityContainer> childTree = analyzedSecurityContainer.getChildTree();
+            if (Lists.isEmpty(childTree)) {
+                return List.of();
+            }
+            List<AnalyzedSecurityContainer> list = cut(baseContainerId, childTree);
+            if (Lists.isNotEmpty(list)) {
+                return list;
+            }
+        }
+        return List.of();
+
     }
 
     @Nonnull

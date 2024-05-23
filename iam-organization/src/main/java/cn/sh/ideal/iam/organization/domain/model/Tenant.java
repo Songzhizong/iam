@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 public interface Tenant {
 
     /** 主键 */
-    Long getId();
+    long getId();
 
     /** 安全容器ID */
     @Nullable

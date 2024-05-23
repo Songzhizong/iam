@@ -19,7 +19,7 @@ import java.util.Set;
 public interface Permission {
     Logger log = LoggerFactory.getLogger(Permission.class);
 
-    Long getId();
+    long getId();
 
     long getAppId();
 

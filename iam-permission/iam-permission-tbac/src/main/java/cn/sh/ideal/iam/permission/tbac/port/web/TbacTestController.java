@@ -39,10 +39,12 @@ public class TbacTestController {
     /** 获取用户在指定安全容器上所有可见的权限ID */
     @GetMapping("/visible_permission_ids")
     public Result<Set<Long>> visiblePermissionIds(@Nullable Long userId,
-                                                  @Nullable Long containerId) {
+                                                  @Nullable Long containerId,
+                                                  @Nullable Long appId) {
         Asserts.nonnull(userId, "userId");
         Asserts.nonnull(containerId, "containerId");
-        Set<Long> set = tbacHandler.visiblePermissionIds(userId, containerId);
+        Asserts.nonnull(appId, "appId");
+        Set<Long> set = tbacHandler.visiblePermissionIds(userId, containerId, appId);
         return Result.success(set);
     }
 
@@ -111,20 +113,6 @@ public class TbacTestController {
         String[] authoritySplit = StringUtils.split(authorities, ",");
         Set<String> authoritySet = Arrays.stream(authoritySplit).collect(Collectors.toSet());
         boolean hasAuthority = tbacHandler.hasAnyAuthority(userId, containerId, authoritySet);
-        return Result.success(hasAuthority);
-    }
-
-    /** 判断用户在指定安全容器上是否拥有所有权限 */
-    @GetMapping("has_all_authority")
-    public Result<Boolean> hasAllAuthority(@Nullable Long userId,
-                                           @Nullable Long containerId,
-                                           @Nullable String authorities) {
-        Asserts.nonnull(userId, "userId");
-        Asserts.nonnull(containerId, "containerId");
-        Asserts.nonnull(authorities, "authorities");
-        String[] authoritySplit = StringUtils.split(authorities, ",");
-        Set<String> authoritySet = Arrays.stream(authoritySplit).collect(Collectors.toSet());
-        boolean hasAuthority = tbacHandler.hasAllAuthority(userId, containerId, authoritySet);
         return Result.success(hasAuthority);
     }
 

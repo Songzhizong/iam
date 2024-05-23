@@ -43,7 +43,7 @@ public class PermissionDO implements Permission {
     @Column(nullable = false, name = "id_")
     @GeneratedValue(generator = TABLE_NAME)
     @GenericGenerator(name = TABLE_NAME, type = ManualIDGenerator.class)
-    private Long id = -1L;
+    private long id = -1L;
 
     @Comment("应用ID")
     @Column(nullable = false, name = "app_id_")

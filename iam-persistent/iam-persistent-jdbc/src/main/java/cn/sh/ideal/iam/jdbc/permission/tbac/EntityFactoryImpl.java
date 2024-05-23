@@ -1,11 +1,11 @@
 package cn.sh.ideal.iam.jdbc.permission.tbac;
 
-import cn.sh.ideal.iam.permission.tbac.configure.TbacI18nReader;
-import cn.sh.ideal.iam.permission.tbac.domain.model.SecurityContainer;
-import cn.sh.ideal.iam.permission.tbac.dto.args.CreateSecurityContainerArgs;
 import cn.sh.ideal.iam.permission.front.domain.model.Permission;
+import cn.sh.ideal.iam.permission.tbac.configure.TbacI18nReader;
 import cn.sh.ideal.iam.permission.tbac.domain.model.EntityFactory;
 import cn.sh.ideal.iam.permission.tbac.domain.model.PermissionAssign;
+import cn.sh.ideal.iam.permission.tbac.domain.model.SecurityContainer;
+import cn.sh.ideal.iam.permission.tbac.dto.args.CreateSecurityContainerArgs;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
@@ -46,7 +46,7 @@ public class EntityFactoryImpl implements EntityFactory {
 
     @Nonnull
     @Override
-    public PermissionAssign assignPermissions(long containerId,
+    public PermissionAssign assignPermission(long containerId,
                                               long userGroupId,
                                               boolean assign,
                                               boolean inheritable,

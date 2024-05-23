@@ -3,6 +3,7 @@ package cn.sh.ideal.iam.jdbc.permission.front;
 import cn.idealio.framework.util.Asserts;
 import cn.idealio.framework.util.data.hibernate.ManualIDGenerator;
 import cn.sh.ideal.iam.core.constant.Terminal;
+import cn.sh.ideal.iam.permission.core.PermissionModel;
 import cn.sh.ideal.iam.permission.front.domain.model.App;
 import cn.sh.ideal.iam.permission.front.dto.args.CreateAppArgs;
 import cn.sh.ideal.iam.permission.front.dto.resp.AppInfo;
@@ -38,7 +39,7 @@ public class AppDO implements App {
     @Column(nullable = false, name = "id_")
     @GeneratedValue(generator = TABLE_NAME)
     @GenericGenerator(name = TABLE_NAME, type = ManualIDGenerator.class)
-    private Long id = -1L;
+    private long id = -1L;
 
     @Nonnull
     @Comment("终端类型")
@@ -46,6 +47,13 @@ public class AppDO implements App {
     @JdbcType(VarcharJdbcType.class)
     @Column(nullable = false, name = "terminal_")
     private Terminal terminal = Terminal.WEB;
+
+    @Nonnull
+    @Comment("权限模型")
+    @Enumerated(EnumType.STRING)
+    @JdbcType(VarcharJdbcType.class)
+    @Column(nullable = false, name = "permission_model_")
+    private PermissionModel permissionModel = PermissionModel.TBAC;
 
     @Nonnull
     @Comment("跟路径, 同终端下全局唯一")

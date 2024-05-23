@@ -3,6 +3,7 @@ package cn.sh.ideal.iam.permission.tbac.application.impl;
 import cn.idealio.framework.lang.Tuple;
 import cn.sh.ideal.iam.permission.tbac.application.TbacHandler;
 import cn.sh.ideal.iam.permission.tbac.configure.TbacProperties;
+import cn.sh.ideal.iam.permission.tbac.domain.model.PermissionAssignable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -36,7 +37,7 @@ public class CompositeTbacHandler implements TbacHandler {
     @Override
     public Map<Long, Tuple<Boolean, Boolean>>
     authorityContainerAssignInfo(long userId, @Nonnull String authority) {
-        if (properties.isEnableCache()) {
+        if (properties.isCacheEnabled()) {
             return cacheableTbacHandler.authorityContainerAssignInfo(userId, authority);
         }
         return cachelessTbacHandler.authorityContainerAssignInfo(userId, authority);
@@ -44,18 +45,28 @@ public class CompositeTbacHandler implements TbacHandler {
 
     @Nonnull
     @Override
-    public Set<Long> visiblePermissionIds(long userId, long containerId) {
-        if (properties.isEnableCache()) {
-            return cacheableTbacHandler.visiblePermissionIds(userId, containerId);
+    public Map<Long, Tuple<Boolean, Boolean>>
+    permissionContainerAssignInfo(long userId, long permissionId) {
+        if (properties.isCacheEnabled()) {
+            return cacheableTbacHandler.permissionContainerAssignInfo(userId, permissionId);
         }
+        return cachelessTbacHandler.permissionContainerAssignInfo(userId, permissionId);
+    }
+
+    @Nonnull
+    @Override
+    public Set<Long> visiblePermissionIds(long userId, long containerId, long appId) {
         long nanoTime = System.nanoTime();
         try {
-            return cachelessTbacHandler.visiblePermissionIds(userId, containerId);
+            if (properties.isCacheEnabled()) {
+                return cacheableTbacHandler.visiblePermissionIds(userId, containerId, appId);
+            }
+            return cachelessTbacHandler.visiblePermissionIds(userId, containerId, appId);
         } finally {
             if (log.isDebugEnabled()) {
                 long micros = (System.nanoTime() - nanoTime) / 1000;
                 double millis = micros / 1000D;
-                log.debug("非缓存执行[获取用户在指定安全容器上所有可见的权限ID]耗时 {}ms", millis);
+                log.debug("执行[获取用户在指定安全容器上所有可见的权限ID]耗时 {}ms", millis);
             }
         }
     }
@@ -65,17 +76,17 @@ public class CompositeTbacHandler implements TbacHandler {
     public Set<Long> authorityContainerIds(long userId,
                                            @Nonnull String authority,
                                            @Nullable Long baseContainerId) {
-        if (properties.isEnableCache()) {
-            return cacheableTbacHandler.authorityContainerIds(userId, authority, baseContainerId);
-        }
         long nanoTime = System.nanoTime();
         try {
+            if (properties.isCacheEnabled()) {
+                return cacheableTbacHandler.authorityContainerIds(userId, authority, baseContainerId);
+            }
             return cachelessTbacHandler.authorityContainerIds(userId, authority, baseContainerId);
         } finally {
             if (log.isDebugEnabled()) {
                 long micros = (System.nanoTime() - nanoTime) / 1000;
                 double millis = micros / 1000D;
-                log.debug("非缓存执行[获取用户拥有指定权限的容器id列表]耗时 {}ms", millis);
+                log.debug("执行[获取用户拥有指定权限的容器id列表]耗时 {}ms", millis);
             }
         }
     }
@@ -84,17 +95,17 @@ public class CompositeTbacHandler implements TbacHandler {
     @Override
     public Set<Long> containerPermissionIds(long userId, long containerId,
                                             @Nonnull Set<Long> permissionIds) {
-        if (properties.isEnableCache()) {
-            return cacheableTbacHandler.containerPermissionIds(userId, containerId, permissionIds);
-        }
         long nanoTime = System.nanoTime();
         try {
+            if (properties.isCacheEnabled()) {
+                return cacheableTbacHandler.containerPermissionIds(userId, containerId, permissionIds);
+            }
             return cachelessTbacHandler.containerPermissionIds(userId, containerId, permissionIds);
         } finally {
             if (log.isDebugEnabled()) {
                 long micros = (System.nanoTime() - nanoTime) / 1000;
                 double millis = micros / 1000D;
-                log.debug("非缓存执行[过滤用户在指定安全容器上有权限的权限ID列表]耗时 {}ms", millis);
+                log.debug("执行[过滤用户在指定安全容器上有权限的权限ID列表]耗时 {}ms", millis);
             }
         }
     }
@@ -104,34 +115,34 @@ public class CompositeTbacHandler implements TbacHandler {
     public Map<Long, Set<Long>> containerPermissionIds(long userId,
                                                        @Nonnull Set<Long> containerIds,
                                                        @Nonnull Set<Long> permissionIds) {
-        if (properties.isEnableCache()) {
-            return cacheableTbacHandler.containerPermissionIds(userId, containerIds, permissionIds);
-        }
         long nanoTime = System.nanoTime();
         try {
+            if (properties.isCacheEnabled()) {
+                return cacheableTbacHandler.containerPermissionIds(userId, containerIds, permissionIds);
+            }
             return cachelessTbacHandler.containerPermissionIds(userId, containerIds, permissionIds);
         } finally {
             if (log.isDebugEnabled()) {
                 long micros = (System.nanoTime() - nanoTime) / 1000;
                 double millis = micros / 1000D;
-                log.debug("非缓存执行[批量过滤用户在指定安全容器上有权限的权限ID列表]耗时 {}ms", millis);
+                log.debug("执行[批量过滤用户在指定安全容器上有权限的权限ID列表]耗时 {}ms", millis);
             }
         }
     }
 
     @Override
     public boolean hasAuthority(long userId, long containerId, @Nonnull String authority) {
-        if (properties.isEnableCache()) {
-            return cacheableTbacHandler.hasAuthority(userId, containerId, authority);
-        }
         long nanoTime = System.nanoTime();
         try {
+            if (properties.isCacheEnabled()) {
+                return cacheableTbacHandler.hasAuthority(userId, containerId, authority);
+            }
             return cachelessTbacHandler.hasAuthority(userId, containerId, authority);
         } finally {
             if (log.isDebugEnabled()) {
                 long micros = (System.nanoTime() - nanoTime) / 1000;
                 double millis = micros / 1000D;
-                log.debug("非缓存执行[判断用户在指定安全容器上是否拥有指定权限]耗时 {}ms", millis);
+                log.debug("执行[判断用户在指定安全容器上是否拥有指定权限]耗时 {}ms", millis);
             }
         }
     }
@@ -139,17 +150,17 @@ public class CompositeTbacHandler implements TbacHandler {
     @Override
     public boolean hasAnyAuthority(long userId, long containerId,
                                    @Nonnull Set<String> authorities) {
-        if (properties.isEnableCache()) {
-            return cacheableTbacHandler.hasAnyAuthority(userId, containerId, authorities);
-        }
         long nanoTime = System.nanoTime();
         try {
+            if (properties.isCacheEnabled()) {
+                return cacheableTbacHandler.hasAnyAuthority(userId, containerId, authorities);
+            }
             return cachelessTbacHandler.hasAnyAuthority(userId, containerId, authorities);
         } finally {
             if (log.isDebugEnabled()) {
                 long micros = (System.nanoTime() - nanoTime) / 1000;
                 double millis = micros / 1000D;
-                log.debug("非缓存执行[判断用户在指定安全容器上是否拥有任一权限]耗时 {}ms", millis);
+                log.debug("执行[判断用户在指定安全容器上是否拥有任一权限]耗时 {}ms", millis);
             }
         }
     }
@@ -157,17 +168,35 @@ public class CompositeTbacHandler implements TbacHandler {
     @Override
     public boolean hasApiPermission(long userId, long containerId,
                                     @Nonnull String method, @Nonnull String path) {
-        if (properties.isEnableCache()) {
-            return cacheableTbacHandler.hasApiPermission(userId, containerId, method, path);
-        }
         long nanoTime = System.nanoTime();
         try {
+            if (properties.isCacheEnabled()) {
+                return cacheableTbacHandler.hasApiPermission(userId, containerId, method, path);
+            }
             return cachelessTbacHandler.hasApiPermission(userId, containerId, method, path);
         } finally {
             if (log.isDebugEnabled()) {
                 long micros = (System.nanoTime() - nanoTime) / 1000;
                 double millis = micros / 1000D;
-                log.debug("非缓存执行[判断用户是否拥有API接口的访问权限]耗时 {}ms", millis);
+                log.debug("执行[判断用户是否拥有API接口的访问权限]耗时 {}ms", millis);
+            }
+        }
+    }
+
+    @Nonnull
+    @Override
+    public PermissionAssignable assignable(long userId, long containerId, long appId) {
+        long nanoTime = System.nanoTime();
+        try {
+            if (properties.isCacheEnabled()) {
+                return cacheableTbacHandler.assignable(userId, containerId, appId);
+            }
+            return cachelessTbacHandler.assignable(userId, containerId, appId);
+        } finally {
+            if (log.isDebugEnabled()) {
+                long micros = (System.nanoTime() - nanoTime) / 1000;
+                double millis = micros / 1000D;
+                log.debug("执行[获取用户可分配信息]耗时 {}ms", millis);
             }
         }
     }

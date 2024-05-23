@@ -1,6 +1,7 @@
 package cn.sh.ideal.iam.permission.tbac.application;
 
 import cn.idealio.framework.lang.Tuple;
+import cn.sh.ideal.iam.permission.tbac.domain.model.PermissionAssignable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -23,7 +24,7 @@ public interface TbacHandler {
      * @author 宋志宗 on 2024/5/18
      */
     @Nonnull
-    Set<Long> visiblePermissionIds(long userId, long containerId);
+    Set<Long> visiblePermissionIds(long userId, long containerId, long appId);
 
 
     /**
@@ -64,6 +65,17 @@ public interface TbacHandler {
     @Nonnull
     Map<Long, Tuple<Boolean, Boolean>> authorityContainerAssignInfo(long userId,
                                                                     @Nonnull String authority);
+
+    /**
+     * 指定权限标识, 获取这个权限标识在各个容器节点上的权限配置信息
+     *
+     * @param userId       用户ID
+     * @param permissionId 权限ID
+     * @return [authority]有权限配置的containerId -> 是否分配 -> 是否继承
+     */
+    @Nonnull
+    Map<Long, Tuple<Boolean, Boolean>> permissionContainerAssignInfo(long userId,
+                                                                     long permissionId);
 
     /**
      * 过滤用户在指定安全容器上有权限的权限ID列表
@@ -134,4 +146,14 @@ public interface TbacHandler {
     boolean hasApiPermission(long userId, long containerId,
                              @Nonnull String method, @Nonnull String path);
 
+    /**
+     * 获取用户可分配信息
+     *
+     * @param userId      用户ID
+     * @param containerId 容器ID
+     * @param appId       应用ID
+     * @return 用户可分配信息
+     */
+    @Nonnull
+    PermissionAssignable assignable(long userId, long containerId, long appId);
 }

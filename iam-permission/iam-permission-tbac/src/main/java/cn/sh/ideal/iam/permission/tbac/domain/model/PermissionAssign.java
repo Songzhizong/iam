@@ -5,6 +5,8 @@ package cn.sh.ideal.iam.permission.tbac.domain.model;
  */
 public interface PermissionAssign {
 
+    long getAppId();
+
     long getContainerId();
 
     long getPermissionId();

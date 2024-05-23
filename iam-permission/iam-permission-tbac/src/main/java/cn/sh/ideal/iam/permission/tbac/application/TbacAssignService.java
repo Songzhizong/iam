@@ -145,7 +145,7 @@ public class TbacAssignService {
         Set<Long> permissionIds = permissionArgsMap.keySet();
         List<Permission> permissions = permissionCache.findAllById(permissionIds);
         for (Permission permission : permissions) {
-            Long permissionId = permission.getId();
+            long permissionId = permission.getId();
             boolean available = permission.available();
             if (!available) {
                 permissionArgsMap.remove(permissionId);

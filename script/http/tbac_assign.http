@@ -19,6 +19,20 @@ Content-Type: application/json
   "mfa": false
 }
 
+### 取消分配权限点
+POST {{base_url}}/iam/tbac/unassign_permission
+Content-Type: application/json
+
+{
+  "containerId": 1,
+  "userGroupId": 622070529905393664,
+  "permissionIds": [
+    622430302093967360,
+    622430574946025472,
+    622430682223738880
+  ]
+}
+
 ### 分配所有权限
 POST {{base_url}}/iam/tbac/assign_all_permissions
     ?appId=508081442220146688

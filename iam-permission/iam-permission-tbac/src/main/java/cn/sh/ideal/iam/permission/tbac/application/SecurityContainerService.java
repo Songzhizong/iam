@@ -154,7 +154,7 @@ public class SecurityContainerService implements ApplicationRunner {
                 tbacHandler.authorityContainerAssignInfo(userId, authority);
         // 获取所有权限的容器ID列表. 不能走缓存, 因为通过缓存获取的容器ID列表可能不包含最新的
         Set<Long> authorityContainerIds =
-                cachelessTbacHandler.authorityContainerIds(containerAssignInfo);
+                cachelessTbacHandler.analyzeContainerIds(containerAssignInfo);
         if (authorityContainerIds.isEmpty()) {
             return List.of();
         }

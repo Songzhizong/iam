@@ -10,6 +10,7 @@ import cn.idealio.security.api.annotation.HasAuthority;
 import cn.sh.ideal.iam.infrastructure.constant.AuditConstants;
 import cn.sh.ideal.iam.permission.tbac.application.TbacAssignService;
 import cn.sh.ideal.iam.permission.tbac.dto.args.AssignPermissionsArgs;
+import cn.sh.ideal.iam.permission.tbac.dto.args.UnassignPermissionsArgs;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -81,7 +82,51 @@ public class TbacAssignController {
         return Result.success();
     }
 
-    /** 分配所有权限 */
+    /**
+     * 取消分配权限点
+     * <pre>
+     *   <b>需要权限: iam:sc:assign_permission</b>
+     *   <p><b>请求示例</b></p>
+     *   POST {{base_url}}/iam/tbac/unassign_permission
+     *   Content-Type: application/json
+     *
+     *   {
+     *     "containerId": 1,
+     *     "userGroupId": 622070529905393664,
+     *     "permissionIds": [
+     *       622430302093967360,
+     *       622430574946025472,
+     *       622430682223738880
+     *     ]
+     *   }
+     *
+     *   <p><b>响应示例</b></p>
+     *   HTTP/1.1 200
+     *   x-ideal-trace-id: 4qc912yk0dfk
+     *   Content-Type: application/json
+     *
+     *   {
+     *     "success": true,
+     *     "message": "success"
+     *   }
+     * </pre>
+     *
+     * @author 宋志宗 on 2024/5/23
+     */
+    @PostMapping("/unassign_permission")
+    @HasAuthority("iam:sc:assign_permission")
+    @Audit(name = "分配权限", code = "iam:sc:unassign_permission",
+            action = AuditAction.PERMISSION_CONFIG, classification = AuditConstants.AUTHORITY_MANAGEMENT)
+    public Result<Void> unassignPermissions(@RequestBody UnassignPermissionsArgs args) {
+        tbacAssignService.unassign(args);
+        return Result.success();
+    }
+
+    /**
+     * 分配所有权限
+     *
+     * @ignore
+     */
     @PostMapping("/assign_all_permissions")
     public Result<Void> assignAllPermission(@Nullable Long appId,
                                             @Nullable Long containerId,

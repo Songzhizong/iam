@@ -37,7 +37,7 @@ public class TenantDO implements Tenant {
     @Column(nullable = false, name = "id_")
     @GeneratedValue(generator = TABLE_NAME)
     @GenericGenerator(name = TABLE_NAME, type = ManualIDGenerator.class)
-    private Long id = -1L;
+    private long id = -1L;
 
     @Comment("安全容器ID")
     @Column(nullable = false, name = "container_id_")

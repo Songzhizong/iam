@@ -1,6 +1,7 @@
 package cn.sh.ideal.iam.permission.front.domain.model;
 
 import cn.sh.ideal.iam.core.constant.Terminal;
+import cn.sh.ideal.iam.permission.core.PermissionModel;
 import cn.sh.ideal.iam.permission.front.dto.resp.AppInfo;
 
 import javax.annotation.Nonnull;
@@ -12,10 +13,13 @@ import javax.annotation.Nonnull;
  */
 public interface App {
 
-    Long getId();
+    long getId();
 
     @Nonnull
     Terminal getTerminal();
+
+    @Nonnull
+    PermissionModel getPermissionModel();
 
     @Nonnull
     String getRootPath();

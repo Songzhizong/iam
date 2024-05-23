@@ -24,7 +24,7 @@ spring:
 ideal-iam:
   permission:
     tbac:
-      enable-cache: true
+      cache-enabled: true
 
 ideal:
   namespace: iam6

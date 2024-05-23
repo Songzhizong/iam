@@ -5,7 +5,9 @@ import cn.idealio.framework.spring.matcher.PathMatchers;
 import cn.sh.ideal.iam.organization.domain.model.UserRepository;
 import cn.sh.ideal.iam.permission.front.domain.model.Permission;
 import cn.sh.ideal.iam.permission.front.domain.model.PermissionCache;
+import cn.sh.ideal.iam.permission.tbac.application.TbacHandler;
 import cn.sh.ideal.iam.permission.tbac.domain.model.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -22,20 +24,18 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Component
-public class CachelessTbacHandler extends AbstractTbacHandler {
-
-    public CachelessTbacHandler(@Nonnull UserRepository userRepository,
-                                @Nonnull PermissionCache permissionCache,
-                                @Nonnull SecurityContainerCache securityContainerCache,
-                                @Nonnull PermissionAssignRepository permissionAssignRepository) {
-        super(userRepository, permissionCache, securityContainerCache, permissionAssignRepository);
-    }
+@RequiredArgsConstructor
+public class CachelessTbacHandler implements TbacHandler {
+    protected final UserRepository userRepository;
+    protected final PermissionCache permissionCache;
+    protected final SecurityContainerCache securityContainerCache;
+    protected final PermissionAssignRepository permissionAssignRepository;
 
     @Nonnull
     @Override
-    public Set<Long> visiblePermissionIds(long userId, long containerId) {
+    public Set<Long> visiblePermissionIds(long userId, long containerId, long appId) {
         Collection<AssignedPermission> assignedPermissions =
-                getAssignedPermissions(userId, containerId, true);
+                getAssignedPermissions(userId, containerId, true, appId);
         return assignedPermissions.stream()
                 .map(assignedPermission -> assignedPermission.getPermission().getId())
                 .collect(Collectors.toSet());
@@ -49,7 +49,7 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
         // [authority]有权限配置的containerId -> 是否分配 -> 是否继承
         Map<Long, Tuple<Boolean, Boolean>> containerAssignMap =
                 authorityContainerAssignInfo(userId, authority);
-        return authorityContainerIds(baseContainerId, containerAssignMap);
+        return analyzeContainerIds(baseContainerId, containerAssignMap);
     }
 
     /**
@@ -59,9 +59,9 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
      * @return 容器ID列表
      */
     @Nonnull
-    public Set<Long> authorityContainerIds(
+    public Set<Long> analyzeContainerIds(
             @Nonnull Map<Long, Tuple<Boolean, Boolean>> containerAssignMap) {
-        return authorityContainerIds(null, containerAssignMap);
+        return analyzeContainerIds(null, containerAssignMap);
     }
 
     /**
@@ -72,7 +72,7 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
      * @return 容器ID列表
      */
     @Nonnull
-    public Set<Long> authorityContainerIds(
+    public Set<Long> analyzeContainerIds(
             @Nullable Long baseContainerId,
             @Nonnull Map<Long, Tuple<Boolean, Boolean>> containerAssignMap) {
         if (containerAssignMap.isEmpty()) {
@@ -86,7 +86,7 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
         List<AnalyzedSecurityContainer> rootContainers =
                 AnalyzedSecurityContainer.filterRoots(analyzedContainers);
         if (baseContainerId != null) {
-            rootContainers = cutContainers(baseContainerId, rootContainers);
+            rootContainers = AnalyzedSecurityContainer.cut(baseContainerId, rootContainers);
         }
         if (rootContainers.isEmpty()) {
             return Set.of();
@@ -155,27 +155,61 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
         }
     }
 
+    /**
+     * 指定权限标识, 获取这个权限标识在各个容器节点上的权限配置信息
+     *
+     * @param userId    用户ID
+     * @param authority 权限标识
+     * @return [authority]有权限配置的containerId -> 是否分配 -> 是否继承
+     */
     @Nonnull
-    private List<AnalyzedSecurityContainer>
-    cutContainers(long baseContainerId, @Nonnull List<AnalyzedSecurityContainer> containers) {
-        if (containers.isEmpty()) {
-            return List.of();
+    @Override
+    public Map<Long, Tuple<Boolean, Boolean>>
+    authorityContainerAssignInfo(long userId, @Nonnull String authority) {
+        return containerAssignInfo(userId, permission -> permission.getAuthorities().contains(authority));
+    }
+
+    @Nonnull
+    @Override
+    public Map<Long, Tuple<Boolean, Boolean>> permissionContainerAssignInfo(long userId, long permissionId) {
+        return containerAssignInfo(userId, permission -> permission.getId() == permissionId);
+    }
+
+    @Nonnull
+    private Map<Long, Tuple<Boolean, Boolean>> containerAssignInfo(
+            long userId, @Nonnull Predicate<Permission> predicate) {
+        Map<Long, Collection<PermissionAssignDetail>> assignDetails = getPermissionAssignDetails(userId);
+        if (assignDetails.isEmpty()) {
+            return Map.of();
         }
-        for (AnalyzedSecurityContainer analyzedSecurityContainer : containers) {
-            long containerId = analyzedSecurityContainer.getContainer().getId();
-            if (containerId == baseContainerId) {
-                return List.of(analyzedSecurityContainer);
+        // 直接分配了权限的containerId -> 是否分配 -> 是否继承
+        Map<Long, Tuple<Boolean, Boolean>> containerAssignMap = new HashMap<>();
+        assignDetails.forEach((containerId, details) -> {
+            for (PermissionAssignDetail detail : details) {
+                Permission permission = detail.getPermission();
+                if (!predicate.test(permission)) {
+                    continue;
+                }
+                boolean assigned = detail.isAssigned();
+                boolean inheritable = detail.isInheritable();
+
+                Tuple<Boolean, Boolean> tuple = containerAssignMap.get(containerId);
+                if (tuple == null) {
+                    containerAssignMap.put(containerId, Tuple.of(assigned, inheritable));
+                } else {
+                    assigned = tuple.getFirst() || assigned;
+                    inheritable = tuple.getSecond() || inheritable;
+                    tuple.setFirst(assigned);
+                    tuple.setSecond(inheritable);
+                }
+                // 如果分配和继承都为true, 则跳过循环.
+                // 因为分配和继承相对禁用和不继承优先级更高, 这两者都是true就没必要继续算下去了
+                if (assigned && inheritable) {
+                    break;
+                }
             }
-            List<AnalyzedSecurityContainer> childTree = analyzedSecurityContainer.getChildTree();
-            if (Lists.isEmpty(childTree)) {
-                return List.of();
-            }
-            List<AnalyzedSecurityContainer> list = cutContainers(baseContainerId, childTree);
-            if (Lists.isNotEmpty(list)) {
-                return list;
-            }
-        }
-        return List.of();
+        });
+        return containerAssignMap;
     }
 
     @Nonnull
@@ -195,7 +229,7 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
         // containerId -> 权限分配信息列表
         Map<Long, Collection<PermissionAssignDetail>> assignMap = getPermissionAssignDetails(userId);
         if (assignMap.isEmpty()) {
-            log.info("用户[{}]在任何安全容器节点上都没有分配权限", userId);
+            log.info("批量过滤容器权限ID列表: 用户[{}]在任何安全容器节点上都没有分配权限", userId);
             HashMap<Long, Set<Long>> result = new HashMap<>();
             for (Long containerId : containerIds) {
                 result.put(containerId, Set.of());
@@ -206,7 +240,7 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
         for (long containerId : containerIds) {
             AnalyzedSecurityContainer container = securityContainerCache.findById(containerId);
             if (container == null) {
-                log.warn("获取用户指定节点上的拥有的所有权限失败, 安全容器[{}]不存在", containerId);
+                log.warn("批量过滤容器权限ID列表:  安全容器[{}]不存在", containerId);
                 result.put(containerId, Set.of());
                 continue;
             }
@@ -221,7 +255,7 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
                 }
                 for (PermissionAssignDetail detail : details) {
                     Permission permission = detail.getPermission();
-                    Long permissionId = permission.getId();
+                    long permissionId = permission.getId();
                     if (!permissionIds.contains(permissionId)) {
                         continue;
                     }
@@ -301,5 +335,203 @@ public class CachelessTbacHandler extends AbstractTbacHandler {
         }
         log.info("用户[{}]在安全容器[{}]上没有此api权限: [{} {}]", userId, containerId, method, path);
         return false;
+    }
+
+    @Nonnull
+    @Override
+    public PermissionAssignable assignable(long userId, long containerId, long appId) {
+        Collection<AssignedPermission> assignedPermissions =
+                getAssignedPermissions(userId, containerId, false, appId);
+        if (assignedPermissions.isEmpty()) {
+            return PermissionAssignable.EMPTY;
+        }
+        Set<Long> groupIds = new HashSet<>();
+        Set<Long> itemIds = new HashSet<>();
+        for (AssignedPermission assignedPermission : assignedPermissions) {
+            Permission permission = assignedPermission.getPermission();
+            if (permission.isGroupSecurity()) {
+                groupIds.add(permission.getGroupId());
+            }
+            if (permission.isItemSecurity()) {
+                itemIds.add(permission.getItemId());
+            }
+        }
+
+        PermissionAssignable assignable = new PermissionAssignable();
+        assignable.setGroupIds(groupIds);
+        assignable.setItemIds(itemIds);
+        return assignable;
+    }
+
+    /**
+     * 获取用户指定节点上的拥有的所有权限
+     *
+     * @param userId          用户ID
+     * @param containerId     节点ID
+     * @param includeChildren 是否包含指定节点的所有层级子节点, 否则只获取在指定节点之上的权限
+     * @return 用户在该节点上拥有的所有权限
+     * @author 宋志宗 on 2024/5/18
+     */
+    @Nonnull
+    public Collection<AssignedPermission> getAssignedPermissions(long userId,
+                                                                 long containerId,
+                                                                 boolean includeChildren) {
+        return getAssignedPermissions(userId, containerId, includeChildren, null);
+    }
+
+    /**
+     * 获取用户指定节点上的拥有的所有权限
+     *
+     * @param userId          用户ID
+     * @param containerId     节点ID
+     * @param includeChildren 是否包含指定节点的所有层级子节点, 否则只获取在指定节点之上的权限
+     * @param appId           应用ID, 如果不为空则只获取该应用下的权限
+     * @return 用户在该节点上拥有的所有权限
+     * @author 宋志宗 on 2024/5/18
+     */
+    @Nonnull
+    public Collection<AssignedPermission> getAssignedPermissions(long userId,
+                                                                 long containerId,
+                                                                 boolean includeChildren,
+                                                                 @Nullable Long appId) {
+        // containerId -> 权限分配信息列表
+        Map<Long, Collection<PermissionAssignDetail>> assignMap = getPermissionAssignDetails(userId);
+        if (assignMap.isEmpty()) {
+            log.info("用户[{}]在任何安全容器节点上都没有分配权限", userId);
+            return List.of();
+        }
+        AnalyzedSecurityContainer container = securityContainerCache.findById(containerId);
+        if (container == null) {
+            log.warn("获取用户指定节点上的拥有的所有权限失败, 安全容器[{}]不存在", containerId);
+            return List.of();
+        }
+        // 权限ID -> 权限分配信息
+        Map<Long, AssignedPermission> assignedPermissionMap = new HashMap<>();
+        SequencedSet<Long> containerParentIds = container.getParentIds();
+        LinkedHashSet<Long> containerIds = new LinkedHashSet<>(containerParentIds);
+        containerIds.add(containerId);
+        for (long loopContainerId : containerIds) {
+            Collection<PermissionAssignDetail> details = assignMap.get(loopContainerId);
+            if (CollectionUtils.isEmpty(details)) {
+                continue;
+            }
+            for (PermissionAssignDetail detail : details) {
+                Permission permission = detail.getPermission();
+                if (appId != null && appId != permission.getAppId()) {
+                    continue;
+                }
+                long permissionId = permission.getId();
+                // 如果是不授权, 则移除
+                if (!detail.isAssigned()) {
+                    assignedPermissionMap.remove(permissionId);
+                    continue;
+                }
+                // 父节点且不继承, 则直接跳过, 不需要加入到权限列表
+                boolean inheritable = detail.isInheritable();
+                if (!inheritable && loopContainerId != containerId) {
+                    // 中间变成了不继承, 那么权限到这一步也就中断了
+                    assignedPermissionMap.remove(permissionId);
+                    continue;
+                }
+                AssignedPermission exists = assignedPermissionMap.get(permissionId);
+                if (exists == null) {
+                    assignedPermissionMap.put(permissionId, new AssignedPermission(detail));
+                } else {
+                    exists.updateMfa(detail.isMfa());
+                }
+            }
+        }
+        if (includeChildren) {
+            Set<Long> assignedContainerIds = assignMap.keySet();
+            List<AnalyzedSecurityContainer> containers =
+                    securityContainerCache.findAllById(assignedContainerIds);
+            for (AnalyzedSecurityContainer analyzedSecurityContainer : containers) {
+                SequencedSet<Long> parentIds = analyzedSecurityContainer.getParentIds();
+                if (!parentIds.contains(containerId)) {
+                    continue;
+                }
+                long analyzedContainerId = analyzedSecurityContainer.getContainer().getId();
+                Collection<PermissionAssignDetail> details = assignMap.get(analyzedContainerId);
+                if (CollectionUtils.isEmpty(details)) {
+                    continue;
+                }
+                for (PermissionAssignDetail detail : details) {
+                    if (!detail.isAssigned()) {
+                        continue;
+                    }
+                    Permission permission = detail.getPermission();
+                    long permissionId = permission.getId();
+                    if (assignedPermissionMap.containsKey(permissionId)) {
+                        continue;
+                    }
+                    assignedPermissionMap.put(permissionId, new AssignedPermission(detail));
+                }
+            }
+        }
+        return assignedPermissionMap.values();
+    }
+
+    /**
+     * 获取用户通过用户组关联的所有权限分配信息
+     *
+     * @param userId 用户ID
+     * @author 宋志宗 on 2024/5/18
+     */
+    @Nonnull
+    public List<PermissionAssign> getAllAssigns(long userId) {
+        List<Long> userGroupIds = userRepository.getGroupIds(userId);
+        if (userGroupIds.isEmpty()) {
+            log.info("用户[{}]未关联任何用户组", userId);
+            return List.of();
+        }
+        return permissionAssignRepository.findAllByUserGroupIdIn(userGroupIds);
+    }
+
+    /**
+     * 获取用户在各个容器节点上的权限配置信息
+     *
+     * @param userId 用户ID
+     * @return 容器ID -> 权限配置信息
+     */
+    @Nonnull
+    public Map<Long, Collection<PermissionAssignDetail>> getPermissionAssignDetails(long userId) {
+        List<PermissionAssign> assigns = getAllAssigns(userId);
+        if (assigns.isEmpty()) {
+            log.info("用户[{}]未配置任何权限", userId);
+            return Map.of();
+        }
+        // 按安全容器ID分组 containerId -> permissionId -> 权限分配信息
+        Map<Long, Map<Long, PermissionAssignDetail>>
+                containerPermissionAssignMap = new HashMap<>();
+        for (PermissionAssign permissionAssign : assigns) {
+            long containerId = permissionAssign.getContainerId();
+            long permissionId = permissionAssign.getPermissionId();
+            Permission permission = permissionCache.findById(permissionId);
+            if (permission == null || !permission.available()) {
+                log.info("用户权限树分析: 权限[{}]不存在或者不可用", permissionId);
+                continue;
+            }
+            boolean mfa = permissionAssign.isMfa();
+            boolean assigned = permissionAssign.isAssigned();
+            boolean inheritable = permissionAssign.isInheritable();
+            Map<Long, PermissionAssignDetail> permissionMap = containerPermissionAssignMap
+                    .computeIfAbsent(containerId, k -> new HashMap<>());
+            PermissionAssignDetail detail = permissionMap.get(permissionId);
+            if (detail == null) {
+                PermissionAssignDetail assignDetail =
+                        new PermissionAssignDetail(mfa, assigned, inheritable, permission);
+                permissionMap.put(permissionId, assignDetail);
+            } else {
+                detail.setMfa(mfa);
+                detail.setAssigned(assigned);
+                detail.setInheritable(inheritable);
+            }
+        }
+        Map<Long, Collection<PermissionAssignDetail>> containerAssignMap = new HashMap<>();
+        containerPermissionAssignMap.forEach((containerId, assignMap) -> {
+            Collection<PermissionAssignDetail> details = assignMap.values();
+            containerAssignMap.put(containerId, details);
+        });
+        return containerAssignMap;
     }
 }

@@ -8,35 +8,18 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
       </profile>
-      <profile name="Annotation profile for iam-authorization" enabled="true">
+      <profile name="Annotation profile for iam" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
         </processorPath>
         <module name="iam-authorization" />
-      </profile>
-      <profile name="Annotation profile for iam-compatibility" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
-        </processorPath>
-        <module name="iam-compatibility" />
-      </profile>
-      <profile name="Annotation profile for iam-core" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
-        </processorPath>
+        <module name="iam-infrastructure" />
         <module name="iam-core" />
+        <module name="iam-organization" />
+        <module name="iam-compatibility" />
       </profile>
       <profile name="Annotation profile for iam-launcher" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -48,7 +31,7 @@
         </processorPath>
         <module name="iam-launcher" />
       </profile>
-      <profile name="Annotation profile for iam-organization" enabled="true">
+      <profile name="Annotation profile for iam-permission-core" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -56,17 +39,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
         </processorPath>
-        <module name="iam-organization" />
-      </profile>
-      <profile name="Annotation profile for iam-permission-api" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
-        </processorPath>
-        <module name="iam-permission-api" />
+        <module name="iam-permission-core" />
       </profile>
       <profile name="Annotation profile for iam-permission-front" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -98,6 +71,16 @@
         </processorPath>
         <module name="iam-permission-tbac" />
       </profile>
+      <profile name="Annotation profile for iam-permission-web" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
+        </processorPath>
+        <module name="iam-permission-web" />
+      </profile>
       <profile name="Annotation profile for iam-persistent-jdbc" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -118,15 +101,6 @@
         </processorPath>
         <module name="iam-persistent-mongo" />
       </profile>
-      <profile name="Annotation profile for iam" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
-        </processorPath>
-        <module name="iam-infrastructure" />
-      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="iam-integration" target="21" />
@@ -142,10 +116,11 @@
       <module name="iam-launcher" options="-parameters" />
       <module name="iam-organization" options="-parameters" />
       <module name="iam-permission" options="-parameters" />
-      <module name="iam-permission-api" options="-parameters" />
+      <module name="iam-permission-core" options="-parameters" />
       <module name="iam-permission-front" options="-parameters" />
       <module name="iam-permission-rbac" options="-parameters" />
       <module name="iam-permission-tbac" options="-parameters" />
+      <module name="iam-permission-web" options="-parameters" />
       <module name="iam-persistent" options="-parameters" />
       <module name="iam-persistent-jdbc" options="-parameters" />
       <module name="iam-persistent-mongo" options="-parameters" />

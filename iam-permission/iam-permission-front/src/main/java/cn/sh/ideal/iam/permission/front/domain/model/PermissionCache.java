@@ -98,7 +98,7 @@ public class PermissionCache implements InitializingBean, ApplicationRunner, Per
                 if (!available) {
                     continue;
                 }
-                Long permissionId = permission.getId();
+                long permissionId = permission.getId();
                 permissionMap.put(permissionId, permission);
                 long itemId = permission.getItemId();
                 itemPermissionsMap.computeIfAbsent(itemId, k -> new ArrayList<>()).add(permission);

@@ -13,6 +13,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class TbacProperties {
 
     /** 是否启用权限缓存, 默认是 */
-    private boolean enableCache = true;
+    private boolean cacheEnabled = true;
 
 }

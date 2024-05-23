@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
  */
 public interface PermissionGroup {
 
-    Long getId();
+    long getId();
 
     long getAppId();
 

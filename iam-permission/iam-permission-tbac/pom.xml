@@ -18,7 +18,7 @@
         </dependency>
         <dependency>
             <groupId>cn.sh.ideal.iam</groupId>
-            <artifactId>iam-permission-api</artifactId>
+            <artifactId>iam-permission-core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
