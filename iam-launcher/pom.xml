@@ -41,6 +41,24 @@
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>native-dev</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <configuration>
+                            <buildArgs>
+                                <arg>-Ob</arg>
+                                <arg>-march=compatibility</arg>
+                                <arg>-H:+AddAllCharsets</arg>
+                            </buildArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <build>

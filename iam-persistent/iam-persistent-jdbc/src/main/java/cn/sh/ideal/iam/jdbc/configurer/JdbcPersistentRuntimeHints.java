@@ -8,6 +8,9 @@ import cn.sh.ideal.iam.jdbc.permission.front.PermissionItemDO;
 import cn.sh.ideal.iam.jdbc.permission.rbac.RbacPermissionAssignDO;
 import cn.sh.ideal.iam.jdbc.permission.tbac.SecurityContainerDO;
 import cn.sh.ideal.iam.jdbc.permission.tbac.TbacPermissionAssignDO;
+import org.hibernate.binder.internal.CommentBinder;
+import org.hibernate.type.descriptor.jdbc.LongVarbinaryJdbcType;
+import org.hibernate.type.descriptor.jdbc.VarcharJdbcType;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
@@ -24,6 +27,10 @@ public class JdbcPersistentRuntimeHints implements RuntimeHintsRegistrar {
     @Override
     public void registerHints(@Nonnull RuntimeHints hints, ClassLoader classLoader) {
         List<TypeReference> references = List.of(
+                // hibernate
+                TypeReference.of(CommentBinder.class),
+                TypeReference.of(VarcharJdbcType.class),
+                TypeReference.of(LongVarbinaryJdbcType.class),
                 // organization
                 TypeReference.of(PlatformDO.class),
                 TypeReference.of(TenantDO.class),

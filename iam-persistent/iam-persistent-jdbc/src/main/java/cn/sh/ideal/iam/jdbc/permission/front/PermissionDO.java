@@ -3,8 +3,8 @@ package cn.sh.ideal.iam.jdbc.permission.front;
 import cn.idealio.framework.lang.StringUtils;
 import cn.idealio.framework.util.Asserts;
 import cn.idealio.framework.util.data.hibernate.ManualIDGenerator;
-import cn.idealio.framework.util.data.jpa.LongSetConverter;
-import cn.idealio.framework.util.data.jpa.StringSetConverter;
+import cn.idealio.framework.util.data.jpa.LongSetBinaryConverter;
+import cn.idealio.framework.util.data.jpa.StringSetGzipConverter;
 import cn.sh.ideal.iam.permission.front.domain.model.Permission;
 import cn.sh.ideal.iam.permission.front.domain.model.PermissionItem;
 import cn.sh.ideal.iam.permission.front.dto.args.CreatePermissionArgs;
@@ -14,6 +14,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.type.descriptor.jdbc.LongVarbinaryJdbcType;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.annotation.Nonnull;
@@ -69,26 +71,30 @@ public class PermissionDO implements Permission {
 
     @Nonnull
     @Comment("api pattern清单")
-    @Convert(converter = StringSetConverter.class)
-    @Column(nullable = false, length = 2000, name = "api_patterns_")
+    @JdbcType(LongVarbinaryJdbcType.class)
+    @Convert(converter = StringSetGzipConverter.class)
+    @Column(nullable = false, name = "api_patterns_")
     private Set<String> apiPatterns = new LinkedHashSet<>();
 
     @Nonnull
     @Comment("明确的api接口地址清单")
-    @Convert(converter = StringSetConverter.class)
-    @Column(nullable = false, length = 2000, name = "specific_apis_")
+    @JdbcType(LongVarbinaryJdbcType.class)
+    @Convert(converter = StringSetGzipConverter.class)
+    @Column(nullable = false, name = "specific_apis_")
     private Set<String> specificApis = new LinkedHashSet<>();
 
     @Nonnull
     @Comment("权限标识列表")
-    @Convert(converter = StringSetConverter.class)
-    @Column(nullable = false, length = 2000, name = "authorities_")
+    @JdbcType(LongVarbinaryJdbcType.class)
+    @Convert(converter = StringSetGzipConverter.class)
+    @Column(nullable = false, name = "authorities_")
     private Set<String> authorities = new LinkedHashSet<>();
 
     @Nonnull
     @Comment("子权限ID列表")
-    @Convert(converter = LongSetConverter.class)
-    @Column(nullable = false, length = 2000, name = "child_ids_")
+    @JdbcType(LongVarbinaryJdbcType.class)
+    @Convert(converter = LongSetBinaryConverter.class)
+    @Column(nullable = false, name = "child_ids_")
     private Set<Long> childIds = new LinkedHashSet<>();
 
     @Comment("是否拥有所在配置项安全权限")

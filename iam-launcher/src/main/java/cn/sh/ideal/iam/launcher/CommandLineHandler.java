@@ -60,7 +60,7 @@ public class CommandLineHandler {
         }
         String arch = System.getProperty("os.arch");
         String vmVersion = System.getProperty("java.vm.version");
-        System.out.println("ideal-common-service version " + version + " " + buildTime + " " + osName + "/" + arch + " vm " + vmVersion);
+        System.out.println("iam version " + version + " " + buildTime + " " + osName + "/" + arch + " vm " + vmVersion);
     }
 
     static void version() {

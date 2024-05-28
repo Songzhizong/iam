@@ -1,0 +1,7 @@
+#! /bin/sh
+cd "$(dirname "$0")"/../.. || exit
+#git pull
+mvn clean install -Pjdbc -T 1C
+cd ./iam-launcher || exit
+mvn clean package -Pnative,jdbc,native-dev native:compile-no-fork
+cp ./target/iam-launcher ../iam
