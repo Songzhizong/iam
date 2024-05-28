@@ -13,6 +13,9 @@ public interface Tenant {
     /** 主键 */
     long getId();
 
+    @Nonnull
+    String getPlatform();
+
     /** 安全容器ID */
     @Nullable
     Long getContainerId();
@@ -43,6 +46,5 @@ public interface Tenant {
         tenantInfo.setNote(getNote());
         tenantInfo.setSystemEdition(getSystemEdition());
         return tenantInfo;
-
     }
 }

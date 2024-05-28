@@ -11,10 +11,7 @@ import cn.sh.ideal.iam.organization.domain.model.Tenant;
 import cn.sh.ideal.iam.organization.dto.args.CreateTenantArgs;
 import cn.sh.ideal.iam.organization.dto.resp.TenantInfo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -34,7 +31,7 @@ public class TenantController {
      * <pre>
      *   <b>需要权限: iam:tenant:create</b>
      *   <p><b>请求示例</b></p>
-     *   POST {{base_url}}/iam/tenants
+     *   POST {{base_url}}/iam/platforms/customer/tenants
      *   Content-Type: application/json
      *
      *   {
@@ -66,12 +63,13 @@ public class TenantController {
      *
      * @author 宋志宗 on 2024/5/14
      */
-    @PostMapping("/tenants")
+    @PostMapping("/platforms/{platform}/tenants")
     @HasAuthority("iam:tenant:create")
     @Audit(name = "新增租户", code = AuditConstants.CREATE_TENANT,
             action = AuditAction.CREATE, classification = AuditConstants.TENANT)
-    public Result<TenantInfo> create(@RequestBody CreateTenantArgs args) {
-        Tenant tenant = tenantService.create(args);
+    public Result<TenantInfo> create(@PathVariable String platform,
+                                     @RequestBody CreateTenantArgs args) {
+        Tenant tenant = tenantService.create(platform, args);
         TenantInfo tenantInfo = tenant.toInfo();
         Result<TenantInfo> result = Result.success(tenantInfo);
         Audits.modify(audit -> {

@@ -9,9 +9,7 @@ import cn.sh.ideal.iam.infrastructure.configure.IamIDGenerator;
 import cn.sh.ideal.iam.infrastructure.constant.AuditConstants;
 import cn.sh.ideal.iam.infrastructure.permission.tbac.SecurityContainerValidator;
 import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
-import cn.sh.ideal.iam.organization.domain.model.EntityFactory;
-import cn.sh.ideal.iam.organization.domain.model.Tenant;
-import cn.sh.ideal.iam.organization.domain.model.TenantRepository;
+import cn.sh.ideal.iam.organization.domain.model.*;
 import cn.sh.ideal.iam.organization.dto.args.CreateTenantArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,13 +32,15 @@ public class TenantService {
     private final EntityFactory entityFactory;
     private final TenantRepository tenantRepository;
     private final OrganizationI18nReader i18nReader;
+    private final PlatformRepository platformRepository;
     @Nullable
     @Autowired(required = false)
     @SuppressWarnings("SpringJavaAutowiredFieldsWarningInspection")
     private final SecurityContainerValidator securityContainerValidator;
 
     @Transactional(rollbackFor = Throwable.class)
-    public Tenant create(@Nonnull CreateTenantArgs args) {
+    public Tenant create(@Nonnull String platform,
+                         @Nonnull CreateTenantArgs args) {
         String abbreviation = args.getAbbreviation();
         if (StringUtils.isNotBlank(abbreviation)) {
             if (tenantRepository.existsByAbbreviation(abbreviation)) {
@@ -58,7 +58,8 @@ public class TenantService {
         }
         args.setAbbreviation(abbreviation);
         long id = idGenerator.generate();
-        Tenant tenant = entityFactory.tenant(id, args, i18nReader);
+        Platform platformEntity = platformRepository.requireByCode(platform);
+        Tenant tenant = entityFactory.tenant(id, platformEntity, args, i18nReader);
         Tenant insert = tenantRepository.insert(tenant);
         Audits.modify(audit -> {
             audit.containerId(insert.getContainerId());

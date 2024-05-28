@@ -2,6 +2,7 @@ package cn.sh.ideal.iam.organization.domain.model;
 
 import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
 import cn.sh.ideal.iam.organization.dto.args.CreateGroupArgs;
+import cn.sh.ideal.iam.organization.dto.args.CreatePlatformArgs;
 import cn.sh.ideal.iam.organization.dto.args.CreateTenantArgs;
 import cn.sh.ideal.iam.organization.dto.args.CreateUserArgs;
 
@@ -13,16 +14,22 @@ import javax.annotation.Nonnull;
 public interface EntityFactory {
 
     @Nonnull
-    Tenant tenant(long id, @Nonnull CreateTenantArgs args,
+    Platform platform(@Nonnull CreatePlatformArgs args,
+                      @Nonnull OrganizationI18nReader i18nReader);
+
+    @Nonnull
+    Tenant tenant(long id,
+                  @Nonnull Platform platform,
+                  @Nonnull CreateTenantArgs args,
                   @Nonnull OrganizationI18nReader i18nReader);
 
     @Nonnull
-    UserGroup group(long tenantId,
+    UserGroup group(@Nonnull Tenant tenant,
                     @Nonnull CreateGroupArgs args,
                     @Nonnull OrganizationI18nReader i18nReader);
 
     @Nonnull
-    User user(long tenantId,
+    User user(@Nonnull Tenant tenant,
               @Nonnull CreateUserArgs args,
               @Nonnull OrganizationI18nReader i18nReader);
 }

@@ -4,6 +4,7 @@ import cn.idealio.framework.lang.StringUtils;
 import cn.idealio.framework.util.Asserts;
 import cn.idealio.framework.util.data.hibernate.ManualIDGenerator;
 import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
+import cn.sh.ideal.iam.organization.domain.model.Platform;
 import cn.sh.ideal.iam.organization.domain.model.Tenant;
 import cn.sh.ideal.iam.organization.dto.args.CreateTenantArgs;
 import jakarta.persistence.*;
@@ -26,7 +27,8 @@ import javax.annotation.Nullable;
 @Table(name = TenantDO.TABLE_NAME,
         indexes = {
                 @Index(name = "uidx01_" + TenantDO.TABLE_NAME, columnList = "abbreviation_", unique = true),
-                @Index(name = "idx01_" + TenantDO.TABLE_NAME, columnList = "container_id_"),
+                @Index(name = "idx01_" + TenantDO.TABLE_NAME, columnList = "platform_"),
+                @Index(name = "idx02_" + TenantDO.TABLE_NAME, columnList = "container_id_"),
         })
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression", "NullableProblems"})
 public class TenantDO implements Tenant {
@@ -38,6 +40,11 @@ public class TenantDO implements Tenant {
     @GeneratedValue(generator = TABLE_NAME)
     @GenericGenerator(name = TABLE_NAME, type = ManualIDGenerator.class)
     private long id = -1L;
+
+    @Nonnull
+    @Comment("所属平台")
+    @Column(nullable = false, name = "platform_")
+    private String platform = "";
 
     @Comment("安全容器ID")
     @Column(nullable = false, name = "container_id_")
@@ -68,7 +75,9 @@ public class TenantDO implements Tenant {
     private long version = 0;
 
     @Nonnull
-    public static TenantDO create(long id, @Nonnull CreateTenantArgs args,
+    public static TenantDO create(long id,
+                                  @Nonnull Platform platform,
+                                  @Nonnull CreateTenantArgs args,
                                   @Nonnull OrganizationI18nReader i18nReader) {
         String name = args.getName();
         String abbreviation = args.getAbbreviation();
@@ -76,6 +85,7 @@ public class TenantDO implements Tenant {
         Asserts.notBlank(abbreviation, () -> i18nReader.getMessage("tenant.abbreviation.blank"));
         TenantDO tenantDO = new TenantDO();
         tenantDO.setId(id);
+        tenantDO.setPlatform(platform.getCode());
         tenantDO.setContainerId(args.getContainerId());
         tenantDO.setName(name);
         tenantDO.setAbbreviation(abbreviation);

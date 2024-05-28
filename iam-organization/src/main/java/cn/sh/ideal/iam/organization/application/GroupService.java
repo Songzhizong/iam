@@ -48,7 +48,7 @@ public class GroupService {
             }
         }
         args.setContainerId(containerId);
-        UserGroup group = entityFactory.group(tenantId, args, i18nReader);
+        UserGroup group = entityFactory.group(tenant, args, i18nReader);
         UserGroup insert = userGroupRepository.insert(group);
         entityAudit(insert);
         return insert;

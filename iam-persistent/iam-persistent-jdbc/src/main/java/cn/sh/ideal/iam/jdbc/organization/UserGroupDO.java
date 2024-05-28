@@ -3,6 +3,7 @@ package cn.sh.ideal.iam.jdbc.organization;
 import cn.idealio.framework.util.Asserts;
 import cn.idealio.framework.util.data.hibernate.JpaIDGenerator;
 import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
+import cn.sh.ideal.iam.organization.domain.model.Tenant;
 import cn.sh.ideal.iam.organization.domain.model.UserGroup;
 import cn.sh.ideal.iam.organization.dto.args.CreateGroupArgs;
 import jakarta.persistence.*;
@@ -38,6 +39,11 @@ public class UserGroupDO implements UserGroup {
     @GenericGenerator(name = TABLE_NAME, type = JpaIDGenerator.class)
     private Long id = null;
 
+    @Nonnull
+    @Comment("所属平台")
+    @Column(nullable = false, name = "platform_")
+    private String platform = "";
+
     @Comment("所属租户ID")
     @Column(nullable = false, name = "tenant_id_")
     private long tenantId = -1L;
@@ -61,7 +67,7 @@ public class UserGroupDO implements UserGroup {
     private long version = 0;
 
     @Nonnull
-    public static UserGroupDO create(long tenantId,
+    public static UserGroupDO create(@Nonnull Tenant tenant,
                                      @Nonnull CreateGroupArgs args,
                                      @Nonnull OrganizationI18nReader i18nReader) {
         Long containerId = args.getContainerId();
@@ -69,7 +75,8 @@ public class UserGroupDO implements UserGroup {
         String note = args.getNote();
         Asserts.notBlank(name, () -> i18nReader.getMessage("user_group.name.blank"));
         UserGroupDO groupDO = new UserGroupDO();
-        groupDO.setTenantId(tenantId);
+        groupDO.setPlatform(tenant.getPlatform());
+        groupDO.setTenantId(tenant.getId());
         groupDO.setContainerId(containerId);
         groupDO.setName(name);
         groupDO.setNote(note);

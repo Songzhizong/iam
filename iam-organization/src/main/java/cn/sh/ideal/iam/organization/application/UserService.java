@@ -63,7 +63,7 @@ public class UserService {
             throw new BadRequestException(i18nReader.getMessage("user.account_used"));
         }
 
-        User user = entityFactory.user(tenantId, args, i18nReader);
+        User user = entityFactory.user(tenant, args, i18nReader);
         user = userRepository.insert(user);
 
         Set<Long> groupIds = args.getUserGroupIds();

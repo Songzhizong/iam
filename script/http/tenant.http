@@ -1,5 +1,5 @@
 ### 新增租户
-POST {{base_url}}/iam/tenants
+POST {{base_url}}/iam/platforms/customer/tenants
 Content-Type: application/json
 Accept-Language: en-US
 

@@ -6,6 +6,7 @@ import cn.idealio.framework.util.data.hibernate.JpaIDGenerator;
 import cn.sh.ideal.iam.infrastructure.encryption.EncryptionProvider;
 import cn.sh.ideal.iam.infrastructure.encryption.EncryptionUtils;
 import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
+import cn.sh.ideal.iam.organization.domain.model.Tenant;
 import cn.sh.ideal.iam.organization.domain.model.User;
 import cn.sh.ideal.iam.organization.dto.args.CreateUserArgs;
 import jakarta.persistence.*;
@@ -44,6 +45,11 @@ public class UserDO implements User {
     @GeneratedValue(generator = TABLE_NAME)
     @GenericGenerator(name = TABLE_NAME, type = JpaIDGenerator.class)
     private Long id = null;
+
+    @Nonnull
+    @Comment("所属平台")
+    @Column(nullable = false, name = "platform_")
+    private String platform = "";
 
     @Comment("所属租户ID")
     @Column(nullable = false, name = "tenant_id_")
@@ -91,13 +97,14 @@ public class UserDO implements User {
     private long updatedTime = 0;
 
     @Nonnull
-    public static UserDO create(long tenantId,
+    public static UserDO create(@Nonnull Tenant tenant,
                                 @Nonnull CreateUserArgs args,
                                 @Nonnull OrganizationI18nReader i18nReader) {
         String name = args.getName();
         Asserts.notBlank(name, () -> i18nReader.getMessage("user.name.blank"));
         UserDO userDO = new UserDO();
-        userDO.setTenantId(tenantId);
+        userDO.setPlatform(tenant.getPlatform());
+        userDO.setTenantId(tenant.getId());
         userDO.setContainerId(args.getContainerId());
         userDO.setName(name);
         userDO.setAccount(args.getAccount());

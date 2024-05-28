@@ -1,0 +1,32 @@
+### 创建平台
+POST {{base_url}}/iam/platforms
+Content-Type: application/json
+
+{
+  "code": "customer",
+  "name": "客户平台",
+  "openName": "苏州算力平台",
+  "note": "苏州算力平台",
+  "registrable": true,
+  "config": "{}"
+}
+
+### 更新平台信息
+PUT {{base_url}}/iam/platforms/customer
+Content-Type: application/json
+
+{
+  "name": "客户平台",
+  "openName": "苏州算力平台",
+  "note": "苏州算力平台1",
+  "registrable": false,
+  "config": "{}"
+}
+
+### 删除平台
+DELETE {{base_url}}/iam/platforms/customer
+
+### 获取所有平台列表
+GET {{base_url}}/iam/platforms
+
+###
