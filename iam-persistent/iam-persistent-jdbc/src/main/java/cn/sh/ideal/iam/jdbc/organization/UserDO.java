@@ -27,13 +27,12 @@ import javax.annotation.Nullable;
 @Setter
 @Entity(name = UserDO.TABLE_NAME)
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = UserDO.TABLE_NAME,
-        indexes = {
-                @Index(name = "uidx01_" + UserDO.TABLE_NAME, columnList = "tenant_id_,account_", unique = true),
-                @Index(name = "idx01_" + UserDO.TABLE_NAME, columnList = "container_id_"),
-                @Index(name = "idx02_" + UserDO.TABLE_NAME, columnList = "phone_"),
-                @Index(name = "idx03_" + UserDO.TABLE_NAME, columnList = "email_"),
-        })
+@Table(name = UserDO.TABLE_NAME, indexes = {
+        @Index(name = "uidx01_" + UserDO.TABLE_NAME, columnList = "tenant_id_,account_", unique = true),
+        @Index(name = "idx01_" + UserDO.TABLE_NAME, columnList = "container_id_"),
+        @Index(name = "idx02_" + UserDO.TABLE_NAME, columnList = "phone_"),
+        @Index(name = "idx03_" + UserDO.TABLE_NAME, columnList = "email_"),
+})
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression", "NullableProblems"})
 public class UserDO implements User {
     public static final String TABLE_NAME = "iam_user";

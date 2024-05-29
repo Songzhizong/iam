@@ -15,25 +15,31 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
         </processorPath>
-        <module name="iam-permission-rbac" />
         <module name="iam-factor-sms" />
-        <module name="iam-authorization" />
-        <module name="iam-connector" />
-        <module name="iam-factor-core" />
-        <module name="iam-launcher" />
+        <module name="iam-account-sync" />
         <module name="iam-factor-all" />
-        <module name="iam-factor-email" />
-        <module name="iam-persistent-mongo" />
+        <module name="iam-idp-oauth2" />
+        <module name="iam-idp-core" />
         <module name="iam-persistent-jdbc" />
         <module name="iam-permission-front" />
-        <module name="iam-infrastructure" />
-        <module name="iam-permission-tbac" />
+        <module name="iam-linking-oauth2" />
         <module name="iam-permission-core" />
+        <module name="iam-authorization-apikey" />
         <module name="iam-core" />
-        <module name="iam-factor-otp" />
+        <module name="iam-linking-core" />
         <module name="iam-organization" />
         <module name="iam-permission-web" />
         <module name="iam-event" />
+        <module name="iam-permission-rbac" />
+        <module name="iam-authorization-core" />
+        <module name="iam-factor-core" />
+        <module name="iam-launcher" />
+        <module name="iam-factor-email" />
+        <module name="iam-persistent-mongo" />
+        <module name="iam-infrastructure" />
+        <module name="iam-permission-tbac" />
+        <module name="iam-authorization-standard" />
+        <module name="iam-factor-otp" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -44,9 +50,12 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="iam" options="-parameters" />
+      <module name="iam-account-sync" options="-parameters" />
       <module name="iam-authorization" options="-parameters" />
+      <module name="iam-authorization-apikey" options="-parameters" />
+      <module name="iam-authorization-core" options="-parameters" />
+      <module name="iam-authorization-standard" options="-parameters" />
       <module name="iam-compatibility" options="-parameters" />
-      <module name="iam-connector" options="-parameters" />
       <module name="iam-core" options="-parameters" />
       <module name="iam-event" options="-parameters" />
       <module name="iam-factor" options="-parameters" />
@@ -55,8 +64,14 @@
       <module name="iam-factor-email" options="-parameters" />
       <module name="iam-factor-otp" options="-parameters" />
       <module name="iam-factor-sms" options="-parameters" />
+      <module name="iam-idp" options="-parameters" />
+      <module name="iam-idp-core" options="-parameters" />
+      <module name="iam-idp-oauth2" options="-parameters" />
       <module name="iam-infrastructure" options="-parameters" />
       <module name="iam-launcher" options="-parameters" />
+      <module name="iam-linking" options="-parameters" />
+      <module name="iam-linking-core" options="-parameters" />
+      <module name="iam-linking-oauth2" options="-parameters" />
       <module name="iam-organization" options="-parameters" />
       <module name="iam-permission" options="-parameters" />
       <module name="iam-permission-core" options="-parameters" />

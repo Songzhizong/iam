@@ -108,12 +108,12 @@ public class SecurityContainerCache implements InitializingBean, ApplicationRunn
 
     @Override
     public void afterPropertiesSet() {
+        refresh(true);
         securityContainerRepository.addListener(this);
     }
 
     @Override
     public void run(ApplicationArguments args) {
-        refresh(true);
         Duration duration = Duration.ofSeconds(5);
         Asyncs.scheduleAtFixedRate(duration, duration, () -> {
             try {

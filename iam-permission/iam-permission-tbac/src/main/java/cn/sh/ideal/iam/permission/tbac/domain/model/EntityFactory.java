@@ -34,9 +34,9 @@ public interface EntityFactory {
 
     @Nonnull
     PermissionAssign assignPermission(long containerId,
-                                       long userGroupId,
-                                       boolean assign,
-                                       boolean inheritable,
-                                       boolean mfa,
-                                       @Nonnull Permission permission);
+                                      long userGroupId,
+                                      boolean assign,
+                                      boolean inheritable,
+                                      boolean mfa,
+                                      @Nonnull Permission permission);
 }

@@ -10,20 +10,22 @@
     </parent>
     <groupId>cn.sh.ideal.iam</groupId>
     <artifactId>iam</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>6.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
+        <module>iam-idp</module>
         <module>iam-core</module>
+        <module>iam-event</module>
+        <module>iam-factor</module>
+        <module>iam-linking</module>
         <module>iam-launcher</module>
-        <module>iam-connector</module>
         <module>iam-permission</module>
         <module>iam-persistent</module>
+        <module>iam-account-sync</module>
         <module>iam-organization</module>
         <module>iam-authorization</module>
         <module>iam-infrastructure</module>
-        <module>iam-factor</module>
-        <module>iam-event</module>
     </modules>
 
     <properties>

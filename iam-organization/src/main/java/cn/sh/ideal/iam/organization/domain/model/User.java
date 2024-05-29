@@ -11,6 +11,9 @@ public interface User {
     /** 主键 */
     Long getId();
 
+    @Nonnull
+    String getPlatform();
+
     /** 所属租户ID */
     long getTenantId();
 

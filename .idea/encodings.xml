@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="file://$PROJECT_DIR$/iam-account-sync/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-authorization/iam-authorization-apikey/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-authorization/iam-authorization-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-authorization/iam-authorization-standard/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-authorization/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-authorization/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-compatibility/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/iam-connector/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-core/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-event/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-factor/iam-factor-all/src/main/java" charset="UTF-8" />
@@ -13,9 +17,17 @@
     <file url="file://$PROJECT_DIR$/iam-factor/iam-factor-sms/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-factor/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-factor/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-idp/iam-idp-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-idp/iam-idp-oauth2/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-idp/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-idp/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-infrastructure/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-integration/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-launcher/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-linking/iam-linking-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-linking/iam-linking-oauth2/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-linking/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-linking/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-organization/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-permission/iam-permission-core/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-permission/iam-permission-front/src/main/java" charset="UTF-8" />

@@ -36,4 +36,7 @@ public interface UserRepository {
 
     /** 保存用户关联的用户组 */
     void saveGroups(long userId, @Nonnull Collection<UserGroup> groups);
+
+    @Nonnull
+    User requireById(long id);
 }

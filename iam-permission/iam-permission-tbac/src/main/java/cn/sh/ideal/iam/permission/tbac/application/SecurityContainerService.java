@@ -16,8 +16,7 @@ import cn.sh.ideal.iam.permission.tbac.dto.args.CreateSecurityContainerArgs;
 import cn.sh.ideal.iam.permission.tbac.dto.resp.SecurityContainerTreeNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +32,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class SecurityContainerService implements ApplicationRunner {
+public class SecurityContainerService implements InitializingBean {
     private static final Duration CHANGE_PARENT_LOCK_TIMEOUT = Duration.ofSeconds(30);
     private final String lockValue = UUID.randomUUID().toString().replace("-", "");
     private final TbacHandler tbacHandler;
@@ -234,7 +233,7 @@ public class SecurityContainerService implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) {
+    public void afterPropertiesSet() throws Exception {
         if (securityContainerRepository.exists()) {
             return;
         }

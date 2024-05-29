@@ -1,0 +1,17 @@
+### 生成totp
+GET {{base_url}}/iam/test/generate
+    ?userId=627104330800955392
+
+### 确认totp
+POST {{base_url}}/iam/test/confirmation
+    ?userId=627104330800955392
+    &code=338727
+
+### 验证otp
+POST {{base_url}}/iam/test/authenticate
+    ?userId=627104330800955392
+    &code=688812
+
+### 删除totp
+DELETE {{base_url}}/iam/test/delete
+    ?userId=627104330800955392

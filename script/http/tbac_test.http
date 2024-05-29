@@ -46,6 +46,12 @@ GET {{base_url}}/iam/tbac/test/has_api_permission
     &method=GET
     &path=/cmdb/model
 
+### 判断是否需要mfa验证
+GET {{base_url}}/iam/tbac/test/need_mfa
+    ?userId=627104330800955392
+    &containerId=1
+    &permissionId=512879011144138752
+
 ### 刷新用户权限缓存
 POST {{base_url}}/iam/tbac/test/update_user_auth_latest_refresh_timestamp
     ?userId=622790509043122176

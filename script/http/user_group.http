@@ -1,5 +1,5 @@
 ### 创建用户组
-POST {{base_url}}/iam/user_groups?tenantId=622606755238510592
+POST {{base_url}}/iam/user_groups?tenantId=627104129180762112
 Content-Type: application/json
 
 {

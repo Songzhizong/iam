@@ -117,11 +117,11 @@ public class PermissionCache implements InitializingBean, ApplicationRunner, Per
     @Override
     public void afterPropertiesSet() {
         permissionRepository.addListener(this);
+        refresh();
     }
 
     @Override
     public void run(ApplicationArguments args) {
-        refresh();
         Duration duration = Duration.ofSeconds(5);
         Asyncs.scheduleAtFixedRate(duration, duration, () -> {
             try {

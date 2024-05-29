@@ -1,5 +1,8 @@
 package cn.sh.ideal.iam.jdbc.configurer;
 
+import cn.sh.ideal.iam.jdbc.authorization.standard.AccessTokenDO;
+import cn.sh.ideal.iam.jdbc.authorization.standard.AuthClientDO;
+import cn.sh.ideal.iam.jdbc.factor.otp.UserTotpDO;
 import cn.sh.ideal.iam.jdbc.organization.*;
 import cn.sh.ideal.iam.jdbc.permission.front.AppDO;
 import cn.sh.ideal.iam.jdbc.permission.front.PermissionDO;
@@ -31,6 +34,11 @@ public class JdbcPersistentRuntimeHints implements RuntimeHintsRegistrar {
                 TypeReference.of(CommentBinder.class),
                 TypeReference.of(VarcharJdbcType.class),
                 TypeReference.of(LongVarbinaryJdbcType.class),
+                // authorization.standard
+                TypeReference.of(AccessTokenDO.class),
+                TypeReference.of(AuthClientDO.class),
+                // factor.otp
+                TypeReference.of(UserTotpDO.class),
                 // organization
                 TypeReference.of(PlatformDO.class),
                 TypeReference.of(TenantDO.class),

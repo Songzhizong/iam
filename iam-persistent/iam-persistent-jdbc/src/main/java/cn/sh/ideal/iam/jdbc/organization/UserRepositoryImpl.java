@@ -1,9 +1,12 @@
 package cn.sh.ideal.iam.jdbc.organization;
 
+import cn.idealio.framework.exception.ResourceNotFoundException;
+import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.User;
 import cn.sh.ideal.iam.organization.domain.model.UserGroup;
 import cn.sh.ideal.iam.organization.domain.model.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Nonnull;
@@ -16,9 +19,11 @@ import java.util.stream.Collectors;
 /**
  * @author 宋志宗 on 2024/5/15
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
+    private final IamI18nReader i18nReader;
     private final UserJpaRepository userJpaRepository;
     private final UserGroupJpaRepository userGroupJpaRepository;
     private final UserGroupRelJpaRepository userGroupRelJpaRepository;
@@ -95,5 +100,14 @@ public class UserRepositoryImpl implements UserRepository {
             return UserGroupRelDO.create(userId, groupId);
         }).toList();
         userGroupRelJpaRepository.saveAll(entities);
+    }
+
+    @Nonnull
+    @Override
+    public User requireById(long id) {
+        return findById(id).orElseThrow(() -> {
+            log.info("用户不存在: {}", id);
+            return new ResourceNotFoundException(i18nReader.getMessage1("user.not_found", id));
+        });
     }
 }

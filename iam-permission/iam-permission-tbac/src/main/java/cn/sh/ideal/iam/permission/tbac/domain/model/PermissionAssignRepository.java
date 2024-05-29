@@ -18,7 +18,7 @@ public interface PermissionAssignRepository {
                                                                    @Nonnull Collection<Long> permissionItemIds);
 
     int deleteAllByContainerIdAndUserGroupIdAndPermissionIdIn(long containerId,
-                                                               long userGroupId,
+                                                              long userGroupId,
                                                               @Nonnull Collection<Long> permissionIds);
 
     @Nonnull

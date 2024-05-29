@@ -179,9 +179,9 @@ public class CacheableTbacHandler extends CachelessTbacHandler {
     /**
      * 权限分配缓存包装器
      *
-     * @param cacheTimestamp 缓存产生时的毫秒时间戳
-     * @param assigns        权限分配列表
-     * @param permissionAssigns        权限ID -> 权限分配列表
+     * @param cacheTimestamp    缓存产生时的毫秒时间戳
+     * @param assigns           权限分配列表
+     * @param permissionAssigns 权限ID -> 权限分配列表
      */
     private record PermissionAssignsCacheWrapper(
             long cacheTimestamp,

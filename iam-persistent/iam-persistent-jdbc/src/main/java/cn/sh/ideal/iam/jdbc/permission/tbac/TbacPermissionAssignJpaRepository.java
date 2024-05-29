@@ -20,8 +20,7 @@ public interface TbacPermissionAssignJpaRepository extends JpaRepository<TbacPer
     @Query(value = """
             DELETE FROM iam_tbac_permission_assign AS e
                    WHERE e.container_id_ = :containerId
-                     AND e.user_group_id_ = :userGroupId
-            """, nativeQuery = true)
+                     AND e.user_group_id_ = :userGroupId""", nativeQuery = true)
     int deleteAllByContainerIdAndUserGroupId(@Param("containerId") long containerId,
                                              @Param("userGroupId") long userGroupId);
 
@@ -32,8 +31,7 @@ public interface TbacPermissionAssignJpaRepository extends JpaRepository<TbacPer
             DELETE FROM iam_tbac_permission_assign AS e
                    WHERE e.container_id_ = :containerId
                      AND e.user_group_id_ = :userGroupId
-                     AND e.permission_item_id_ in (:permissionItemIds)
-            """, nativeQuery = true)
+                     AND e.permission_item_id_ in (:permissionItemIds)""", nativeQuery = true)
     void deleteAllByContainerIdAndUserGroupIdAndPermissionItemIdIn(@Param("containerId") long containerId,
                                                                    @Param("userGroupId") long userGroupId,
                                                                    @Param("permissionItemIds")
@@ -45,11 +43,10 @@ public interface TbacPermissionAssignJpaRepository extends JpaRepository<TbacPer
             DELETE FROM iam_tbac_permission_assign AS e
                    WHERE e.container_id_ = :containerId
                      AND e.user_group_id_ = :userGroupId
-                     AND e.permission_id_ in (:permissionIds)
-            """, nativeQuery = true)
+                     AND e.permission_id_ in (:permissionIds)""", nativeQuery = true)
     int deleteAllByContainerIdAndUserGroupIdAndPermissionIdIn(@Param("containerId") long containerId,
-                                                               @Param("userGroupId") long userGroupId,
-                                                               @Param("permissionIds")
+                                                              @Param("userGroupId") long userGroupId,
+                                                              @Param("permissionIds")
                                                               @Nonnull Collection<Long> permissionIds);
 
     @Modifying
@@ -58,8 +55,7 @@ public interface TbacPermissionAssignJpaRepository extends JpaRepository<TbacPer
             DELETE FROM iam_tbac_permission_assign AS e
                    WHERE e.app_id_ = :appId
                      AND e.container_id_ = :containerId
-                     AND e.user_group_id_ in (:userGroupId)
-            """, nativeQuery = true)
+                     AND e.user_group_id_ = :userGroupId""", nativeQuery = true)
     void deleteAllByAppIdAndContainerIdAndUserGroupId(@Param("appId") long appId,
                                                       @Param("containerId") long containerId,
                                                       @Param("userGroupId") long userGroupId);
