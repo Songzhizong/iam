@@ -56,7 +56,7 @@ public class PlatformService {
             return new ResourceNotFoundException(i18nReader.getMessage("platform.not.found"));
         });
         platform.update(args, i18nReader);
-        Asyncs.execAndDelayVirtual(INVALIDATE_CACHE_DELAY, () -> cache.require(code));
+        Asyncs.execAndDelayVirtual(INVALIDATE_CACHE_DELAY, () -> cache.invalidate(code));
         return platformRepository.update(platform);
     }
 
@@ -69,7 +69,7 @@ public class PlatformService {
             return null;
         }
         platform.delete();
-        Asyncs.execAndDelayVirtual(INVALIDATE_CACHE_DELAY, () -> cache.require(code));
+        Asyncs.execAndDelayVirtual(INVALIDATE_CACHE_DELAY, () -> cache.invalidate(code));
         return platformRepository.update(platform);
     }
 
