@@ -1,7 +1,7 @@
 package cn.sh.ideal.iam.jdbc.permission.tbac;
 
 import cn.idealio.framework.util.Asserts;
-import cn.sh.ideal.iam.permission.tbac.configure.TbacI18nReader;
+import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.permission.tbac.domain.model.SecurityContainer;
 import cn.sh.ideal.iam.permission.tbac.dto.args.CreateSecurityContainerArgs;
 import jakarta.persistence.*;
@@ -66,7 +66,7 @@ public class SecurityContainerDO implements SecurityContainer {
     @Nonnull
     public static SecurityContainerDO create(@Nullable SecurityContainer parent,
                                              @Nonnull CreateSecurityContainerArgs args,
-                                             @Nonnull TbacI18nReader i18nReader) {
+                                             @Nonnull IamI18nReader i18nReader) {
         String name = args.getName();
         Asserts.notBlank(name, () -> i18nReader.getMessage("sc.name.blank"));
         SecurityContainerDO securityContainerDO = new SecurityContainerDO();

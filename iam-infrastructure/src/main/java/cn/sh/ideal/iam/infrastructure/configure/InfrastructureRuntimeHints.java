@@ -20,7 +20,7 @@ public class InfrastructureRuntimeHints implements RuntimeHintsRegistrar {
                 TypeReference.of(ExtendedAttributes.class)
         );
         hints.reflection().registerTypes(references, b -> b.withMembers(MemberCategory.values()));
-        hints.serialization().registerType(TypeReference.of(ExtendedAttributes.class))
-        ;
+        hints.serialization().registerType(TypeReference.of(ExtendedAttributes.class));
+        hints.resources().registerPattern("i18n/**");
     }
 }

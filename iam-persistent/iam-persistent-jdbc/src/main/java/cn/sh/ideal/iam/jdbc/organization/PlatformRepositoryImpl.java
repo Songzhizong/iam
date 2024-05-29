@@ -1,7 +1,7 @@
 package cn.sh.ideal.iam.jdbc.organization;
 
 import cn.idealio.framework.exception.ResourceNotFoundException;
-import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
+import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.Platform;
 import cn.sh.ideal.iam.organization.domain.model.PlatformRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 public class PlatformRepositoryImpl implements PlatformRepository {
-    private final OrganizationI18nReader i18nReader;
+    private final IamI18nReader i18nReader;
     private final PlatformJpaRepository platformJpaRepository;
 
     @Nonnull

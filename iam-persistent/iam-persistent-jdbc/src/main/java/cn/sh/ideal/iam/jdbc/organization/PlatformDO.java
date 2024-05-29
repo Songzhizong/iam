@@ -4,7 +4,7 @@ import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.lang.StringUtils;
 import cn.idealio.framework.util.Asserts;
 import cn.idealio.framework.util.data.hibernate.annotations.JpaIdentityGenerator;
-import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
+import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.Platform;
 import cn.sh.ideal.iam.organization.dto.args.CreatePlatformArgs;
 import cn.sh.ideal.iam.organization.dto.args.UpdatePlatformArgs;
@@ -81,7 +81,7 @@ public class PlatformDO implements Platform {
 
     @Nonnull
     public static PlatformDO create(@Nonnull CreatePlatformArgs args,
-                                    @Nonnull OrganizationI18nReader i18nReader) {
+                                    @Nonnull IamI18nReader i18nReader) {
         String code = args.getCode();
         String name = args.getName();
         Asserts.notBlank(code, () -> i18nReader.getMessage("platform.code.required"));
@@ -115,7 +115,7 @@ public class PlatformDO implements Platform {
 
     @Override
     public void update(@Nonnull UpdatePlatformArgs args,
-                       @Nonnull OrganizationI18nReader i18nReader) {
+                       @Nonnull IamI18nReader i18nReader) {
         String name = args.getName();
         String openName = args.getOpenName();
         Asserts.notBlank(name, () -> i18nReader.getMessage("platform.name.required"));

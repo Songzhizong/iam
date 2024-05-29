@@ -9,8 +9,8 @@ import cn.idealio.framework.lang.Tuple;
 import cn.idealio.framework.lock.GlobalLock;
 import cn.idealio.framework.lock.GlobalLockFactory;
 import cn.idealio.framework.util.Asserts;
+import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.permission.tbac.application.impl.CachelessTbacHandler;
-import cn.sh.ideal.iam.permission.tbac.configure.TbacI18nReader;
 import cn.sh.ideal.iam.permission.tbac.domain.model.*;
 import cn.sh.ideal.iam.permission.tbac.dto.args.CreateSecurityContainerArgs;
 import cn.sh.ideal.iam.permission.tbac.dto.resp.SecurityContainerTreeNode;
@@ -37,7 +37,7 @@ public class SecurityContainerService implements ApplicationRunner {
     private static final Duration CHANGE_PARENT_LOCK_TIMEOUT = Duration.ofSeconds(30);
     private final String lockValue = UUID.randomUUID().toString().replace("-", "");
     private final TbacHandler tbacHandler;
-    private final TbacI18nReader i18nReader;
+    private final IamI18nReader i18nReader;
     private final EntityFactory entityFactory;
     private final GlobalLockFactory globalLockFactory;
     private final CachelessTbacHandler cachelessTbacHandler;

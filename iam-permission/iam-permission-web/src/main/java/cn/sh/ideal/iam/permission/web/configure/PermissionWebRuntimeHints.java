@@ -18,6 +18,5 @@ public class PermissionWebRuntimeHints implements RuntimeHintsRegistrar {
         List<TypeReference> references = List.of(
         );
         hints.reflection().registerTypes(references, b -> b.withMembers(MemberCategory.values()));
-        hints.resources().registerPattern("i18n/**");
     }
 }

@@ -3,7 +3,7 @@ package cn.sh.ideal.iam.permission.tbac.domain.model;
 import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.lang.StringUtils;
 import cn.idealio.framework.util.NumberSystemConverter;
-import cn.sh.ideal.iam.permission.tbac.configure.TbacI18nReader;
+import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.permission.tbac.dto.resp.SecurityContainerInfo;
 import cn.sh.ideal.iam.permission.tbac.dto.resp.SecurityContainerTreeNode;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public interface SecurityContainer {
     void setName(@Nonnull String name);
 
     default void changeParent(@Nullable SecurityContainer parent,
-                              @Nonnull TbacI18nReader i18nReader) {
+                              @Nonnull IamI18nReader i18nReader) {
         if (parent == null) {
             setParentId(null);
             setParentRoute("");

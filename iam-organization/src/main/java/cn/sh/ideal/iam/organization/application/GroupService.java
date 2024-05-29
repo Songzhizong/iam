@@ -2,9 +2,9 @@ package cn.sh.ideal.iam.organization.application;
 
 import cn.idealio.framework.audit.Audits;
 import cn.idealio.framework.audit.Fields;
+import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.infrastructure.constant.AuditConstants;
 import cn.sh.ideal.iam.infrastructure.permission.tbac.SecurityContainerValidator;
-import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.*;
 import cn.sh.ideal.iam.organization.dto.args.CreateGroupArgs;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +23,8 @@ import javax.annotation.Nullable;
 @Service
 @RequiredArgsConstructor
 public class GroupService {
+    private final IamI18nReader i18nReader;
     private final EntityFactory entityFactory;
-    private final OrganizationI18nReader i18nReader;
     private final TenantRepository tenantRepository;
     private final UserGroupRepository userGroupRepository;
     @Nullable

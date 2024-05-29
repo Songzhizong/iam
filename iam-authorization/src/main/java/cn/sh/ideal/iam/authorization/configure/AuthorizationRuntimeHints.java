@@ -20,6 +20,5 @@ public class AuthorizationRuntimeHints implements RuntimeHintsRegistrar {
                 TypeReference.of(VisibleToken.class)
         );
         hints.reflection().registerTypes(references, b -> b.withMembers(MemberCategory.values()));
-        hints.resources().registerPattern("i18n/**");
     }
 }

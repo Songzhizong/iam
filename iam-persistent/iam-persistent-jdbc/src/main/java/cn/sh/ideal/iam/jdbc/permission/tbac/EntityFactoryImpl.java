@@ -1,7 +1,7 @@
 package cn.sh.ideal.iam.jdbc.permission.tbac;
 
+import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.permission.front.domain.model.Permission;
-import cn.sh.ideal.iam.permission.tbac.configure.TbacI18nReader;
 import cn.sh.ideal.iam.permission.tbac.domain.model.EntityFactory;
 import cn.sh.ideal.iam.permission.tbac.domain.model.PermissionAssign;
 import cn.sh.ideal.iam.permission.tbac.domain.model.SecurityContainer;
@@ -23,7 +23,7 @@ public class EntityFactoryImpl implements EntityFactory {
     @Override
     public SecurityContainer securityContainer(@Nullable SecurityContainer parent,
                                                @Nonnull CreateSecurityContainerArgs args,
-                                               @Nonnull TbacI18nReader i18nReader) {
+                                               @Nonnull IamI18nReader i18nReader) {
         return SecurityContainerDO.create(parent, args, i18nReader);
     }
 

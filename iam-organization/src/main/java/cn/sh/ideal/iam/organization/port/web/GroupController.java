@@ -6,9 +6,9 @@ import cn.idealio.framework.audit.Audits;
 import cn.idealio.framework.transmission.Result;
 import cn.idealio.framework.util.Asserts;
 import cn.idealio.security.api.annotation.HasAuthority;
+import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.infrastructure.constant.AuditConstants;
 import cn.sh.ideal.iam.organization.application.GroupService;
-import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.UserGroup;
 import cn.sh.ideal.iam.organization.dto.args.CreateGroupArgs;
 import cn.sh.ideal.iam.organization.dto.resp.GroupInfo;
@@ -27,8 +27,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/iam")
 public class GroupController {
+    private final IamI18nReader i18nReader;
     private final GroupService groupService;
-    private final OrganizationI18nReader i18nReader;
 
     /**
      * 创建用户组

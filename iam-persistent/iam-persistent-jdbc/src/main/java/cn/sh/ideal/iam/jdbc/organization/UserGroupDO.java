@@ -2,7 +2,7 @@ package cn.sh.ideal.iam.jdbc.organization;
 
 import cn.idealio.framework.util.Asserts;
 import cn.idealio.framework.util.data.hibernate.annotations.JpaIdentityGenerator;
-import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
+import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.Tenant;
 import cn.sh.ideal.iam.organization.domain.model.UserGroup;
 import cn.sh.ideal.iam.organization.dto.args.CreateGroupArgs;
@@ -67,7 +67,7 @@ public class UserGroupDO implements UserGroup {
     @Nonnull
     public static UserGroupDO create(@Nonnull Tenant tenant,
                                      @Nonnull CreateGroupArgs args,
-                                     @Nonnull OrganizationI18nReader i18nReader) {
+                                     @Nonnull IamI18nReader i18nReader) {
         Long containerId = args.getContainerId();
         String name = args.getName();
         String note = args.getNote();

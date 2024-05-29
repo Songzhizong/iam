@@ -1,7 +1,7 @@
 package cn.sh.ideal.iam.permission.tbac.domain.model;
 
+import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.permission.front.domain.model.Permission;
-import cn.sh.ideal.iam.permission.tbac.configure.TbacI18nReader;
 import cn.sh.ideal.iam.permission.tbac.dto.args.CreateSecurityContainerArgs;
 
 import javax.annotation.Nonnull;
@@ -15,14 +15,14 @@ public interface EntityFactory {
 
     @Nonnull
     default SecurityContainer securityContainer(@Nonnull CreateSecurityContainerArgs args,
-                                                @Nonnull TbacI18nReader i18nReader) {
+                                                @Nonnull IamI18nReader i18nReader) {
         return securityContainer(null, args, i18nReader);
     }
 
     @Nonnull
     SecurityContainer securityContainer(@Nullable SecurityContainer parent,
                                         @Nonnull CreateSecurityContainerArgs args,
-                                        @Nonnull TbacI18nReader i18nReader);
+                                        @Nonnull IamI18nReader i18nReader);
 
     @Nonnull
     List<PermissionAssign> assignPermissions(long containerId,

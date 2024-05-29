@@ -3,11 +3,11 @@ package cn.sh.ideal.iam.permission.tbac.application;
 import cn.idealio.framework.exception.ResourceNotFoundException;
 import cn.idealio.framework.lang.Sets;
 import cn.idealio.framework.util.Asserts;
+import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.UserGroupRepository;
 import cn.sh.ideal.iam.permission.front.domain.model.Permission;
 import cn.sh.ideal.iam.permission.front.domain.model.PermissionCache;
 import cn.sh.ideal.iam.permission.front.domain.model.PermissionRepository;
-import cn.sh.ideal.iam.permission.tbac.configure.TbacI18nReader;
 import cn.sh.ideal.iam.permission.tbac.domain.model.EntityFactory;
 import cn.sh.ideal.iam.permission.tbac.domain.model.PermissionAssign;
 import cn.sh.ideal.iam.permission.tbac.domain.model.PermissionAssignRepository;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class TbacAssignService {
-    private final TbacI18nReader i18nReader;
+    private final IamI18nReader i18nReader;
     private final EntityFactory entityFactory;
     private final PermissionCache permissionCache;
     private final UserGroupRepository userGroupRepository;

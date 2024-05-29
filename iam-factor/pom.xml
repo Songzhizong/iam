@@ -9,6 +9,14 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>iam-factor</artifactId>
+    <packaging>pom</packaging>
     <description>多因素认证</description>
 
+    <modules>
+        <module>iam-factor-all</module>
+        <module>iam-factor-otp</module>
+        <module>iam-factor-sms</module>
+        <module>iam-factor-core</module>
+        <module>iam-factor-email</module>
+    </modules>
 </project>

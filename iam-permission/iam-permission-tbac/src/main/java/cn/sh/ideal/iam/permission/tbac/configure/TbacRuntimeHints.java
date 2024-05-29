@@ -26,6 +26,5 @@ public class TbacRuntimeHints implements RuntimeHintsRegistrar {
                 TypeReference.of(PermissionAssignDetail.class)
         );
         hints.reflection().registerTypes(references, b -> b.withMembers(MemberCategory.values()));
-        hints.resources().registerPattern("i18n/**");
     }
 }

@@ -6,9 +6,9 @@ import cn.idealio.framework.audit.Audits;
 import cn.idealio.framework.transmission.Result;
 import cn.idealio.framework.util.Asserts;
 import cn.idealio.security.api.annotation.HasAuthority;
+import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.infrastructure.constant.AuditConstants;
 import cn.sh.ideal.iam.organization.application.UserService;
-import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.User;
 import cn.sh.ideal.iam.organization.dto.args.CreateUserArgs;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ import java.util.Map;
 @RequestMapping("/iam")
 public class UserController {
     private final UserService userService;
-    private final OrganizationI18nReader i18nReader;
+    private final IamI18nReader i18nReader;
 
     /**
      * 新增用户

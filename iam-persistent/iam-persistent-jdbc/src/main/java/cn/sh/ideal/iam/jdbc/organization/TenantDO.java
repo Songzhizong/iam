@@ -3,7 +3,7 @@ package cn.sh.ideal.iam.jdbc.organization;
 import cn.idealio.framework.lang.StringUtils;
 import cn.idealio.framework.util.Asserts;
 import cn.idealio.framework.util.data.hibernate.annotations.ManualIdentityGenerator;
-import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
+import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.Platform;
 import cn.sh.ideal.iam.organization.domain.model.Tenant;
 import cn.sh.ideal.iam.organization.dto.args.CreateTenantArgs;
@@ -76,7 +76,7 @@ public class TenantDO implements Tenant {
     public static TenantDO create(long id,
                                   @Nonnull Platform platform,
                                   @Nonnull CreateTenantArgs args,
-                                  @Nonnull OrganizationI18nReader i18nReader) {
+                                  @Nonnull IamI18nReader i18nReader) {
         String name = args.getName();
         String abbreviation = args.getAbbreviation();
         Asserts.notBlank(name, () -> i18nReader.getMessage("tenant.name.blank"));

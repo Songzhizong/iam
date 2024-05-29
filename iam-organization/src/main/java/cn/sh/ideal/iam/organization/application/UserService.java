@@ -4,9 +4,9 @@ import cn.idealio.framework.audit.Audits;
 import cn.idealio.framework.audit.Fields;
 import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.lang.StringUtils;
+import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.infrastructure.constant.AuditConstants;
 import cn.sh.ideal.iam.infrastructure.permission.tbac.SecurityContainerValidator;
-import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.*;
 import cn.sh.ideal.iam.organization.dto.args.CreateUserArgs;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +27,9 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    private final IamI18nReader i18nReader;
     private final EntityFactory entityFactory;
     private final UserRepository userRepository;
-    private final OrganizationI18nReader i18nReader;
     private final TenantRepository tenantRepository;
     private final UserGroupRepository userGroupRepository;
     @Nullable

@@ -1,6 +1,6 @@
 package cn.sh.ideal.iam.organization.domain.model;
 
-import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
+import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.organization.dto.args.UpdatePlatformArgs;
 import cn.sh.ideal.iam.organization.dto.resp.PlatformVO;
 
@@ -31,7 +31,7 @@ public interface Platform {
 
 
     void update(@Nonnull UpdatePlatformArgs args,
-                @Nonnull OrganizationI18nReader i18nReader);
+                @Nonnull IamI18nReader i18nReader);
 
     @Nonnull
     default PlatformVO toVO() {

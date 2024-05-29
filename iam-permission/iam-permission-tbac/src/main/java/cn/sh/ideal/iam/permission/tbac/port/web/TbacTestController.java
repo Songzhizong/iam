@@ -132,6 +132,17 @@ public class TbacTestController {
         return Result.success(hasApiPermission);
     }
 
+    /** 判断是否需要mfa验证 */
+    @GetMapping("/need_mfa")
+    public Result<Boolean> needMfa(@Nullable Long userId,
+                                   @Nullable Long containerId,
+                                   @Nullable Long permissionId) {
+        Asserts.nonnull(userId, "userId");
+        Asserts.nonnull(containerId, "containerId");
+        Asserts.nonnull(permissionId, "permissionId");
+        return Result.success(tbacHandler.needMfa(userId, containerId, permissionId));
+    }
+
     /** 更新用户缓存刷新时间 */
     @PostMapping("/update_user_auth_latest_refresh_timestamp")
     public Result<Void> updateUserAuthLatestRefreshTimestamp(@Nullable Long userId) {

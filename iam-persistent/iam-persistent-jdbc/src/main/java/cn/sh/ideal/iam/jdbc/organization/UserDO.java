@@ -3,9 +3,9 @@ package cn.sh.ideal.iam.jdbc.organization;
 import cn.idealio.framework.lang.StringUtils;
 import cn.idealio.framework.util.Asserts;
 import cn.idealio.framework.util.data.hibernate.annotations.JpaIdentityGenerator;
+import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.infrastructure.encryption.EncryptionProvider;
 import cn.sh.ideal.iam.infrastructure.encryption.EncryptionUtils;
-import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.Tenant;
 import cn.sh.ideal.iam.organization.domain.model.User;
 import cn.sh.ideal.iam.organization.dto.args.CreateUserArgs;
@@ -109,7 +109,7 @@ public class UserDO implements User {
     @Nonnull
     public static UserDO create(@Nonnull Tenant tenant,
                                 @Nonnull CreateUserArgs args,
-                                @Nonnull OrganizationI18nReader i18nReader) {
+                                @Nonnull IamI18nReader i18nReader) {
         String name = args.getName();
         Asserts.notBlank(name, () -> i18nReader.getMessage("user.name.blank"));
         UserDO userDO = new UserDO();

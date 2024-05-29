@@ -4,7 +4,7 @@ import cn.idealio.framework.concurrent.Asyncs;
 import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.exception.ResourceNotFoundException;
 import cn.idealio.framework.util.Asserts;
-import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
+import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.EntityFactory;
 import cn.sh.ideal.iam.organization.domain.model.Platform;
 import cn.sh.ideal.iam.organization.domain.model.PlatformCache;
@@ -31,7 +31,7 @@ public class PlatformService {
     private static final Duration INVALIDATE_CACHE_DELAY = Duration.ofSeconds(2);
     private final PlatformCache cache;
     private final EntityFactory entityFactory;
-    private final OrganizationI18nReader i18nReader;
+    private final IamI18nReader i18nReader;
     private final PlatformRepository platformRepository;
 
     @Nonnull

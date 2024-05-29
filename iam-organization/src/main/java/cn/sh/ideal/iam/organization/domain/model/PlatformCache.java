@@ -3,7 +3,7 @@ package cn.sh.ideal.iam.organization.domain.model;
 import cn.idealio.framework.cache.CacheFactory;
 import cn.idealio.framework.cache.serialize.LongSerializer;
 import cn.idealio.framework.exception.ResourceNotFoundException;
-import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
+import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +23,12 @@ public class PlatformCache {
     private static final Cache<String, PlatformCacheWrapper> CACHE = Caffeine.newBuilder()
             .expireAfterWrite(1, TimeUnit.HOURS)
             .build();
-    private final OrganizationI18nReader i18nReader;
+    private final IamI18nReader i18nReader;
     private final PlatformRepository platformRepository;
     private final cn.idealio.framework.cache.Cache<String, Long> platformChangeCache;
 
     public PlatformCache(@Nonnull CacheFactory cacheFactory,
-                         @Nonnull OrganizationI18nReader i18nReader,
+                         @Nonnull IamI18nReader i18nReader,
                          @Nonnull PlatformRepository platformRepository) {
         this.i18nReader = i18nReader;
         this.platformRepository = platformRepository;
