@@ -5,6 +5,7 @@
     <file url="file://$PROJECT_DIR$/iam-compatibility/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-connector/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-event/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-factor/iam-factor-all/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-factor/iam-factor-core/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-factor/iam-factor-email/src/main/java" charset="UTF-8" />
