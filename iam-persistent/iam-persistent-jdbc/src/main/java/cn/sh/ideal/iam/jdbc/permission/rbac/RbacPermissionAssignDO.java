@@ -1,13 +1,12 @@
 package cn.sh.ideal.iam.jdbc.permission.rbac;
 
-import cn.idealio.framework.util.data.hibernate.JpaIDGenerator;
+import cn.idealio.framework.util.data.hibernate.annotations.JpaIdentityGenerator;
 import cn.idealio.framework.util.data.jpa.LongSetGzipConverter;
 import cn.sh.ideal.iam.permission.rbac.domain.model.PermissionAssign;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.type.descriptor.jdbc.LongVarbinaryJdbcType;
 import org.springframework.data.annotation.CreatedDate;
@@ -38,8 +37,7 @@ public class RbacPermissionAssignDO implements PermissionAssign {
     @Id
     @Comment("主键")
     @Column(nullable = false, name = "id_")
-    @GeneratedValue(generator = TABLE_NAME)
-    @GenericGenerator(name = TABLE_NAME, type = JpaIDGenerator.class)
+    @JpaIdentityGenerator(name = TABLE_NAME)
     private Long id = null;
 
     @Comment("应用ID")
@@ -54,12 +52,11 @@ public class RbacPermissionAssignDO implements PermissionAssign {
     @Column(nullable = false, name = "user_group_id_")
     private long userGroupId;
 
-    @Lob
     @Nonnull
     @Comment("分配的权限ID列表")
     @JdbcType(LongVarbinaryJdbcType.class)
     @Convert(converter = LongSetGzipConverter.class)
-    @Column(nullable = false, length = 4000, name = "permission_ids_")
+    @Column(nullable = false, name = "permission_ids_")
     private Set<Long> permissionIds = new LinkedHashSet<>();
 
     @Version

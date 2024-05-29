@@ -2,7 +2,7 @@ package cn.sh.ideal.iam.jdbc.organization;
 
 import cn.idealio.framework.lang.StringUtils;
 import cn.idealio.framework.util.Asserts;
-import cn.idealio.framework.util.data.hibernate.JpaIDGenerator;
+import cn.idealio.framework.util.data.hibernate.annotations.JpaIdentityGenerator;
 import cn.sh.ideal.iam.infrastructure.encryption.EncryptionProvider;
 import cn.sh.ideal.iam.infrastructure.encryption.EncryptionUtils;
 import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
@@ -13,7 +13,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -42,8 +41,7 @@ public class UserDO implements User {
     @Id
     @Comment("主键")
     @Column(nullable = false, name = "id_")
-    @GeneratedValue(generator = TABLE_NAME)
-    @GenericGenerator(name = TABLE_NAME, type = JpaIDGenerator.class)
+    @JpaIdentityGenerator(name = TABLE_NAME)
     private Long id = null;
 
     @Nonnull

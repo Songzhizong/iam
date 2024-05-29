@@ -3,7 +3,7 @@ package cn.sh.ideal.iam.jdbc.organization;
 import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.lang.StringUtils;
 import cn.idealio.framework.util.Asserts;
-import cn.idealio.framework.util.data.hibernate.JpaIDGenerator;
+import cn.idealio.framework.util.data.hibernate.annotations.JpaIdentityGenerator;
 import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.Platform;
 import cn.sh.ideal.iam.organization.dto.args.CreatePlatformArgs;
@@ -13,7 +13,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Comment;
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.annotation.Nonnull;
@@ -40,8 +39,7 @@ public class PlatformDO implements Platform {
     @Id
     @Comment("主键")
     @Column(nullable = false, name = "id_")
-    @GeneratedValue(generator = TABLE_NAME)
-    @GenericGenerator(name = TABLE_NAME, type = JpaIDGenerator.class)
+    @JpaIdentityGenerator(name = TABLE_NAME)
     private Long id = null;
 
     @Nonnull

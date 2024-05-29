@@ -1,7 +1,7 @@
 package cn.sh.ideal.iam.jdbc.permission.front;
 
 import cn.idealio.framework.util.Asserts;
-import cn.idealio.framework.util.data.hibernate.ManualIDGenerator;
+import cn.idealio.framework.util.data.hibernate.annotations.ManualIdentityGenerator;
 import cn.sh.ideal.iam.core.constant.Terminal;
 import cn.sh.ideal.iam.permission.core.PermissionModel;
 import cn.sh.ideal.iam.permission.front.domain.model.App;
@@ -11,7 +11,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.type.descriptor.jdbc.VarcharJdbcType;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -37,8 +36,7 @@ public class AppDO implements App {
     @Id
     @Comment("主键")
     @Column(nullable = false, name = "id_")
-    @GeneratedValue(generator = TABLE_NAME)
-    @GenericGenerator(name = TABLE_NAME, type = ManualIDGenerator.class)
+    @ManualIdentityGenerator(name = TABLE_NAME)
     private long id = -1L;
 
     @Nonnull

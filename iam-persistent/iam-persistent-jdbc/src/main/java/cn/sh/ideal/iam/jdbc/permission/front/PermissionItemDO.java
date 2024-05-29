@@ -1,7 +1,7 @@
 package cn.sh.ideal.iam.jdbc.permission.front;
 
 import cn.idealio.framework.util.Asserts;
-import cn.idealio.framework.util.data.hibernate.ManualIDGenerator;
+import cn.idealio.framework.util.data.hibernate.annotations.ManualIdentityGenerator;
 import cn.sh.ideal.iam.permission.front.domain.model.PermissionGroup;
 import cn.sh.ideal.iam.permission.front.domain.model.PermissionItem;
 import cn.sh.ideal.iam.permission.front.dto.args.CreatePermissionItemArgs;
@@ -10,7 +10,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.annotation.Nonnull;
@@ -35,8 +34,7 @@ public class PermissionItemDO implements PermissionItem {
     @Id
     @Comment("主键")
     @Column(nullable = false, name = "id_")
-    @GeneratedValue(generator = TABLE_NAME)
-    @GenericGenerator(name = TABLE_NAME, type = ManualIDGenerator.class)
+    @ManualIdentityGenerator(name = TABLE_NAME)
     private long id = -1L;
 
     @Comment("应用ID")

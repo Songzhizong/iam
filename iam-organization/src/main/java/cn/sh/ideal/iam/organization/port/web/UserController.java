@@ -1,7 +1,5 @@
 package cn.sh.ideal.iam.organization.port.web;
 
-import cn.hutool.captcha.ICaptcha;
-import cn.hutool.captcha.LineCaptcha;
 import cn.idealio.framework.audit.Audit;
 import cn.idealio.framework.audit.AuditAction;
 import cn.idealio.framework.audit.Audits;
@@ -14,7 +12,10 @@ import cn.sh.ideal.iam.organization.configure.OrganizationI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.User;
 import cn.sh.ideal.iam.organization.dto.args.CreateUserArgs;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -88,11 +89,5 @@ public class UserController {
             audit.response(result);
         });
         return result;
-    }
-
-    @GetMapping("/captcha")
-    public String captcha() {
-        LineCaptcha captcha = new LineCaptcha(200, 100, 4, 150);
-        return captcha.getImageBase64();
     }
 }
