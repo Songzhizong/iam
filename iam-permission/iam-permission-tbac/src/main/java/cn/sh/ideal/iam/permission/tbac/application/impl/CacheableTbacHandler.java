@@ -20,10 +20,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.Duration;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -62,22 +59,34 @@ public class CacheableTbacHandler extends CachelessTbacHandler {
     @Nonnull
     @Override
     public List<PermissionAssign> getAllAssigns(long userId) {
+        return getPermissionAssignsCacheWrapper(userId).assigns();
+    }
+
+    @Nonnull
+    @Override
+    public List<PermissionAssign> getPermissionAssigns(long userId, long permissionId) {
+        return getPermissionAssignsCacheWrapper(userId)
+                .permissionAssigns()
+                .getOrDefault(permissionId, List.of());
+    }
+
+    @Nonnull
+    private PermissionAssignsCacheWrapper getPermissionAssignsCacheWrapper(long userId) {
         PermissionAssignsCacheWrapper wrapper = PERMISSION_ASSIGN_CACHE.get(userId, k -> {
             List<PermissionAssign> assigns = super.getAllAssigns(userId);
-            return new PermissionAssignsCacheWrapper(System.currentTimeMillis(), assigns);
+            return PermissionAssignsCacheWrapper.of(assigns);
         });
         Long latestRefreshTimestamp = getUserAuthLatestRefreshTimestamp(userId);
         if (latestRefreshTimestamp == null || wrapper.cacheTimestamp() > latestRefreshTimestamp) {
-            return wrapper.assigns();
+            return wrapper;
         }
         log.info("用户权限发生变更, 重新加载用户所有权限分配信息缓存");
         PERMISSION_ASSIGN_CACHE.invalidate(userId);
         return PERMISSION_ASSIGN_CACHE.get(userId, k -> {
             List<PermissionAssign> assigns = super.getAllAssigns(userId);
-            return new PermissionAssignsCacheWrapper(System.currentTimeMillis(), assigns);
-        }).assigns();
+            return PermissionAssignsCacheWrapper.of(assigns);
+        });
     }
-
 
     @Override
     public boolean hasAuthority(long userId, long containerId, @Nonnull String authority) {
@@ -172,9 +181,22 @@ public class CacheableTbacHandler extends CachelessTbacHandler {
      *
      * @param cacheTimestamp 缓存产生时的毫秒时间戳
      * @param assigns        权限分配列表
+     * @param permissionAssigns        权限ID -> 权限分配列表
      */
-    private record PermissionAssignsCacheWrapper(long cacheTimestamp,
-                                                 @Nonnull List<PermissionAssign> assigns) {
+    private record PermissionAssignsCacheWrapper(
+            long cacheTimestamp,
+            @Nonnull List<PermissionAssign> assigns,
+            @Nonnull Map<Long, List<PermissionAssign>> permissionAssigns) {
+
+        @Nonnull
+        public static PermissionAssignsCacheWrapper of(@Nonnull List<PermissionAssign> assigns) {
+            Map<Long, List<PermissionAssign>> permissionAssigns = new HashMap<>();
+            for (PermissionAssign assign : assigns) {
+                long permissionId = assign.getPermissionId();
+                permissionAssigns.computeIfAbsent(permissionId, k -> new ArrayList<>()).add(assign);
+            }
+            return new PermissionAssignsCacheWrapper(System.currentTimeMillis(), assigns, permissionAssigns);
+        }
     }
 
 

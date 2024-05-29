@@ -61,6 +61,18 @@ public class TbacPermissionAssignRepositoryImpl implements PermissionAssignRepos
                 .stream().map(e -> (PermissionAssign) e).toList();
     }
 
+    @Nonnull
+    @Override
+    public List<PermissionAssign> findAllByPermissionIdAndUserGroupIdIn(long permissionId,
+                                                                        @Nonnull Collection<Long> userGroupIds) {
+        if (userGroupIds.isEmpty()) {
+            return List.of();
+        }
+        return permissionAssignJpaRepository
+                .findAllByPermissionIdAndUserGroupIdIn(permissionId, userGroupIds)
+                .stream().map(e -> (PermissionAssign) e).toList();
+    }
+
     @Override
     public void deleteAllByAppIdAndContainerIdAndUserGroupId(long appId, long containerId, long userGroupId) {
         permissionAssignJpaRepository.deleteAllByAppIdAndContainerIdAndUserGroupId(appId, containerId, userGroupId);

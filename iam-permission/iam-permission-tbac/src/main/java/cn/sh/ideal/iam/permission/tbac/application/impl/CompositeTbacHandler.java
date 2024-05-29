@@ -183,6 +183,23 @@ public class CompositeTbacHandler implements TbacHandler {
         }
     }
 
+    @Override
+    public boolean needMfa(long userId, long containerId, long permissionId) {
+        long nanoTime = System.nanoTime();
+        try {
+            if (properties.isCacheEnabled()) {
+                return cacheableTbacHandler.needMfa(userId, containerId, permissionId);
+            }
+            return cachelessTbacHandler.needMfa(userId, containerId, permissionId);
+        } finally {
+            if (log.isDebugEnabled()) {
+                long micros = (System.nanoTime() - nanoTime) / 1000;
+                double millis = micros / 1000D;
+                log.debug("执行[判断用户是否需要双因素认证]耗时 {}ms", millis);
+            }
+        }
+    }
+
     @Nonnull
     @Override
     public PermissionAssignable assignable(long userId, long containerId, long appId) {

@@ -146,6 +146,8 @@ public interface TbacHandler {
     boolean hasApiPermission(long userId, long containerId,
                              @Nonnull String method, @Nonnull String path);
 
+    boolean needMfa(long userId, long containerId, long permissionId);
+
     /**
      * 获取用户可分配信息
      *

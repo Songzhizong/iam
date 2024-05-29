@@ -31,11 +31,23 @@ public class CachelessTbacHandler implements TbacHandler {
     protected final SecurityContainerCache securityContainerCache;
     protected final PermissionAssignRepository permissionAssignRepository;
 
+    /**
+     * 获取用户在指定安全容器上所有可见的权限ID
+     * <p>
+     * 这个方法主要用于前端渲染用户有权限的页面元素
+     *
+     * @param userId      用户ID
+     * @param containerId 容器ID
+     * @return 可见权限ID列表
+     * @author 宋志宗 on 2024/5/18
+     */
     @Nonnull
     @Override
     public Set<Long> visiblePermissionIds(long userId, long containerId, long appId) {
+        // 获取用户在指定节点上的所有权限, 包括他的所有子节点
         Collection<AssignedPermission> assignedPermissions =
                 getAssignedPermissions(userId, containerId, true, appId);
+        // 将权限转换为权限ID的集合
         return assignedPermissions.stream()
                 .map(assignedPermission -> assignedPermission.getPermission().getId())
                 .collect(Collectors.toSet());
@@ -46,9 +58,10 @@ public class CachelessTbacHandler implements TbacHandler {
     public Set<Long> authorityContainerIds(long userId,
                                            @Nonnull String authority,
                                            @Nullable Long baseContainerId) {
-        // [authority]有权限配置的containerId -> 是否分配 -> 是否继承
+        // 获取用户在各个容器节点上的权限配置信息, [authority]有权限配置的containerId -> 是否分配 -> 是否继承
         Map<Long, Tuple<Boolean, Boolean>> containerAssignMap =
                 authorityContainerAssignInfo(userId, authority);
+        // 通过权限配置信息分析出所有有权限的容器ID
         return analyzeContainerIds(baseContainerId, containerAssignMap);
     }
 
@@ -166,19 +179,23 @@ public class CachelessTbacHandler implements TbacHandler {
     @Override
     public Map<Long, Tuple<Boolean, Boolean>>
     authorityContainerAssignInfo(long userId, @Nonnull String authority) {
-        return containerAssignInfo(userId, permission -> permission.getAuthorities().contains(authority));
+        return containerAssignInfo(userId,
+                permission -> permission.getAuthorities().contains(authority)
+        );
     }
 
     @Nonnull
     @Override
-    public Map<Long, Tuple<Boolean, Boolean>> permissionContainerAssignInfo(long userId, long permissionId) {
+    public Map<Long, Tuple<Boolean, Boolean>>
+    permissionContainerAssignInfo(long userId, long permissionId) {
         return containerAssignInfo(userId, permission -> permission.getId() == permissionId);
     }
 
     @Nonnull
     private Map<Long, Tuple<Boolean, Boolean>> containerAssignInfo(
             long userId, @Nonnull Predicate<Permission> predicate) {
-        Map<Long, Collection<PermissionAssignDetail>> assignDetails = getPermissionAssignDetails(userId);
+        Map<Long, Collection<PermissionAssignDetail>>
+                assignDetails = getPermissionAssignDetails(userId);
         if (assignDetails.isEmpty()) {
             return Map.of();
         }
@@ -217,7 +234,8 @@ public class CachelessTbacHandler implements TbacHandler {
     public Set<Long> containerPermissionIds(long userId, long containerId,
                                             @Nonnull Set<Long> permissionIds) {
 
-        Map<Long, Set<Long>> map = containerPermissionIds(userId, Set.of(containerId), permissionIds);
+        Set<Long> containerIds = Set.of(containerId);
+        Map<Long, Set<Long>> map = containerPermissionIds(userId, containerIds, permissionIds);
         return map.getOrDefault(containerId, Set.of());
     }
 
@@ -337,6 +355,29 @@ public class CachelessTbacHandler implements TbacHandler {
         return false;
     }
 
+    @Override
+    public boolean needMfa(long userId, long containerId, long permissionId) {
+        List<PermissionAssign> assigns = getPermissionAssigns(userId, permissionId);
+        if (assigns.isEmpty()) {
+            log.info("mfa验证失败, 用户[{}]在安全容器[{}]上没有分配权限[{}]",
+                    userId, containerId, permissionId);
+            return false;
+        }
+        Map<Long, Collection<PermissionAssignDetail>>
+                assignDetails = getPermissionAssignDetails(assigns);
+        Collection<AssignedPermission> assignedPermissions =
+                getAssignedPermissions(containerId, false, null, assignDetails);
+        for (AssignedPermission permission : assignedPermissions) {
+            long assignedPermissionId = permission.getPermission().getId();
+            if (assignedPermissionId == permissionId) {
+                return permission.isMfa();
+            }
+        }
+        log.error("mfa验证失败, 用户[{}]在安全容器[{}]上没有分配权限[{}]",
+                userId, containerId, permissionId);
+        return false;
+    }
+
     @Nonnull
     @Override
     public PermissionAssignable assignable(long userId, long containerId, long appId) {
@@ -400,6 +441,23 @@ public class CachelessTbacHandler implements TbacHandler {
             log.info("用户[{}]在任何安全容器节点上都没有分配权限", userId);
             return List.of();
         }
+        return getAssignedPermissions(containerId, includeChildren, appId, assignMap);
+    }
+
+    /**
+     * 获取用户指定节点上的拥有的所有权限
+     *
+     * @param containerId     节点ID
+     * @param includeChildren 是否包含指定节点的所有层级子节点, 否则只获取在指定节点之上的权限
+     * @param appId           应用ID, 如果不为空则只获取该应用下的权限
+     * @param assignMap       容器ID -> 权限配置信息
+     * @return 用户在该节点上拥有的所有权限
+     * @author 宋志宗 on 2024/5/18
+     */
+    @Nonnull
+    public Collection<AssignedPermission> getAssignedPermissions(
+            long containerId, boolean includeChildren, @Nullable Long appId,
+            @Nonnull Map<Long, Collection<PermissionAssignDetail>> assignMap) {
         AnalyzedSecurityContainer container = securityContainerCache.findById(containerId);
         if (container == null) {
             log.warn("获取用户指定节点上的拥有的所有权限失败, 安全容器[{}]不存在", containerId);
@@ -481,14 +539,28 @@ public class CachelessTbacHandler implements TbacHandler {
     public List<PermissionAssign> getAllAssigns(long userId) {
         List<Long> userGroupIds = userRepository.getGroupIds(userId);
         if (userGroupIds.isEmpty()) {
-            log.info("用户[{}]未关联任何用户组", userId);
+            log.info("获取所有权限分配信息返回空, 用户[{}]未关联任何用户组", userId);
             return List.of();
         }
         return permissionAssignRepository.findAllByUserGroupIdIn(userGroupIds);
     }
 
+    @Nonnull
+    public List<PermissionAssign> getPermissionAssigns(long userId, long permissionId) {
+        List<Long> userGroupIds = userRepository.getGroupIds(userId);
+        if (userGroupIds.isEmpty()) {
+            log.info("获取指定权限分配信息返回空, 用户[{}]未关联任何用户组", userId);
+            return List.of();
+        }
+        return permissionAssignRepository
+                .findAllByPermissionIdAndUserGroupIdIn(permissionId, userGroupIds);
+    }
+
     /**
      * 获取用户在各个容器节点上的权限配置信息
+     * <p>
+     * 这个方法的返回值可以用于分析用户在各个容器节点上的权限配置。
+     * 例如：哪些权限已经被分配，哪些权限是可继承的，以及哪些权限需要多因素认证。
      *
      * @param userId 用户ID
      * @return 容器ID -> 权限配置信息
@@ -500,6 +572,21 @@ public class CachelessTbacHandler implements TbacHandler {
             log.info("用户[{}]未配置任何权限", userId);
             return Map.of();
         }
+        return getPermissionAssignDetails(assigns);
+    }
+
+    /**
+     * 获取用户在各个容器节点上的权限配置信息
+     * <p>
+     * 这个方法的返回值可以用于分析用户在各个容器节点上的权限配置。
+     * 例如：哪些权限已经被分配，哪些权限是可继承的，以及哪些权限需要多因素认证。
+     *
+     * @param assigns 权限分配信息
+     * @return 容器ID -> 权限配置信息
+     */
+    @Nonnull
+    public Map<Long, Collection<PermissionAssignDetail>>
+    getPermissionAssignDetails(@Nonnull List<PermissionAssign> assigns) {
         // 按安全容器ID分组 containerId -> permissionId -> 权限分配信息
         Map<Long, Map<Long, PermissionAssignDetail>>
                 containerPermissionAssignMap = new HashMap<>();

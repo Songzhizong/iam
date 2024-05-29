@@ -17,6 +17,7 @@
         </processorPath>
         <module name="iam-permission-rbac" />
         <module name="iam-authorization" />
+        <module name="iam-connector" />
         <module name="iam-launcher" />
         <module name="iam-persistent-mongo" />
         <module name="iam-persistent-jdbc" />
@@ -27,10 +28,20 @@
         <module name="iam-core" />
         <module name="iam-organization" />
         <module name="iam-permission-web" />
-        <module name="iam-compatibility" />
+      </profile>
+      <profile name="Annotation profile for iam-factor" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
+        </processorPath>
+        <module name="iam-factor" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="iam-compatibility" target="21" />
       <module name="iam-integration" target="21" />
     </bytecodeTargetLevel>
   </component>
@@ -39,7 +50,9 @@
       <module name="iam" options="-parameters" />
       <module name="iam-authorization" options="-parameters" />
       <module name="iam-compatibility" options="-parameters" />
+      <module name="iam-connector" options="-parameters" />
       <module name="iam-core" options="-parameters" />
+      <module name="iam-factor" options="-parameters" />
       <module name="iam-infrastructure" options="-parameters" />
       <module name="iam-launcher" options="-parameters" />
       <module name="iam-organization" options="-parameters" />

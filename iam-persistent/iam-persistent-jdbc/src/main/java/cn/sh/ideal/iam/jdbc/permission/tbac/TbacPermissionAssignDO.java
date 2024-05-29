@@ -23,9 +23,10 @@ import javax.annotation.Nonnull;
                 @Index(name = "uidx01_" + TbacPermissionAssignDO.TABLE_NAME,
                         columnList = "container_id_,user_group_id_,permission_id_", unique = true),
                 @Index(name = "idx01_" + TbacPermissionAssignDO.TABLE_NAME, columnList = "app_id_"),
-                @Index(name = "idx02_" + TbacPermissionAssignDO.TABLE_NAME, columnList = "user_group_id_"),
-                @Index(name = "idx03_" + TbacPermissionAssignDO.TABLE_NAME, columnList = "permission_item_id_"),
-                @Index(name = "idx04_" + TbacPermissionAssignDO.TABLE_NAME, columnList = "permission_group_id_"),
+                @Index(name = "idx02_" + TbacPermissionAssignDO.TABLE_NAME, columnList = "permission_id_"),
+                @Index(name = "idx03_" + TbacPermissionAssignDO.TABLE_NAME, columnList = "user_group_id_"),
+                @Index(name = "idx04_" + TbacPermissionAssignDO.TABLE_NAME, columnList = "permission_item_id_"),
+                @Index(name = "idx05_" + TbacPermissionAssignDO.TABLE_NAME, columnList = "permission_group_id_"),
         })
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression", "NullableProblems"})
 public class TbacPermissionAssignDO implements PermissionAssign {

@@ -82,15 +82,27 @@ public class UserDO implements User {
     @Column(nullable = false, name = "language_")
     private String language = "";
 
+    @Nonnull
+    @Comment("密码")
+    @Column(nullable = false, name = "password_")
+    private String password = "";
+
+    @Comment("密码修改时间")
+    @Column(nullable = false, name = "password_time_")
+    private long passwordTime = 0;
+
     @Version
+    @Comment("乐观锁版本")
     @Column(nullable = false, name = "version_")
     private long version = 0;
 
     @CreatedDate
+    @Comment("创建时间")
     @Column(nullable = false, name = "created_time_")
     private long createdTime = 0;
 
     @LastModifiedDate
+    @Comment("更新时间")
     @Column(nullable = false, name = "updated_time_")
     private long updatedTime = 0;
 

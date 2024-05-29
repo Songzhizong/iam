@@ -52,9 +52,6 @@ public interface TbacPermissionAssignJpaRepository extends JpaRepository<TbacPer
                                                                @Param("permissionIds")
                                                               @Nonnull Collection<Long> permissionIds);
 
-    @Nonnull
-    List<TbacPermissionAssignDO> findAllByUserGroupIdIn(@Nonnull Collection<Long> userGroupIds);
-
     @Modifying
     @Transactional(rollbackFor = Throwable.class)
     @Query(value = """
@@ -66,4 +63,11 @@ public interface TbacPermissionAssignJpaRepository extends JpaRepository<TbacPer
     void deleteAllByAppIdAndContainerIdAndUserGroupId(@Param("appId") long appId,
                                                       @Param("containerId") long containerId,
                                                       @Param("userGroupId") long userGroupId);
+
+    @Nonnull
+    List<TbacPermissionAssignDO> findAllByUserGroupIdIn(@Nonnull Collection<Long> userGroupIds);
+
+    @Nonnull
+    List<TbacPermissionAssignDO> findAllByPermissionIdAndUserGroupIdIn(long permissionId,
+                                                                       @Nonnull Collection<Long> userGroupIds);
 }

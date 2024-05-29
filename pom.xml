@@ -16,12 +16,13 @@
     <modules>
         <module>iam-core</module>
         <module>iam-launcher</module>
+        <module>iam-connector</module>
         <module>iam-permission</module>
         <module>iam-persistent</module>
         <module>iam-organization</module>
         <module>iam-authorization</module>
-        <module>iam-compatibility</module>
         <module>iam-infrastructure</module>
+        <module>iam-factor</module>
     </modules>
 
     <properties>
