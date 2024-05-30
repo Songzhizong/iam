@@ -1,6 +1,6 @@
 package cn.sh.ideal.iam.permission.front.dto.resp;
 
-import cn.sh.ideal.iam.core.constant.Terminal;
+import cn.sh.ideal.iam.common.constant.Terminal;
 import lombok.Getter;
 import lombok.Setter;
 

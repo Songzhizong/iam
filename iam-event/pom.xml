@@ -13,7 +13,7 @@
     <dependencies>
         <dependency>
             <groupId>cn.sh.ideal.iam</groupId>
-            <artifactId>iam-core</artifactId>
+            <artifactId>iam-common</artifactId>
             <version>6.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>

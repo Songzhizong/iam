@@ -1,6 +1,6 @@
 package cn.sh.ideal.iam.permission.front.domain.model;
 
-import cn.sh.ideal.iam.core.constant.Terminal;
+import cn.sh.ideal.iam.common.constant.Terminal;
 
 import javax.annotation.Nonnull;
 import java.util.List;

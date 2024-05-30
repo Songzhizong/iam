@@ -4,7 +4,7 @@ import cn.idealio.framework.util.Asserts;
 import cn.idealio.framework.util.data.hibernate.annotations.JpaIdentityGenerator;
 import cn.sh.ideal.iam.authorization.standard.domain.model.AuthClient;
 import cn.sh.ideal.iam.authorization.standard.dto.args.CreateAuthClientArgs;
-import cn.sh.ideal.iam.core.constant.Terminal;
+import cn.sh.ideal.iam.common.constant.Terminal;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

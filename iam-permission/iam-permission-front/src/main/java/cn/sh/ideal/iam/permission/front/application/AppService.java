@@ -3,7 +3,7 @@ package cn.sh.ideal.iam.permission.front.application;
 import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.exception.ResourceNotFoundException;
 import cn.idealio.framework.util.Asserts;
-import cn.sh.ideal.iam.core.constant.Terminal;
+import cn.sh.ideal.iam.common.constant.Terminal;
 import cn.sh.ideal.iam.infrastructure.configure.IamIDGenerator;
 import cn.sh.ideal.iam.permission.front.domain.model.*;
 import cn.sh.ideal.iam.permission.front.dto.args.CreateAppArgs;

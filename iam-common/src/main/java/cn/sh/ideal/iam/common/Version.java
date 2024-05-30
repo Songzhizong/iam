@@ -1,4 +1,4 @@
-package cn.sh.ideal.iam.core;
+package cn.sh.ideal.iam.common;
 
 import cn.idealio.framework.lang.StringUtils;
 import org.slf4j.Logger;

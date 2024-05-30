@@ -1,6 +1,6 @@
 package cn.sh.ideal.iam.jdbc.permission.front;
 
-import cn.sh.ideal.iam.core.constant.Terminal;
+import cn.sh.ideal.iam.common.constant.Terminal;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.annotation.Nonnull;

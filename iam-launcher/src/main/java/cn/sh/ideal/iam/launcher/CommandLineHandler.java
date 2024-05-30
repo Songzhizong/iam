@@ -1,7 +1,7 @@
 package cn.sh.ideal.iam.launcher;
 
 import cn.idealio.framework.lang.StringUtils;
-import cn.sh.ideal.iam.core.Version;
+import cn.sh.ideal.iam.common.Version;
 import org.springframework.aot.AotDetector;
 
 import javax.annotation.Nonnull;

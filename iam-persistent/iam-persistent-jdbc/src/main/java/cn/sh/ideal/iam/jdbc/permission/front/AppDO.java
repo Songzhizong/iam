@@ -2,7 +2,7 @@ package cn.sh.ideal.iam.jdbc.permission.front;
 
 import cn.idealio.framework.util.Asserts;
 import cn.idealio.framework.util.data.hibernate.annotations.ManualIdentityGenerator;
-import cn.sh.ideal.iam.core.constant.Terminal;
+import cn.sh.ideal.iam.common.constant.Terminal;
 import cn.sh.ideal.iam.permission.core.PermissionModel;
 import cn.sh.ideal.iam.permission.front.domain.model.App;
 import cn.sh.ideal.iam.permission.front.dto.args.CreateAppArgs;

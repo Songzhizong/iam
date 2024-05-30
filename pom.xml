@@ -15,8 +15,8 @@
 
     <modules>
         <module>iam-idp</module>
-        <module>iam-core</module>
         <module>iam-event</module>
+        <module>iam-common</module>
         <module>iam-factor</module>
         <module>iam-linking</module>
         <module>iam-launcher</module>

@@ -16,6 +16,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
         </processorPath>
         <module name="iam-factor-sms" />
+        <module name="iam-common" />
         <module name="iam-account-sync" />
         <module name="iam-factor-all" />
         <module name="iam-idp-oauth2" />
@@ -27,7 +28,6 @@
         <module name="iam-linking-all" />
         <module name="iam-permission-core" />
         <module name="iam-authorization-apikey" />
-        <module name="iam-core" />
         <module name="iam-linking-core" />
         <module name="iam-organization" />
         <module name="iam-permission-web" />
@@ -60,8 +60,8 @@
       <module name="iam-authorization-apikey" options="-parameters" />
       <module name="iam-authorization-core" options="-parameters" />
       <module name="iam-authorization-standard" options="-parameters" />
+      <module name="iam-common" options="-parameters" />
       <module name="iam-compatibility" options="-parameters" />
-      <module name="iam-core" options="-parameters" />
       <module name="iam-event" options="-parameters" />
       <module name="iam-factor" options="-parameters" />
       <module name="iam-factor-all" options="-parameters" />

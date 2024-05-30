@@ -1,4 +1,4 @@
-package cn.sh.ideal.iam.core.constant;
+package cn.sh.ideal.iam.common.constant;
 
 /**
  * @author 宋志宗 on 2023/6/15
