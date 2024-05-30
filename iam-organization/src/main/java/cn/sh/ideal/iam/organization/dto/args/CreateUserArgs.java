@@ -50,6 +50,12 @@ public class CreateUserArgs {
     private String language;
 
     /**
+     * 登录密码
+     */
+    @Nullable
+    private String password;
+
+    /**
      * 用户组ID列表
      *
      * <li>为null代表不改表</li>

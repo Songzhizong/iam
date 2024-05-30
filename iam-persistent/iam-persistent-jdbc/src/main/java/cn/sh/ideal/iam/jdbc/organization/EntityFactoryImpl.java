@@ -1,6 +1,7 @@
 package cn.sh.ideal.iam.jdbc.organization;
 
 import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
+import cn.sh.ideal.iam.infrastructure.encoder.password.PasswordEncoder;
 import cn.sh.ideal.iam.organization.domain.model.*;
 import cn.sh.ideal.iam.organization.dto.args.CreateGroupArgs;
 import cn.sh.ideal.iam.organization.dto.args.CreatePlatformArgs;
@@ -43,8 +44,9 @@ public class EntityFactoryImpl implements EntityFactory {
     @Override
     public User user(@Nonnull Tenant tenant,
                      @Nonnull CreateUserArgs args,
-                     @Nonnull IamI18nReader i18nReader) {
-        return UserDO.create(tenant, args, i18nReader);
+                     @Nonnull IamI18nReader i18nReader,
+                     @Nonnull PasswordEncoder passwordEncoder) {
+        return UserDO.create(tenant, args, i18nReader, passwordEncoder);
     }
 
 }

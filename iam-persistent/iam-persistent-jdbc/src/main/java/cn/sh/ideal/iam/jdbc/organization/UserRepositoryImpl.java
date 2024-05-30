@@ -2,6 +2,7 @@ package cn.sh.ideal.iam.jdbc.organization;
 
 import cn.idealio.framework.exception.ResourceNotFoundException;
 import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
+import cn.sh.ideal.iam.infrastructure.encryption.EncryptionUtils;
 import cn.sh.ideal.iam.organization.domain.model.User;
 import cn.sh.ideal.iam.organization.domain.model.UserGroup;
 import cn.sh.ideal.iam.organization.domain.model.UserRepository;
@@ -63,6 +64,20 @@ public class UserRepositoryImpl implements UserRepository {
     public List<User> findAllById(@Nonnull Collection<Long> ids) {
         return userJpaRepository.findAllById(ids)
                 .stream().map(e -> (User) e).toList();
+    }
+
+    @Nonnull
+    @Override
+    public Optional<User> findByPlatformAndEmail(@Nonnull String platform,
+                                                 @Nonnull String email) {
+        String encrypt = EncryptionUtils.encrypt(email);
+        return userJpaRepository.findByEmailAndPlatform(encrypt, platform).map(e -> e);
+    }
+
+    @Nonnull
+    @Override
+    public Optional<User> findByTenantIdAndAccount(long tenantId, @Nonnull String account) {
+        return userJpaRepository.findByTenantIdAndAccount(tenantId, account).map(e -> e);
     }
 
     @Override

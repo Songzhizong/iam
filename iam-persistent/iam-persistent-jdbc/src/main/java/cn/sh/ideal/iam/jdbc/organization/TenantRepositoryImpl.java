@@ -42,14 +42,22 @@ public class TenantRepositoryImpl implements TenantRepository {
         return tenantJpaRepository.findById(id).map(e -> e);
     }
 
+    @Nonnull
+    @Override
+    public Optional<Tenant> findByPlatformAndAbbreviation(@Nonnull String platform,
+                                                          @Nonnull String abbreviation) {
+        return tenantJpaRepository.findByPlatformAndAbbreviation(platform, abbreviation).map(e -> e);
+    }
+
     @Override
     public boolean existsByContainerId(long containerId) {
         return tenantJpaRepository.existsByContainerId(containerId);
     }
 
     @Override
-    public boolean existsByAbbreviation(@Nonnull String abbreviation) {
-        return tenantJpaRepository.existsByAbbreviation(abbreviation);
+    public boolean existsByPlatformAndAbbreviation(@Nonnull String platform,
+                                                   @Nonnull String abbreviation) {
+        return tenantJpaRepository.existsByPlatformAndAbbreviation(platform, abbreviation);
     }
 
 }

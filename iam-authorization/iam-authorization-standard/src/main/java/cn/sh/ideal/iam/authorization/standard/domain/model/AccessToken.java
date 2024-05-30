@@ -11,4 +11,26 @@ public interface AccessToken {
 
     long getTenantId();
 
+    long getSessionTimeout();
+
+    long getExpiration();
+
+    void setExpiration(long expiration);
+
+    long getLatestActivity();
+
+    void setLatestActivity(long latestActivity);
+
+    default boolean renewal() {
+        boolean changed = false;
+        long currentTimeMillis = System.currentTimeMillis();
+        long latestActivity = getLatestActivity();
+        if (currentTimeMillis - latestActivity > 60_000) {
+            changed = true;
+            setLatestActivity(currentTimeMillis);
+            long sessionTimeout = getSessionTimeout();
+            setExpiration(currentTimeMillis + sessionTimeout);
+        }
+        return changed;
+    }
 }

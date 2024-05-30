@@ -1,5 +1,6 @@
 package cn.sh.ideal.iam.jdbc.organization;
 
+import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.lang.StringUtils;
 import cn.idealio.framework.util.Asserts;
 import cn.idealio.framework.util.data.hibernate.annotations.ManualIdentityGenerator;
@@ -10,28 +11,32 @@ import cn.sh.ideal.iam.organization.dto.args.CreateTenantArgs;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Comment;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.regex.Pattern;
 
 /**
  * @author 宋志宗 on 2024/5/14
  */
+@Slf4j
 @Getter
 @Setter
 @Entity(name = TenantDO.TABLE_NAME)
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = TenantDO.TABLE_NAME,
         indexes = {
-                @Index(name = "uidx01_" + TenantDO.TABLE_NAME, columnList = "abbreviation_", unique = true),
-                @Index(name = "idx01_" + TenantDO.TABLE_NAME, columnList = "platform_"),
-                @Index(name = "idx02_" + TenantDO.TABLE_NAME, columnList = "container_id_"),
+                @Index(name = "uidx01_" + TenantDO.TABLE_NAME, columnList = "platform_,abbreviation_", unique = true),
+                @Index(name = "idx01_" + TenantDO.TABLE_NAME, columnList = "container_id_"),
         })
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression", "NullableProblems"})
 public class TenantDO implements Tenant {
     public static final String TABLE_NAME = "iam_tenant";
+    // 租户缩写正则表达式, 仅支持大小字母/数字/下划线
+    private static final Pattern ABBREVIATION_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
 
     @Id
     @Comment("主键")
@@ -81,6 +86,10 @@ public class TenantDO implements Tenant {
         String abbreviation = args.getAbbreviation();
         Asserts.notBlank(name, () -> i18nReader.getMessage("tenant.name.blank"));
         Asserts.notBlank(abbreviation, () -> i18nReader.getMessage("tenant.abbreviation.blank"));
+        if (!ABBREVIATION_PATTERN.matcher(abbreviation).matches()) {
+            log.info("租户缩写不合法: {}", abbreviation);
+            throw new BadRequestException(i18nReader.getMessage("tenant.abbreviation.invalid"));
+        }
         TenantDO tenantDO = new TenantDO();
         tenantDO.setId(id);
         tenantDO.setPlatform(platform.getCode());

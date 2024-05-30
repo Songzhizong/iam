@@ -2,6 +2,8 @@ package cn.sh.ideal.iam.jdbc.authorization.standard;
 
 import cn.idealio.framework.util.data.hibernate.annotations.JpaIdentityGenerator;
 import cn.sh.ideal.iam.authorization.standard.domain.model.AccessToken;
+import cn.sh.ideal.iam.authorization.standard.domain.model.AuthClient;
+import cn.sh.ideal.iam.infrastructure.user.UserDetail;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,11 +44,11 @@ public class AccessTokenDO implements AccessToken {
     @Nonnull
     @Comment("授权端ID")
     @Column(nullable = false, name = "client_id_")
-    private String clientId = "";
+    private long clientId = -1L;
 
     @Comment("有效时长, 单位毫秒")
-    @Column(nullable = false, name = "expire_in_")
-    private long expireIn = 0;
+    @Column(nullable = false, name = "session_timeout_")
+    private long sessionTimeout = 0;
 
     @Comment("过期时间戳")
     @Column(nullable = false, name = "expiration_")
@@ -59,4 +61,20 @@ public class AccessTokenDO implements AccessToken {
     @Comment("创建时间")
     @Column(nullable = false, name = "created_time_")
     private long createdTime = 0;
+
+    @Nonnull
+    public static AccessTokenDO create(@Nonnull AuthClient authClient,
+                                       @Nonnull UserDetail userDetail,
+                                       long sessionTimeout) {
+        long currentTimeMillis = System.currentTimeMillis();
+        AccessTokenDO accessTokenDO = new AccessTokenDO();
+        accessTokenDO.setUserId(userDetail.getId());
+        accessTokenDO.setTenantId(userDetail.getTenantId());
+        accessTokenDO.setClientId(authClient.getId());
+        accessTokenDO.setSessionTimeout(sessionTimeout);
+        accessTokenDO.setExpiration(currentTimeMillis + sessionTimeout);
+        accessTokenDO.setLatestActivity(currentTimeMillis);
+        accessTokenDO.setCreatedTime(currentTimeMillis);
+        return accessTokenDO;
+    }
 }

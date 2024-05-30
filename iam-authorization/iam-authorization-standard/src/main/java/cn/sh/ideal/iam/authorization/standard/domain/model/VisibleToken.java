@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author 宋志宗 on 2024/2/5
  */
@@ -18,4 +20,13 @@ public class VisibleToken {
     /** token值 */
     @JsonProperty("access_token")
     private String accessToken;
+
+    @Nonnull
+    public static VisibleToken create(@Nonnull String type,
+                                      @Nonnull String visibleToken) {
+        VisibleToken token = new VisibleToken();
+        token.setTokenType(type);
+        token.setAccessToken(visibleToken);
+        return token;
+    }
 }

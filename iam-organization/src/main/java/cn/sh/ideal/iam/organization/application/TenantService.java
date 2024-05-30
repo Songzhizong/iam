@@ -43,12 +43,12 @@ public class TenantService {
                          @Nonnull CreateTenantArgs args) {
         String abbreviation = args.getAbbreviation();
         if (StringUtils.isNotBlank(abbreviation)) {
-            if (tenantRepository.existsByAbbreviation(abbreviation)) {
+            if (tenantRepository.existsByPlatformAndAbbreviation(platform, abbreviation)) {
                 log.info("创建租户失败, 租户缩写已存在: {}", abbreviation);
                 throw new BadRequestException(i18nReader.getMessage("tenant.abbreviation.exists"));
             }
         } else {
-            abbreviation = generateAbbreviation();
+            abbreviation = generateAbbreviation(platform);
         }
         Long containerId = args.getContainerId();
         if (containerId != null) {
@@ -72,11 +72,11 @@ public class TenantService {
     }
 
     @Nonnull
-    private String generateAbbreviation() {
+    private String generateAbbreviation(@Nonnull String platform) {
         String abbreviation;
         do {
             abbreviation = NumberSystemConverter.to26(MAX_TIME - System.currentTimeMillis());
-            if (!tenantRepository.existsByAbbreviation(abbreviation)) {
+            if (!tenantRepository.existsByPlatformAndAbbreviation(platform, abbreviation)) {
                 return abbreviation;
             }
             try {

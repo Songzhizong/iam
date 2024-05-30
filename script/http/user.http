@@ -1,5 +1,5 @@
 ### 新增用户
-POST {{base_url}}/iam/users?tenantId=627104129180762112
+POST {{base_url}}/iam/users?tenantId=627523138766241792
 Content-Type: application/json
 
 {
@@ -9,8 +9,9 @@ Content-Type: application/json
   "phone": "18256928780",
   "email": "zzsong91@163.com",
   "language": "zh_CN",
+  "password": "admin@password",
   "userGroupIds": [
-    627104204829229056
+    627523164422799360
   ]
 }
 

@@ -7,6 +7,7 @@ import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.lang.StringUtils;
 import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.infrastructure.constant.AuditConstants;
+import cn.sh.ideal.iam.infrastructure.encoder.password.PasswordEncoder;
 import cn.sh.ideal.iam.infrastructure.permission.tbac.SecurityContainerValidator;
 import cn.sh.ideal.iam.organization.domain.model.*;
 import cn.sh.ideal.iam.organization.dto.args.CreateUserArgs;
@@ -34,6 +35,7 @@ public class UserService {
     private final IamI18nReader i18nReader;
     private final EntityFactory entityFactory;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private final TenantRepository tenantRepository;
     private final UserGroupRepository userGroupRepository;
     @Nullable
@@ -67,7 +69,7 @@ public class UserService {
             throw new BadRequestException(i18nReader.getMessage("user.account_used"));
         }
 
-        User user = entityFactory.user(tenant, args, i18nReader);
+        User user = entityFactory.user(tenant, args, i18nReader, passwordEncoder);
         user = userRepository.insert(user);
 
         Set<Long> groupIds = args.getUserGroupIds();

@@ -1,6 +1,6 @@
 package cn.sh.ideal.iam.factor.otp.util.googleauth;
 
-import cn.hutool.core.codec.Base32;
+import cn.idealio.framework.util.Base32;
 import org.slf4j.LoggerFactory;
 
 import javax.crypto.Mac;

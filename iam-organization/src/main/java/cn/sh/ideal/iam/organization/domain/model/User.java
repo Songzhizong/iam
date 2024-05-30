@@ -40,4 +40,14 @@ public interface User {
     /** 获取语言 */
     @Nullable
     String getLanguage();
+
+    /** 密码 */
+    @Nonnull
+    String getPassword();
+
+    /** 密码修改时间 */
+    long getPasswordTime();
+
+    /** 是否被锁定 */
+    boolean isBlocked();
 }

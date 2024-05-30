@@ -1,6 +1,7 @@
 package cn.sh.ideal.iam.organization.domain.model;
 
 import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
+import cn.sh.ideal.iam.infrastructure.encoder.password.PasswordEncoder;
 import cn.sh.ideal.iam.organization.dto.args.CreateGroupArgs;
 import cn.sh.ideal.iam.organization.dto.args.CreatePlatformArgs;
 import cn.sh.ideal.iam.organization.dto.args.CreateTenantArgs;
@@ -31,5 +32,6 @@ public interface EntityFactory {
     @Nonnull
     User user(@Nonnull Tenant tenant,
               @Nonnull CreateUserArgs args,
-              @Nonnull IamI18nReader i18nReader);
+              @Nonnull IamI18nReader i18nReader,
+              @Nonnull PasswordEncoder passwordEncoder);
 }

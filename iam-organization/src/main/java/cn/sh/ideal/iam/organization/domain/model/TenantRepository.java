@@ -22,9 +22,14 @@ public interface TenantRepository {
     @Nonnull
     Optional<Tenant> findById(long id);
 
+    @Nonnull
+    Optional<Tenant> findByPlatformAndAbbreviation(@Nonnull String platform,
+                                                   @Nonnull String abbreviation);
+
     boolean existsByContainerId(long containerId);
 
-    boolean existsByAbbreviation(@Nonnull String abbreviation);
+    boolean existsByPlatformAndAbbreviation(@Nonnull String platform,
+                                            @Nonnull String abbreviation);
 
     @Nonnull
     default Tenant requireById(long id, @Nonnull IamI18nReader i18nReader) {

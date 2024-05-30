@@ -7,5 +7,6 @@ import javax.annotation.Nonnull;
  */
 public interface Authorization {
 
-    boolean support(@Nonnull String authorization);
+    @Nonnull
+    String getType();
 }

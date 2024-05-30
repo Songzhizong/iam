@@ -1,0 +1,9 @@
+### 密码登录
+POST {{base_url}}/iam/login/password
+Content-Type: application/json
+x-auth-client-token: e2946f03-d992-4b23-b35e-98ebf15a9efe
+
+{
+  "username": "zzsong91@163.com",
+  "password": "admin@password"
+}

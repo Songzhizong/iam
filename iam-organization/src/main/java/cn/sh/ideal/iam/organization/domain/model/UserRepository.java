@@ -24,6 +24,12 @@ public interface UserRepository {
     @Nonnull
     List<User> findAllById(@Nonnull Collection<Long> ids);
 
+    @Nonnull
+    Optional<User> findByPlatformAndEmail(@Nonnull String platform, @Nonnull String email);
+
+    @Nonnull
+    Optional<User> findByTenantIdAndAccount(long tenantId, @Nonnull String account);
+
     boolean existsByTenantIdAndAccount(long tenantId, @Nonnull String account);
 
     /** 获取用户关联的所有用户组 */

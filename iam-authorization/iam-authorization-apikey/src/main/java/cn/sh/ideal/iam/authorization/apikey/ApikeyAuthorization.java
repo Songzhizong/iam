@@ -16,8 +16,7 @@ public class ApikeyAuthorization implements Authorization {
     @Nonnull
     private final String token;
 
-    @Override
-    public boolean support(@Nonnull String authorization) {
+    public static boolean support(@Nonnull String authorization) {
         return StringUtils.startsWith(authorization, TOKEN_PREFIX);
     }
 
@@ -29,5 +28,11 @@ public class ApikeyAuthorization implements Authorization {
     @Override
     public String toString() {
         return TOKEN_PREFIX + token;
+    }
+
+    @Nonnull
+    @Override
+    public String getType() {
+        return TYPE;
     }
 }

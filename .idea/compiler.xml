@@ -48,6 +48,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="iam-compatibility" target="21" />
+      <module name="iam-core" target="21" />
       <module name="iam-integration" target="21" />
     </bytecodeTargetLevel>
   </component>
