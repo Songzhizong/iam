@@ -15,6 +15,7 @@
     <modules>
         <module>iam-idp-core</module>
         <module>iam-idp-oauth2</module>
+        <module>iam-idp-all</module>
     </modules>
 
     <build>

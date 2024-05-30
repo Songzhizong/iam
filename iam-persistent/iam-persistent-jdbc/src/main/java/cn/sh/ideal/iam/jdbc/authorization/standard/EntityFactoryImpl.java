@@ -12,6 +12,7 @@ import javax.annotation.Nonnull;
  */
 @Component("authorizationStandardEntityFactory")
 public class EntityFactoryImpl implements EntityFactory {
+
     @Nonnull
     @Override
     public AuthClient authClient(@Nonnull CreateAuthClientArgs args) {

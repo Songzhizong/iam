@@ -2,6 +2,7 @@ package cn.sh.ideal.iam.organization.application;
 
 import cn.idealio.framework.audit.Audits;
 import cn.idealio.framework.audit.Fields;
+import cn.idealio.framework.concurrent.Asyncs;
 import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.lang.StringUtils;
 import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 
@@ -27,6 +29,8 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    private static final Duration INVALIDATE_CACHE_DELAY = Duration.ofSeconds(2);
+    private final UserCache userCache;
     private final IamI18nReader i18nReader;
     private final EntityFactory entityFactory;
     private final UserRepository userRepository;
@@ -67,11 +71,13 @@ public class UserService {
         user = userRepository.insert(user);
 
         Set<Long> groupIds = args.getUserGroupIds();
+        Long userId = user.getId();
         if (groupIds != null) {
             List<UserGroup> groups = userGroupRepository.findAllById(groupIds);
-            userRepository.saveGroups(user.getId(), groups);
+            userRepository.saveGroups(userId, groups);
         }
         entityAudit(user);
+        Asyncs.execAndDelayVirtual(INVALIDATE_CACHE_DELAY, () -> userCache.invalidate(userId));
         return user;
     }
 

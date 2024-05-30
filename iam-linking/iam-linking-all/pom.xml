@@ -5,20 +5,23 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>cn.sh.ideal.iam</groupId>
-        <artifactId>iam</artifactId>
+        <artifactId>iam-linking</artifactId>
         <version>6.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>iam-permission</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>iam-linking-all</artifactId>
 
-    <modules>
-        <module>iam-permission-web</module>
-        <module>iam-permission-core</module>
-        <module>iam-permission-rbac</module>
-        <module>iam-permission-tbac</module>
-        <module>iam-permission-front</module>
-        <module>iam-permission-all</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>cn.sh.ideal.iam</groupId>
+            <artifactId>iam-linking-core</artifactId>
+            <version>6.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.sh.ideal.iam</groupId>
+            <artifactId>iam-linking-oauth2</artifactId>
+            <version>6.0.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>

@@ -13,6 +13,7 @@
     <description>第三方账号连接, 可实现微信登录、github登录等功能</description>
 
     <modules>
+        <module>iam-linking-all</module>
         <module>iam-linking-core</module>
         <module>iam-linking-oauth2</module>
     </modules>

@@ -21,8 +21,10 @@
         <module name="iam-idp-oauth2" />
         <module name="iam-idp-core" />
         <module name="iam-persistent-jdbc" />
+        <module name="iam-permission-all" />
         <module name="iam-permission-front" />
         <module name="iam-linking-oauth2" />
+        <module name="iam-linking-all" />
         <module name="iam-permission-core" />
         <module name="iam-authorization-apikey" />
         <module name="iam-core" />
@@ -36,10 +38,12 @@
         <module name="iam-launcher" />
         <module name="iam-factor-email" />
         <module name="iam-persistent-mongo" />
+        <module name="iam-authorization-all" />
         <module name="iam-infrastructure" />
         <module name="iam-permission-tbac" />
         <module name="iam-authorization-standard" />
         <module name="iam-factor-otp" />
+        <module name="iam-idp-all" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -52,6 +56,7 @@
       <module name="iam" options="-parameters" />
       <module name="iam-account-sync" options="-parameters" />
       <module name="iam-authorization" options="-parameters" />
+      <module name="iam-authorization-all" options="-parameters" />
       <module name="iam-authorization-apikey" options="-parameters" />
       <module name="iam-authorization-core" options="-parameters" />
       <module name="iam-authorization-standard" options="-parameters" />
@@ -65,15 +70,18 @@
       <module name="iam-factor-otp" options="-parameters" />
       <module name="iam-factor-sms" options="-parameters" />
       <module name="iam-idp" options="-parameters" />
+      <module name="iam-idp-all" options="-parameters" />
       <module name="iam-idp-core" options="-parameters" />
       <module name="iam-idp-oauth2" options="-parameters" />
       <module name="iam-infrastructure" options="-parameters" />
       <module name="iam-launcher" options="-parameters" />
       <module name="iam-linking" options="-parameters" />
+      <module name="iam-linking-all" options="-parameters" />
       <module name="iam-linking-core" options="-parameters" />
       <module name="iam-linking-oauth2" options="-parameters" />
       <module name="iam-organization" options="-parameters" />
       <module name="iam-permission" options="-parameters" />
+      <module name="iam-permission-all" options="-parameters" />
       <module name="iam-permission-core" options="-parameters" />
       <module name="iam-permission-front" options="-parameters" />
       <module name="iam-permission-rbac" options="-parameters" />

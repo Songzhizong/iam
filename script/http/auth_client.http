@@ -1,0 +1,10 @@
+### 创建授权端
+POST {{base_url}}/iam/auth_clients
+Content-Type: application/json
+
+{
+  "platform": "customer",
+  "name": "Web端",
+  "note": "客户平台Web端",
+  "terminal": "WEB"
+}

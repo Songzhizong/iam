@@ -13,12 +13,32 @@
     <dependencies>
         <dependency>
             <groupId>cn.sh.ideal.iam</groupId>
+            <artifactId>iam-authorization-all</artifactId>
+            <version>6.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.sh.ideal.iam</groupId>
             <artifactId>iam-factor-all</artifactId>
             <version>6.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>cn.sh.ideal.iam</groupId>
             <artifactId>iam-organization</artifactId>
+            <version>6.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.sh.ideal.iam</groupId>
+            <artifactId>iam-idp-all</artifactId>
+            <version>6.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.sh.ideal.iam</groupId>
+            <artifactId>iam-linking-all</artifactId>
+            <version>6.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.sh.ideal.iam</groupId>
+            <artifactId>iam-permission-all</artifactId>
             <version>6.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>

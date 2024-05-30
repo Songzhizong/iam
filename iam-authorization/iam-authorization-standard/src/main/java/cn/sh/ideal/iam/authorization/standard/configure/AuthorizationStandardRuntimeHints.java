@@ -1,5 +1,6 @@
 package cn.sh.ideal.iam.authorization.standard.configure;
 
+import cn.sh.ideal.iam.authorization.standard.domain.model.VisibleToken;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
@@ -16,6 +17,7 @@ public class AuthorizationStandardRuntimeHints implements RuntimeHintsRegistrar 
     @Override
     public void registerHints(@Nonnull RuntimeHints hints, ClassLoader classLoader) {
         List<TypeReference> references = List.of(
+                TypeReference.of(VisibleToken.class)
         );
         hints.reflection().registerTypes(references, b -> b.withMembers(MemberCategory.values()));
     }
