@@ -20,6 +20,7 @@
         <module>iam-factor</module>
         <module>iam-linking</module>
         <module>iam-launcher</module>
+        <module>iam-security</module>
         <module>iam-permission</module>
         <module>iam-persistent</module>
         <module>iam-account-sync</module>

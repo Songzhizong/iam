@@ -4,12 +4,12 @@ import cn.idealio.framework.audit.Audit;
 import cn.idealio.framework.audit.AuditAction;
 import cn.idealio.framework.audit.Audits;
 import cn.idealio.framework.transmission.Result;
-import cn.idealio.security.api.annotation.HasAuthority;
 import cn.sh.ideal.iam.infrastructure.constant.AuditConstants;
 import cn.sh.ideal.iam.organization.application.TenantService;
 import cn.sh.ideal.iam.organization.domain.model.Tenant;
 import cn.sh.ideal.iam.organization.dto.args.CreateTenantArgs;
 import cn.sh.ideal.iam.organization.dto.resp.TenantInfo;
+import cn.sh.ideal.iam.security.api.annotation.HasAuthority;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

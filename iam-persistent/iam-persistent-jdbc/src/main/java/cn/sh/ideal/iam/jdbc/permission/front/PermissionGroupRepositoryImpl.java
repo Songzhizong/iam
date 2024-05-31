@@ -45,6 +45,13 @@ public class PermissionGroupRepositoryImpl implements PermissionGroupRepository 
 
     @Nonnull
     @Override
+    public List<PermissionGroup> findAll() {
+        return permissionGroupJpaRepository.findAll()
+                .stream().map(e -> (PermissionGroup) e).toList();
+    }
+
+    @Nonnull
+    @Override
     public List<PermissionGroup> findAllByAppId(long appId) {
         return permissionGroupJpaRepository.findAllByAppId(appId)
                 .stream().map(e -> (PermissionGroup) e).toList();

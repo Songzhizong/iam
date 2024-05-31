@@ -17,6 +17,9 @@ public interface UserDetail {
 
     long getTenantId();
 
+    @Nonnull
+    String getName();
+
     /** 获取登录账号 */
     @Nullable
     String getAccount();

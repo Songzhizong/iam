@@ -1,4 +1,4 @@
-package cn.sh.ideal.iam.authorization.core.type;
+package cn.sh.ideal.iam.authorization.core;
 
 import javax.annotation.Nonnull;
 

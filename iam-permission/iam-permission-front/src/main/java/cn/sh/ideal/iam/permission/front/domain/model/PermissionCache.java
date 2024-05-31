@@ -18,6 +18,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 /**
  * @author 宋志宗 on 2024/5/17
@@ -30,17 +31,23 @@ public class PermissionCache implements InitializingBean, ApplicationRunner, Per
     private final AtomicLong lastRefreshTime = new AtomicLong(0);
     private final PermissionRepository permissionRepository;
     private final Cache<String, Long> permissionChangedTimeCache;
+    private final PermissionItemRepository permissionItemRepository;
+    private final PermissionGroupRepository permissionGroupRepository;
 
     private volatile Map<Long, Permission> permissionMap = new HashMap<>();
     private volatile Map<Long, List<Permission>> itemPermissionsMap = new HashMap<>();
 
     public PermissionCache(@Nonnull CacheFactory cacheFactory,
-                           @Nonnull PermissionRepository permissionRepository) {
+                           @Nonnull PermissionRepository permissionRepository,
+                           @Nonnull PermissionItemRepository permissionItemRepository,
+                           @Nonnull PermissionGroupRepository permissionGroupRepository) {
         this.permissionRepository = permissionRepository;
         this.permissionChangedTimeCache = cacheFactory.
                 <String, Long>newBuilder(LongSerializer.instance())
                 .expireAfterWrite(Duration.ofHours(1))
                 .build("");
+        this.permissionItemRepository = permissionItemRepository;
+        this.permissionGroupRepository = permissionGroupRepository;
     }
 
     @Nullable
@@ -91,16 +98,31 @@ public class PermissionCache implements InitializingBean, ApplicationRunner, Per
             if (permissions.isEmpty()) {
                 return;
             }
+            List<PermissionItem> items = permissionItemRepository.findAll();
+            List<PermissionGroup> groups = permissionGroupRepository.findAll();
+            Map<Long, PermissionItem> itemMap = items.stream()
+                    .collect(Collectors.toMap(PermissionItem::getId, item -> item));
+            Map<Long, PermissionGroup> groupMap = groups.stream()
+                    .collect(Collectors.toMap(PermissionGroup::getId, group -> group));
             Map<Long, Permission> permissionMap = new HashMap<>();
             Map<Long, List<Permission>> itemPermissionsMap = new HashMap<>();
             for (Permission permission : permissions) {
+                long permissionId = permission.getId();
                 boolean available = permission.available();
                 if (!available) {
                     continue;
                 }
-                long permissionId = permission.getId();
-                permissionMap.put(permissionId, permission);
                 long itemId = permission.getItemId();
+                PermissionItem item = itemMap.get(itemId);
+                if (item == null || !item.isEnabled()) {
+                    continue;
+                }
+                long groupId = item.getGroupId();
+                PermissionGroup group = groupMap.get(groupId);
+                if (group == null || !group.isEnabled()) {
+                    continue;
+                }
+                permissionMap.put(permissionId, permission);
                 itemPermissionsMap.computeIfAbsent(itemId, k -> new ArrayList<>()).add(permission);
             }
             this.permissionMap = permissionMap;

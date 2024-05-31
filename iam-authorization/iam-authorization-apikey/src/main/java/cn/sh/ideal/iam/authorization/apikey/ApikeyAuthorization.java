@@ -1,7 +1,7 @@
 package cn.sh.ideal.iam.authorization.apikey;
 
 import cn.idealio.framework.lang.StringUtils;
-import cn.sh.ideal.iam.authorization.core.type.Authorization;
+import cn.sh.ideal.iam.authorization.core.Authorization;
 import lombok.RequiredArgsConstructor;
 
 import javax.annotation.Nonnull;

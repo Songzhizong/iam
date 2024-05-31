@@ -44,6 +44,12 @@
     <file url="file://$PROJECT_DIR$/iam-persistent/iam-persistent-mongo/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-persistent/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/iam-persistent/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-security/iam-security-adapter/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-security/iam-security-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-security/iam-security-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-security/iam-security-standard/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-security/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/iam-security/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
   </component>

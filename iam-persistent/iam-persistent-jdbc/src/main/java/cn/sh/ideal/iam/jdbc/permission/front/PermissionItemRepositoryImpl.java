@@ -45,6 +45,13 @@ public class PermissionItemRepositoryImpl implements PermissionItemRepository {
 
     @Nonnull
     @Override
+    public List<PermissionItem> findAll() {
+        return permissionItemJpaRepository.findAll()
+                .stream().map(e -> (PermissionItem) e).toList();
+    }
+
+    @Nonnull
+    @Override
     public List<PermissionItem> findAllByAppId(long appId) {
         return permissionItemJpaRepository.findAllByAppId(appId)
                 .stream().map(e -> (PermissionItem) e).toList();

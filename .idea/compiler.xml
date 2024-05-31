@@ -18,12 +18,16 @@
         <module name="iam-factor-sms" />
         <module name="iam-common" />
         <module name="iam-account-sync" />
+        <module name="iam-security-adapter" />
         <module name="iam-factor-all" />
         <module name="iam-idp-oauth2" />
         <module name="iam-idp-core" />
         <module name="iam-persistent-jdbc" />
+        <module name="iam-security-api" />
+        <module name="iam-security-core" />
         <module name="iam-permission-all" />
         <module name="iam-permission-front" />
+        <module name="iam-security-standard" />
         <module name="iam-linking-oauth2" />
         <module name="iam-linking-all" />
         <module name="iam-permission-core" />
@@ -91,6 +95,11 @@
       <module name="iam-persistent" options="-parameters" />
       <module name="iam-persistent-jdbc" options="-parameters" />
       <module name="iam-persistent-mongo" options="-parameters" />
+      <module name="iam-security" options="-parameters" />
+      <module name="iam-security-adapter" options="-parameters" />
+      <module name="iam-security-api" options="-parameters" />
+      <module name="iam-security-core" options="-parameters" />
+      <module name="iam-security-standard" options="-parameters" />
     </option>
   </component>
 </project>

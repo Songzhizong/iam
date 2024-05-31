@@ -1,0 +1,8 @@
+[
+  {
+    "name": "cn.idealio.security.api.exception.MissTenantIdException"
+  },
+  {
+    "name": "cn.idealio.security.api.exception.NoTenantAccessException"
+  }
+]

@@ -20,6 +20,9 @@ public interface PermissionItemRepository {
     Optional<PermissionItem> findById(long id);
 
     @Nonnull
+    List<PermissionItem> findAll();
+
+    @Nonnull
     List<PermissionItem> findAllByAppId(long appId);
 
     boolean existsByAppId(long appId);

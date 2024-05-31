@@ -20,6 +20,9 @@ public interface PermissionGroupRepository {
     Optional<PermissionGroup> findById(long id);
 
     @Nonnull
+    List<PermissionGroup> findAll();
+
+    @Nonnull
     List<PermissionGroup> findAllByAppId(long appId);
 
     boolean existsByAppId(long appId);

@@ -3,6 +3,7 @@ package cn.sh.ideal.iam.jdbc.organization;
 import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.lang.StringUtils;
 import cn.idealio.framework.util.Asserts;
+import cn.idealio.framework.util.NumberSystemConverter;
 import cn.idealio.framework.util.data.hibernate.annotations.ManualIdentityGenerator;
 import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.Platform;
@@ -130,5 +131,10 @@ public class TenantDO implements Tenant {
             systemEdition = "";
         }
         this.systemEdition = systemEdition;
+    }
+
+    public static void main(String[] args) {
+        long currentTimeMillis = Long.MAX_VALUE;
+        System.out.println(NumberSystemConverter.to58(currentTimeMillis));
     }
 }

@@ -1,4 +1,4 @@
-package cn.sh.ideal.iam.authorization.core.type;
+package cn.sh.ideal.iam.security.api;
 
 import javax.annotation.Nullable;
 

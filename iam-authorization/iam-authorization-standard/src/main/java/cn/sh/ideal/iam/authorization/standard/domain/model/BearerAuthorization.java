@@ -2,7 +2,7 @@ package cn.sh.ideal.iam.authorization.standard.domain.model;
 
 import cn.idealio.framework.exception.UnauthorizedException;
 import cn.idealio.framework.lang.StringUtils;
-import cn.sh.ideal.iam.authorization.core.type.Authorization;
+import cn.sh.ideal.iam.authorization.core.Authorization;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -37,7 +37,7 @@ public class BearerAuthorization implements Authorization {
         this.visibleToken = visibleToken;
     }
 
-    public static boolean support(@Nonnull String authorization) {
+    public static boolean supports(@Nonnull String authorization) {
         return StringUtils.startsWith(authorization, TOKEN_PREFIX);
     }
 
@@ -48,8 +48,8 @@ public class BearerAuthorization implements Authorization {
     }
 
     @Nonnull
-    public static BearerAuthorization ofAuthorization(@Nonnull String authorization) {
-        if (!BearerAuthorization.support(authorization)) {
+    public static BearerAuthorization read(@Nonnull String authorization) {
+        if (!BearerAuthorization.supports(authorization)) {
             log.warn("BearerAuthorization无法解析此授权头: {}", authorization);
             throw new IllegalArgumentException("Invalid authorization for BearerAuthorization");
         }

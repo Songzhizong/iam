@@ -5,6 +5,7 @@ import cn.sh.ideal.iam.infrastructure.user.UserDetail;
 import cn.sh.ideal.iam.infrastructure.user.UserDetailService;
 import cn.sh.ideal.iam.organization.domain.model.TenantRepository;
 import cn.sh.ideal.iam.organization.domain.model.User;
+import cn.sh.ideal.iam.organization.domain.model.UserCache;
 import cn.sh.ideal.iam.organization.domain.model.UserRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import javax.annotation.Nullable;
 @Service
 @RequiredArgsConstructor
 public class UserDetailServiceImpl implements UserDetailService {
+    private final UserCache userCache;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TenantRepository tenantRepository;
@@ -54,6 +56,17 @@ public class UserDetailServiceImpl implements UserDetailService {
         return new UserDetailImpl(user);
     }
 
+    @Nullable
+    @Override
+    public UserDetail findById(long userId) {
+        User user = userCache.get(userId);
+        if (user == null) {
+            log.warn("获取UserDetail失败, 用户不存在: {}", userId);
+            return null;
+        }
+        return new UserDetailImpl(user);
+    }
+
     @Getter
     @Setter
     @RequiredArgsConstructor
@@ -75,6 +88,12 @@ public class UserDetailServiceImpl implements UserDetailService {
         @Override
         public long getTenantId() {
             return user.getTenantId();
+        }
+
+        @Nonnull
+        @Override
+        public String getName() {
+            return user.getName();
         }
 
         @Nullable

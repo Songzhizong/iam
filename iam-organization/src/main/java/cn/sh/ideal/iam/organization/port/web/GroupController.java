@@ -5,13 +5,13 @@ import cn.idealio.framework.audit.AuditAction;
 import cn.idealio.framework.audit.Audits;
 import cn.idealio.framework.transmission.Result;
 import cn.idealio.framework.util.Asserts;
-import cn.idealio.security.api.annotation.HasAuthority;
 import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.infrastructure.constant.AuditConstants;
 import cn.sh.ideal.iam.organization.application.GroupService;
 import cn.sh.ideal.iam.organization.domain.model.UserGroup;
 import cn.sh.ideal.iam.organization.dto.args.CreateGroupArgs;
 import cn.sh.ideal.iam.organization.dto.resp.GroupInfo;
+import cn.sh.ideal.iam.security.api.annotation.HasAuthority;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

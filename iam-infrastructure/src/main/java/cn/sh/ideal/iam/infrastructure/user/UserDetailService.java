@@ -12,4 +12,7 @@ public interface UserDetailService {
     UserDetail loadUserByUsername(@Nonnull String platform,
                                   @Nonnull String username,
                                   @Nonnull String password);
+
+    @Nullable
+    UserDetail findById(long userId);
 }
