@@ -10,7 +10,6 @@
     </parent>
     <artifactId>iam-permission-front</artifactId>
 
-
     <dependencies>
         <dependency>
             <groupId>cn.sh.ideal.iam</groupId>

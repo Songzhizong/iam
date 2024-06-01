@@ -7,3 +7,15 @@ x-auth-client-token: e2946f03-d992-4b23-b35e-98ebf15a9efe
   "username": "zzsong91@163.com",
   "password": "admin@password"
 }
+
+> {%
+    let token = response.body.data.token;
+    if (token != null) {
+        client.global.set("token_type", token.token_type);
+        client.global.set("access_token", token.access_token);
+    }
+    let mfaTicket = response.body.data.mfaTicket;
+    if (mfaTicket != null) {
+        client.global.set("mfa_ticket", mfaTicket.ticket);
+    }
+%}

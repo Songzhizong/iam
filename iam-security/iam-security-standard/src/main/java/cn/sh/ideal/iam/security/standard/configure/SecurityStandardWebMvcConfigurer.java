@@ -18,7 +18,7 @@ public class SecurityStandardWebMvcConfigurer implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(@Nonnull InterceptorRegistry registry) {
-        registry.addInterceptor(securityInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(securityInterceptor).addPathPatterns("/iam/**");
     }
 }
 

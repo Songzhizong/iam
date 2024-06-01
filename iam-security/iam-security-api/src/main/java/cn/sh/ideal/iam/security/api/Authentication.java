@@ -1,5 +1,6 @@
 package cn.sh.ideal.iam.security.api;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -11,7 +12,8 @@ public interface Authentication {
     long userId();
 
     /** 获取用户所属租户ID */
-    long tenantId();
+    @Nonnull
+    Long tenantId();
 
     /** 获取用户姓名 */
     @Nullable

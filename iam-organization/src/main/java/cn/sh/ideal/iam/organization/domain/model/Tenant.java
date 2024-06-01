@@ -36,6 +36,9 @@ public interface Tenant {
     @Nullable
     String getSystemEdition();
 
+    /** 是否已被冻结 */
+    boolean isBlocked();
+
     @Nonnull
     default TenantInfo toInfo() {
         TenantInfo tenantInfo = new TenantInfo();

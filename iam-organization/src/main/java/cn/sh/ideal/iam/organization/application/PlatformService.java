@@ -1,13 +1,11 @@
 package cn.sh.ideal.iam.organization.application;
 
-import cn.idealio.framework.concurrent.Asyncs;
 import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.exception.ResourceNotFoundException;
 import cn.idealio.framework.util.Asserts;
 import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.EntityFactory;
 import cn.sh.ideal.iam.organization.domain.model.Platform;
-import cn.sh.ideal.iam.organization.domain.model.PlatformCache;
 import cn.sh.ideal.iam.organization.domain.model.PlatformRepository;
 import cn.sh.ideal.iam.organization.dto.args.CreatePlatformArgs;
 import cn.sh.ideal.iam.organization.dto.args.UpdatePlatformArgs;
@@ -18,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.time.Duration;
 import java.util.List;
 
 /**
@@ -28,8 +25,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class PlatformService {
-    private static final Duration INVALIDATE_CACHE_DELAY = Duration.ofSeconds(2);
-    private final PlatformCache cache;
     private final EntityFactory entityFactory;
     private final IamI18nReader i18nReader;
     private final PlatformRepository platformRepository;
@@ -56,7 +51,6 @@ public class PlatformService {
             return new ResourceNotFoundException(i18nReader.getMessage("platform.not.found"));
         });
         platform.update(args, i18nReader);
-        Asyncs.execAndDelayVirtual(INVALIDATE_CACHE_DELAY, () -> cache.invalidate(code));
         return platformRepository.update(platform);
     }
 
@@ -69,7 +63,6 @@ public class PlatformService {
             return null;
         }
         platform.delete();
-        Asyncs.execAndDelayVirtual(INVALIDATE_CACHE_DELAY, () -> cache.invalidate(code));
         return platformRepository.update(platform);
     }
 

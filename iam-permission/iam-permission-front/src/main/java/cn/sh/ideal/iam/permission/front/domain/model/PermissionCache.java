@@ -86,8 +86,7 @@ public class PermissionCache implements InitializingBean, ApplicationRunner, Per
     }
 
     private void refresh() {
-        boolean tryLock = refreshLock.tryLock();
-        if (!tryLock) {
+        if (!refreshLock.tryLock()) {
             log.warn("刷新权限缓存出现锁冲突, 等待下一轮执行");
             return;
         }
@@ -161,6 +160,7 @@ public class PermissionCache implements InitializingBean, ApplicationRunner, Per
 
     @Override
     public void onPermissionTableChanged() {
-        permissionChangedTimeCache.put(PERMISSION_CHANGED_TIME_KEY, System.currentTimeMillis());
+        long value = System.currentTimeMillis() + 2000;
+        permissionChangedTimeCache.put(PERMISSION_CHANGED_TIME_KEY, value);
     }
 }

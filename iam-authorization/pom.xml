@@ -12,10 +12,10 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>iam-authorization-all</module>
         <module>iam-authorization-core</module>
         <module>iam-authorization-apikey</module>
         <module>iam-authorization-Standard</module>
-        <module>iam-authorization-all</module>
     </modules>
 
     <build>

@@ -20,6 +20,11 @@ spring:
   main:
     allow-bean-definition-overriding: true
 
+ideal-iam:
+  security:
+    permit-matchers:
+      - /iam/login/**
+
 ideal:
   trace:
     exclude-patterns:

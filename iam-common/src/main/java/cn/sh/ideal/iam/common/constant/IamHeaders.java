@@ -20,41 +20,40 @@ public interface IamHeaders {
     String PLATFORM = "x-platform";
 
     /**
-     * 是否多租户平台, Boolean
-     */
-    @Nonnull
-    String MULTI_TENANT = "x-multi-tenant";
-
-    /**
      * 用户id头, Long
      */
     @Nonnull
     String USER_ID = "x-user-id";
 
     /**
-     * 用户姓名
+     * 用户姓名, String encoded
      */
     @Nonnull
     String USER_NAME = "x-user-name";
 
     /**
-     * 用户登录账号
+     * 用户登录账号, Sting encoded
      */
     @Nonnull
     String ACCOUNT = "x-user-account";
 
     /**
-     * 用户归属租户ID
+     * 用户归属租户ID, Long
      */
     @Nonnull
     String USER_TENANT_ID = "x-user-tenant-id";
 
     /**
-     * 当前访问租户ID
+     * 当前访问租户ID Long
      */
     @Nonnull
     String TENANT_ID = IdealHeaders.TENANT_ID;
 
+    /** 应用ID, Long */
+    @Nonnull
+    String APP_ID = "x-auth-app-id";
+
+    /** 授权端Token, Sting */
     @Nonnull
     String CLIENT_TOKEN = "x-auth-client-token";
 

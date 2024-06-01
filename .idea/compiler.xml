@@ -18,7 +18,6 @@
         <module name="iam-factor-sms" />
         <module name="iam-common" />
         <module name="iam-account-sync" />
-        <module name="iam-security-adapter" />
         <module name="iam-factor-all" />
         <module name="iam-idp-oauth2" />
         <module name="iam-idp-core" />
@@ -34,8 +33,8 @@
         <module name="iam-authorization-apikey" />
         <module name="iam-linking-core" />
         <module name="iam-organization" />
-        <module name="iam-permission-web" />
         <module name="iam-event" />
+        <module name="iam-permission-composite" />
         <module name="iam-permission-rbac" />
         <module name="iam-authorization-core" />
         <module name="iam-factor-core" />
@@ -54,6 +53,7 @@
       <module name="iam-compatibility" target="21" />
       <module name="iam-core" target="21" />
       <module name="iam-integration" target="21" />
+      <module name="iam-security-adapter" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -87,11 +87,11 @@
       <module name="iam-organization" options="-parameters" />
       <module name="iam-permission" options="-parameters" />
       <module name="iam-permission-all" options="-parameters" />
+      <module name="iam-permission-composite" options="-parameters" />
       <module name="iam-permission-core" options="-parameters" />
       <module name="iam-permission-front" options="-parameters" />
       <module name="iam-permission-rbac" options="-parameters" />
       <module name="iam-permission-tbac" options="-parameters" />
-      <module name="iam-permission-web" options="-parameters" />
       <module name="iam-persistent" options="-parameters" />
       <module name="iam-persistent-jdbc" options="-parameters" />
       <module name="iam-persistent-mongo" options="-parameters" />

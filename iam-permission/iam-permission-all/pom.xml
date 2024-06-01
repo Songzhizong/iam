@@ -33,7 +33,7 @@
         </dependency>
         <dependency>
             <groupId>cn.sh.ideal.iam</groupId>
-            <artifactId>iam-permission-web</artifactId>
+            <artifactId>iam-permission-composite</artifactId>
             <version>6.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

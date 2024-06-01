@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression", "NullableProblems"})
 public class UserDO implements User {
     public static final String TABLE_NAME = "iam_user";
-    // 账号正则表达式, 大小写字母开头且仅支持大小写字母/数字/下划线
+    /** 账号正则表达式, 大小写字母开头且仅支持大小写字母/数字/下划线 */
     private static final Pattern ACCOUNT_PATTERN = Pattern.compile("^[a-zA-Z][a-zA-Z0-9_]+$");
 
     @Id

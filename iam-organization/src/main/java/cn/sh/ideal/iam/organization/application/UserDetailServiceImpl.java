@@ -59,7 +59,7 @@ public class UserDetailServiceImpl implements UserDetailService {
     @Nullable
     @Override
     public UserDetail findById(long userId) {
-        User user = userCache.get(userId);
+        User user = userCache.get(userId).orElse(null);
         if (user == null) {
             log.warn("获取UserDetail失败, 用户不存在: {}", userId);
             return null;

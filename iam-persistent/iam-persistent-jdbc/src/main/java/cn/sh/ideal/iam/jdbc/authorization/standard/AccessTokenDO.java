@@ -37,9 +37,10 @@ public class AccessTokenDO implements AccessToken {
     @Column(nullable = false, name = "user_id_")
     private long userId = -1L;
 
+    @Nonnull
     @Comment("用户所属租户ID")
     @Column(nullable = false, name = "tenant_id_")
-    private long tenantId = -1L;
+    private Long tenantId = -1L;
 
     @Nonnull
     @Comment("授权端ID")

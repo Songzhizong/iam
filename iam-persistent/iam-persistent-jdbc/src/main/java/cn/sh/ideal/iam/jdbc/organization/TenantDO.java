@@ -74,6 +74,10 @@ public class TenantDO implements Tenant {
     @Column(nullable = false, name = "system_edition_")
     private String systemEdition = "";
 
+    @Comment("租户是否被锁定")
+    @Column(nullable = false, name = "blocked_")
+    private boolean blocked = false;
+
     @Version
     @Column(nullable = false, name = "version_")
     private long version = 0;

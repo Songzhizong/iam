@@ -25,7 +25,7 @@ public class PermissionRepositoryImpl implements PermissionRepository {
     public Permission insert(@Nonnull Permission permission) {
         PermissionDO entity = (PermissionDO) permission;
         PermissionDO saved = permissionJpaRepository.saveAndFlush(entity);
-        Asyncs.delayExec(Duration.ofSeconds(1), () -> {
+        Asyncs.executeVirtual(() -> {
             for (PermissionRepositoryListener listener : listeners) {
                 listener.onPermissionTableChanged();
             }

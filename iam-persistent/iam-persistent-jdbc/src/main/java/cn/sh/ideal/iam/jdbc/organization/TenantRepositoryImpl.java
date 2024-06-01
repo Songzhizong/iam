@@ -1,5 +1,7 @@
 package cn.sh.ideal.iam.jdbc.organization;
 
+import cn.idealio.framework.exception.ResourceNotFoundException;
+import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.Tenant;
 import cn.sh.ideal.iam.organization.domain.model.TenantRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 public class TenantRepositoryImpl implements TenantRepository {
+    private final IamI18nReader i18nReader;
     private final TenantJpaRepository tenantJpaRepository;
 
     @Nonnull
@@ -58,6 +61,15 @@ public class TenantRepositoryImpl implements TenantRepository {
     public boolean existsByPlatformAndAbbreviation(@Nonnull String platform,
                                                    @Nonnull String abbreviation) {
         return tenantJpaRepository.existsByPlatformAndAbbreviation(platform, abbreviation);
+    }
+
+    @Nonnull
+    @Override
+    public Tenant requireById(long id) {
+        return findById(id).orElseThrow(() -> {
+            String[] args = {String.valueOf(id)};
+            return new ResourceNotFoundException(i18nReader.getMessage("tenant.notfound", args));
+        });
     }
 
 }

@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 public class UsernameOrPasswordIncorrectException extends VisibleException {
 
     public UsernameOrPasswordIncorrectException(int failureCount, @Nullable Integer failureLimit) {
-        super(400, IamGuides.USERNAME_OR_PASSWORD_ERROR, "用户名或密码错误");
+        super(400, IamGuides.USERNAME_OR_PASSWORD_INCORRECT, "用户名或密码错误");
         if (failureLimit != null && failureLimit > 0 && failureCount > 0) {
             Data info = new Data(failureCount, failureLimit);
             setData(info);

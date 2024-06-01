@@ -55,7 +55,7 @@ public class AccessTokenService {
         AccessToken accessToken = entityFactory.accessToken(authClient, userDetail, sessionTimeout);
         accessToken = accessTokenRepository.insert(accessToken);
         long accessId = accessToken.getId();
-        BearerAuthorization authorization = BearerAuthorization.create(accessId);
+        StandardAuthorization authorization = StandardAuthorization.create(accessId);
         String type = authorization.getType();
         String visibleToken = authorization.getVisibleToken();
         TOKEN_CACHE.put(accessId, new TokenCacheWrapper(accessToken, System.currentTimeMillis()));

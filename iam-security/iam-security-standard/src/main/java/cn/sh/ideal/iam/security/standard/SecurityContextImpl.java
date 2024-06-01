@@ -3,6 +3,7 @@ package cn.sh.ideal.iam.security.standard;
 import cn.sh.ideal.iam.security.api.Authentication;
 import cn.sh.ideal.iam.security.api.AuthorityValidator;
 import cn.sh.ideal.iam.security.api.SecurityContext;
+import cn.sh.ideal.iam.security.api.TenantAccessibility;
 import lombok.RequiredArgsConstructor;
 
 import javax.annotation.Nonnull;
@@ -14,6 +15,8 @@ import javax.annotation.Nonnull;
 @SuppressWarnings("ClassCanBeRecord")
 public class SecurityContextImpl implements SecurityContext {
     private final Authentication authentication;
+    private final AuthorityValidator authorityValidator;
+    private final TenantAccessibility tenantAccessibility;
 
     @Nonnull
     @Override
@@ -24,6 +27,12 @@ public class SecurityContextImpl implements SecurityContext {
     @Nonnull
     @Override
     public AuthorityValidator authorityValidator() {
-        return null;
+        return authorityValidator;
+    }
+
+    @Nonnull
+    @Override
+    public TenantAccessibility tenantAccessibility() {
+        return tenantAccessibility;
     }
 }

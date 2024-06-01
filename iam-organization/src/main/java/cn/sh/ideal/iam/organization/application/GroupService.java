@@ -35,7 +35,7 @@ public class GroupService {
     @Nonnull
     @Transactional(rollbackFor = Throwable.class)
     public UserGroup create(long tenantId, @Nonnull CreateGroupArgs args) {
-        Tenant tenant = tenantRepository.requireById(tenantId, i18nReader);
+        Tenant tenant = tenantRepository.requireById(tenantId);
         Long tenantContainerId = tenant.getContainerId();
         Long containerId = args.getContainerId();
         if (containerId == null) {

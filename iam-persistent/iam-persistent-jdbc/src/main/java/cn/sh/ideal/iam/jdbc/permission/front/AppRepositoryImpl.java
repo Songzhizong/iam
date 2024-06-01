@@ -1,8 +1,10 @@
 package cn.sh.ideal.iam.jdbc.permission.front;
 
+import cn.idealio.framework.concurrent.Asyncs;
 import cn.sh.ideal.iam.common.constant.Terminal;
 import cn.sh.ideal.iam.permission.front.domain.model.App;
 import cn.sh.ideal.iam.permission.front.domain.model.AppRepository;
+import cn.sh.ideal.iam.permission.front.domain.model.AppRepositoryListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -23,20 +25,37 @@ public class AppRepositoryImpl implements AppRepository {
     @Override
     public App insert(@Nonnull App app) {
         AppDO entity = (AppDO) app;
-        return appJpaRepository.save(entity);
+        AppDO saved = appJpaRepository.saveAndFlush(entity);
+        Asyncs.executeVirtual(() -> {
+            for (AppRepositoryListener listener : listeners) {
+                listener.onAppTableChanged();
+            }
+        });
+        return saved;
     }
 
     @Nonnull
     @Override
     public App save(@Nonnull App app) {
         AppDO entity = (AppDO) app;
-        return appJpaRepository.save(entity);
+        AppDO saved = appJpaRepository.saveAndFlush(entity);
+        Asyncs.executeVirtual(() -> {
+            for (AppRepositoryListener listener : listeners) {
+                listener.onAppTableChanged();
+            }
+        });
+        return saved;
     }
 
     @Override
     public void delete(@Nonnull App app) {
         AppDO entity = (AppDO) app;
         appJpaRepository.delete(entity);
+        Asyncs.executeVirtual(() -> {
+            for (AppRepositoryListener listener : listeners) {
+                listener.onAppTableChanged();
+            }
+        });
     }
 
     @Nonnull

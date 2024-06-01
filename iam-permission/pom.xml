@@ -12,12 +12,12 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>iam-permission-web</module>
+        <module>iam-permission-all</module>
         <module>iam-permission-core</module>
         <module>iam-permission-rbac</module>
         <module>iam-permission-tbac</module>
         <module>iam-permission-front</module>
-        <module>iam-permission-all</module>
+        <module>iam-permission-composite</module>
     </modules>
 
     <build>

@@ -2,6 +2,7 @@ package cn.sh.ideal.iam.organization.application;
 
 import cn.idealio.framework.audit.Audits;
 import cn.idealio.framework.audit.Fields;
+import cn.idealio.framework.concurrent.Asyncs;
 import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.lang.StringUtils;
 import cn.idealio.framework.util.NumberSystemConverter;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.Duration;
 
 /**
  * @author 宋志宗 on 2024/5/14
@@ -28,10 +30,12 @@ import javax.annotation.Nullable;
 @RequiredArgsConstructor
 public class TenantService {
     private static final long MAX_TIME = 4765107660000L;
+    private static final Duration INVALIDATE_CACHE_DELAY = Duration.ofSeconds(2);
+    private final TenantCache tenantCache;
+    private final IamI18nReader i18nReader;
     private final IamIDGenerator idGenerator;
     private final EntityFactory entityFactory;
     private final TenantRepository tenantRepository;
-    private final IamI18nReader i18nReader;
     private final PlatformRepository platformRepository;
     @Nullable
     @Autowired(required = false)
@@ -68,6 +72,7 @@ public class TenantService {
             audit.resourceTenantId(insert.getId());
             audit.auditInfo(Fields.of().add("名称", "name", insert.getName()));
         });
+        Asyncs.execAndDelayVirtual(INVALIDATE_CACHE_DELAY, () -> tenantCache.invalidate(insert.getId()));
         return insert;
     }
 

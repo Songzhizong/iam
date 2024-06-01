@@ -21,4 +21,12 @@ public interface SecurityContext {
      */
     @Nonnull
     AuthorityValidator authorityValidator();
+
+    /**
+     * 获取可访问的租户信息
+     *
+     * @return 可访问的租户信息
+     */
+    @Nonnull
+    TenantAccessibility tenantAccessibility();
 }

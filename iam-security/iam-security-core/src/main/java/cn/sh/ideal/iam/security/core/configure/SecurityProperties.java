@@ -25,4 +25,8 @@ public class SecurityProperties {
     /** 不需要登录认证的接口清单 */
     @Nonnull
     private Set<String> permitMatchers = new LinkedHashSet<>();
+
+    /** 不需要租户校验的接口清单 */
+    @Nonnull
+    private Set<String> tenantAccessMatchers = new LinkedHashSet<>();
 }

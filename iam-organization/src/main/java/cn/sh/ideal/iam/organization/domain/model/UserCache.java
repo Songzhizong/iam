@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.Duration;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -39,23 +40,22 @@ public class UserCache {
 
     @Nonnull
     public User require(long userId) {
-        User user = get(userId);
-        if (user == null) {
+        return get(userId).orElseThrow(() -> {
             log.info("获取用户缓存信息失败, 用户不存在: {}", userId);
-            throw new ResourceNotFoundException(i18nReader.getMessage("user.not_found"));
-        }
-        return user;
+            String message = i18nReader.getMessage1("user.not_found", userId);
+            return new ResourceNotFoundException(message);
+        });
     }
 
-    @Nullable
-    public User get(long userId) {
+    @Nonnull
+    public Optional<User> get(long userId) {
         UserCacheWrapper wrapper = getCacheWrapper(userId);
         Long userChangeTime = userChangeCache.getIfPresent(userId);
         if (userChangeTime != null && userChangeTime > wrapper.cachedTime) {
             CACHE.invalidate(userId);
             wrapper = getCacheWrapper(userId);
         }
-        return wrapper.user();
+        return Optional.ofNullable(wrapper.user());
     }
 
     public void invalidate(long userId) {

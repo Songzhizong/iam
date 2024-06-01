@@ -47,7 +47,7 @@ public class UserService {
     @Transactional(rollbackFor = Throwable.class)
     public User create(long tenantId, @Nonnull CreateUserArgs args) {
         // 安全容器处理
-        Tenant tenant = tenantRepository.requireById(tenantId, i18nReader);
+        Tenant tenant = tenantRepository.requireById(tenantId);
         Long tenantContainerId = tenant.getContainerId();
         Long containerId = args.getContainerId();
         if (containerId == null) {

@@ -1,8 +1,5 @@
 package cn.sh.ideal.iam.organization.domain.model;
 
-import cn.idealio.framework.exception.ResourceNotFoundException;
-import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
-
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
@@ -32,10 +29,5 @@ public interface TenantRepository {
                                             @Nonnull String abbreviation);
 
     @Nonnull
-    default Tenant requireById(long id, @Nonnull IamI18nReader i18nReader) {
-        return findById(id).orElseThrow(() -> {
-            String[] args = {String.valueOf(id)};
-            return new ResourceNotFoundException(i18nReader.getMessage("tenant.notfound", args));
-        });
-    }
+    Tenant requireById(long id);
 }

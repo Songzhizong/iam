@@ -1,6 +1,9 @@
 ### 创建平台
 POST {{base_url}}/iam/platforms
 Content-Type: application/json
+Authorization: {{token_type}} {{access_token}}
+x-tenant-id: {{tenant_id}}
+x-auth-app-id: {{app_id}}
 
 {
   "code": "customer",
@@ -14,6 +17,9 @@ Content-Type: application/json
 ### 更新平台信息
 PUT {{base_url}}/iam/platforms/customer
 Content-Type: application/json
+Authorization: {{token_type}} {{access_token}}
+x-tenant-id: {{tenant_id}}
+x-auth-app-id: {{app_id}}
 
 {
   "name": "客户平台",
@@ -25,8 +31,14 @@ Content-Type: application/json
 
 ### 删除平台
 DELETE {{base_url}}/iam/platforms/customer
+Authorization: {{token_type}} {{access_token}}
+x-tenant-id: {{tenant_id}}
+x-auth-app-id: {{app_id}}
 
 ### 获取所有平台列表
 GET {{base_url}}/iam/platforms
+Authorization: {{token_type}} {{access_token}}
+x-tenant-id: {{tenant_id}}
+x-auth-app-id: {{app_id}}
 
 ###

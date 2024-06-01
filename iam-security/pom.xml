@@ -13,9 +13,8 @@
 
     <modules>
         <module>iam-security-api</module>
-        <module>iam-security-standard</module>
         <module>iam-security-core</module>
-        <module>iam-security-adapter</module>
+        <module>iam-security-standard</module>
     </modules>
 
     <build>
