@@ -30,7 +30,7 @@ public class AccessibleTenant implements Comparable<AccessibleTenant> {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         AccessibleTenant that = (AccessibleTenant) object;
-        return id == that.id;
+        return id.equals(that.id);
     }
 
     @Override

@@ -28,9 +28,7 @@ public class LoginController {
     /**
      * 密码登录
      *
-     * @param clientToken
-     * @param args
-     * @return
+     * @param clientToken 客户端token
      */
     @PostMapping("/password")
     public Result<LoginResponse> login(

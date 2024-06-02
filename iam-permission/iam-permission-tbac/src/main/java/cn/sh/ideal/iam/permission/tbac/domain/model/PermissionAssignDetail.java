@@ -55,7 +55,7 @@ public class PermissionAssignDetail {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         PermissionAssignDetail detail = (PermissionAssignDetail) object;
-        return permission.getId() == detail.getPermission().getId();
+        return permission.getId().equals(detail.getPermission().getId());
     }
 
     @Override

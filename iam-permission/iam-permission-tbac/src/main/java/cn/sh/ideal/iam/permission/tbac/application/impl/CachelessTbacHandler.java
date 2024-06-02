@@ -195,7 +195,7 @@ public class CachelessTbacHandler implements TbacHandler {
     @Override
     public Map<Long, Tuple<Boolean, Boolean>>
     permissionContainerAssignInfo(@Nonnull Long userId, @Nonnull Long permissionId) {
-        return containerAssignInfo(userId, permission -> permission.getId() == permissionId);
+        return containerAssignInfo(userId, permission -> permission.getId().equals(permissionId));
     }
 
     @Nonnull
@@ -499,7 +499,7 @@ public class CachelessTbacHandler implements TbacHandler {
             }
             for (PermissionAssignDetail detail : details) {
                 Permission permission = detail.getPermission();
-                if (appId != null && appId != permission.getAppId()) {
+                if (appId != null && !Objects.equals(appId, permission.getAppId())) {
                     continue;
                 }
                 Long permissionId = permission.getId();

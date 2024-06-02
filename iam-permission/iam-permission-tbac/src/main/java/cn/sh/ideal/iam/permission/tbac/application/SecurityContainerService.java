@@ -233,7 +233,7 @@ public class SecurityContainerService implements InitializingBean {
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         if (securityContainerRepository.exists()) {
             return;
         }
