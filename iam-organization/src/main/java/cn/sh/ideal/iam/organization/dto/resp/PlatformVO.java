@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 @Getter
 @Setter
@@ -23,7 +23,4 @@ public class PlatformVO {
 
     /** 是否允许注册 */
     private boolean registrable = false;
-
-    /** 配置信息 */
-    private String config = "";
 }

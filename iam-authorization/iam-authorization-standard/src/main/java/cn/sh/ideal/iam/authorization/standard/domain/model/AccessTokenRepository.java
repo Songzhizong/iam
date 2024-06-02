@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import java.util.Optional;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 public interface AccessTokenRepository {
 
@@ -14,8 +14,8 @@ public interface AccessTokenRepository {
     @Nonnull
     AccessToken update(@Nonnull AccessToken accessToken);
 
-    void deleteById(long id);
+    void deleteById(@Nonnull Long id);
 
     @Nonnull
-    Optional<AccessToken> findById(long id);
+    Optional<AccessToken> findById(@Nonnull Long id);
 }

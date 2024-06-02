@@ -17,9 +17,9 @@ import java.util.List;
 /**
  * @author 宋志宗 on 2024/5/29
  */
+@SuppressWarnings("ClassCanBeRecord")
 @Slf4j
 @Getter
-@SuppressWarnings("ClassCanBeRecord")
 public class StandardAuthorization implements Authorization {
     private static final String TYPE = "Standard";
     private static final String TOKEN_PREFIX = TYPE + " ";
@@ -28,11 +28,12 @@ public class StandardAuthorization implements Authorization {
     private static final Algorithm ALGORITHM = Algorithm.HMAC256("MWKdQ7jtgy!q3N7Nz3wD7m2iHxaTG.rXhAQFpLbv!EGJYxe3THLE.Q7tMXRyRqeM");
     private static final JWTVerifier VERIFIER = JWT.require(ALGORITHM).build();
 
-    private final long accessId;
+    @Nonnull
+    private final Long accessId;
     @Nonnull
     private final String visibleToken;
 
-    public StandardAuthorization(long accessId, @Nonnull String visibleToken) {
+    public StandardAuthorization(@Nonnull Long accessId, @Nonnull String visibleToken) {
         this.accessId = accessId;
         this.visibleToken = visibleToken;
     }
@@ -42,7 +43,7 @@ public class StandardAuthorization implements Authorization {
     }
 
     @Nonnull
-    public static StandardAuthorization create(long accessId) {
+    public static StandardAuthorization create(@Nonnull Long accessId) {
         String accessToken = JWT.create().withAudience(String.valueOf(accessId)).sign(ALGORITHM);
         return new StandardAuthorization(accessId, accessToken);
     }
@@ -68,7 +69,7 @@ public class StandardAuthorization implements Authorization {
             throw new UnauthorizedException("Invalid Authorization");
         }
         String accessIdString = audience.getFirst();
-        long accessId = Long.parseLong(accessIdString);
+        Long accessId = Long.valueOf(accessIdString);
         return new StandardAuthorization(accessId, visibleToken);
     }
 

@@ -37,9 +37,10 @@ public class SecurityContainerDO implements SecurityContainer {
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id = null;
 
+    @Nonnull
     @Comment("父ID")
     @Column(nullable = false, name = "parent_id_")
-    private long parentId = -1L;
+    private Long parentId = -1L;
 
     @Nonnull
     @Comment("路由键")
@@ -77,7 +78,7 @@ public class SecurityContainerDO implements SecurityContainer {
 
     @Nullable
     public Long getParentId() {
-        long parentId = this.parentId;
+        Long parentId = this.parentId;
         if (parentId < 0) {
             return null;
         }

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 public interface PermissionItemRepository {
 
@@ -14,16 +14,16 @@ public interface PermissionItemRepository {
 
     void insert(@Nonnull List<PermissionItem> permissionItems);
 
-    int deleteAllByAppId(long appId);
+    int deleteAllByAppId(@Nonnull Long appId);
 
     @Nonnull
-    Optional<PermissionItem> findById(long id);
+    Optional<PermissionItem> findById(@Nonnull Long id);
 
     @Nonnull
     List<PermissionItem> findAll();
 
     @Nonnull
-    List<PermissionItem> findAllByAppId(long appId);
+    List<PermissionItem> findAllByAppId(@Nonnull Long appId);
 
-    boolean existsByAppId(long appId);
+    boolean existsByAppId(@Nonnull Long appId);
 }

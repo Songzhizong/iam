@@ -13,7 +13,8 @@ public interface UserGroup {
     Long getId();
 
     /** 所属租户ID */
-    long getTenantId();
+    @Nonnull
+    Long getTenantId();
 
     /** 安全容器ID */
     @Nullable

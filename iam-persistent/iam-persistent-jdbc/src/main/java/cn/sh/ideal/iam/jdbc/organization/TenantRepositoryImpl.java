@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -41,7 +43,7 @@ public class TenantRepositoryImpl implements TenantRepository {
 
     @Nonnull
     @Override
-    public Optional<Tenant> findById(long id) {
+    public Optional<Tenant> findById(@Nonnull Long id) {
         return tenantJpaRepository.findById(id).map(e -> e);
     }
 
@@ -52,8 +54,18 @@ public class TenantRepositoryImpl implements TenantRepository {
         return tenantJpaRepository.findByPlatformAndAbbreviation(platform, abbreviation).map(e -> e);
     }
 
+    @Nonnull
     @Override
-    public boolean existsByContainerId(long containerId) {
+    public List<Tenant> findAllByContainerIdIn(@Nonnull Collection<Long> containerIds) {
+        if (containerIds.isEmpty()) {
+            return List.of();
+        }
+        return tenantJpaRepository.findAllByContainerIdIn(containerIds)
+                .stream().map(e -> (Tenant) e).toList();
+    }
+
+    @Override
+    public boolean existsByContainerId(@Nonnull Long containerId) {
         return tenantJpaRepository.existsByContainerId(containerId);
     }
 
@@ -65,7 +77,7 @@ public class TenantRepositoryImpl implements TenantRepository {
 
     @Nonnull
     @Override
-    public Tenant requireById(long id) {
+    public Tenant requireById(@Nonnull Long id) {
         return findById(id).orElseThrow(() -> {
             String[] args = {String.valueOf(id)};
             return new ResourceNotFoundException(i18nReader.getMessage("tenant.notfound", args));

@@ -1,5 +1,6 @@
 package cn.sh.ideal.iam.authorization.standard.configure;
 
+import cn.sh.ideal.iam.authorization.standard.domain.model.AuthClientInfo;
 import cn.sh.ideal.iam.authorization.standard.domain.model.VisibleToken;
 import cn.sh.ideal.iam.authorization.standard.exception.UsernameOrPasswordIncorrectException;
 import org.springframework.aot.hint.MemberCategory;
@@ -18,6 +19,7 @@ public class AuthorizationStandardRuntimeHints implements RuntimeHintsRegistrar 
     @Override
     public void registerHints(@Nonnull RuntimeHints hints, ClassLoader classLoader) {
         List<TypeReference> references = List.of(
+                TypeReference.of(AuthClientInfo.class),
                 TypeReference.of(VisibleToken.class),
                 TypeReference.of(UsernameOrPasswordIncorrectException.Data.class)
         );

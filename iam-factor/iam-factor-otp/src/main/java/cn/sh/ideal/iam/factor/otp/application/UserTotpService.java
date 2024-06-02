@@ -46,7 +46,7 @@ public class UserTotpService {
                 .expireAfterWrite(Duration.ofMinutes(5)).build("iam:totp:cache");
     }
 
-    public void authenticate(long userId, int code) {
+    public void authenticate(@Nonnull Long userId, int code) {
         userTotpRepository.findByUserId(userId).ifPresentOrElse(e -> {
             String secret = e.getSecret();
             if (!TOTP.authenticate(secret, code)) {
@@ -60,7 +60,7 @@ public class UserTotpService {
     }
 
     @Nonnull
-    public TOTP generate(long userId) {
+    public TOTP generate(@Nonnull Long userId) {
         userTotpRepository.findByUserId(userId).ifPresent(e -> {
             log.info("用户已经存在TOTP, userId: {}", userId);
             throw new BadRequestException(i18nReader.getMessage1("totp.already_exists", userId));
@@ -81,7 +81,7 @@ public class UserTotpService {
     }
 
     @Transactional(rollbackFor = Throwable.class)
-    public void confirmation(long userId, int code) {
+    public void confirmation(@Nonnull Long userId, int code) {
         String secret = totpCache.getIfPresent(userId);
         if (StringUtils.isBlank(secret)) {
             log.info("确认失败, 用户没有缓存TOTP数据, userId: {}", userId);
@@ -97,7 +97,7 @@ public class UserTotpService {
     }
 
     @Transactional(rollbackFor = Throwable.class)
-    public void delete(long userId) {
+    public void delete(@Nonnull Long userId) {
         userTotpRepository.findByUserId(userId).ifPresentOrElse(e -> {
             userTotpRepository.delete(e);
             log.info("删除用户TOTP, userId: {}", userId);

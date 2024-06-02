@@ -11,12 +11,12 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/30
  */
 public interface PermissionJpaRepository extends JpaRepository<PermissionDO, Long> {
 
     @Nonnull
-    List<PermissionDO> findAllByAppId(long appId);
+    List<PermissionDO> findAllByAppId(@Nonnull Long appId);
 
     @Nonnull
     List<PermissionDO> findAllByItemIdIn(@Nonnull Collection<Long> itemIds);
@@ -24,7 +24,7 @@ public interface PermissionJpaRepository extends JpaRepository<PermissionDO, Lon
     @Modifying
     @Transactional(rollbackFor = Throwable.class)
     @Query(value = "DELETE FROM iam_permission AS e WHERE e.app_id_ = :appId", nativeQuery = true)
-    int deleteAllByAppId(@Param("appId") long appId);
+    int deleteAllByAppId(@Param("appId") @Nonnull Long appId);
 
-    boolean existsByAppId(long appId);
+    boolean existsByAppId(@Nonnull Long appId);
 }

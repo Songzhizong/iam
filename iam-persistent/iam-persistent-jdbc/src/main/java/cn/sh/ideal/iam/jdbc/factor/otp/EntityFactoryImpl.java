@@ -14,7 +14,7 @@ public class EntityFactoryImpl implements EntityFactory {
 
     @Nonnull
     @Override
-    public UserTotp userTotp(long userId, @Nonnull String secret) {
+    public UserTotp userTotp(@Nonnull Long userId, @Nonnull String secret) {
         return UserTotpDO.create(userId, secret);
     }
 }

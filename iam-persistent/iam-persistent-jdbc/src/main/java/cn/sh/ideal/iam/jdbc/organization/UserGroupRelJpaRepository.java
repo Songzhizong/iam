@@ -15,16 +15,16 @@ import java.util.List;
 public interface UserGroupRelJpaRepository extends JpaRepository<UserGroupRelDO, Long> {
 
     @Nonnull
-    List<UserGroupRelDO> findAllByUserId(long userId);
+    List<UserGroupRelDO> findAllByUserId(@Nonnull Long userId);
 
     @Modifying
     @Transactional(rollbackFor = Throwable.class)
     @Query(value = "DELETE FROM iam_user_group_user_rel AS e WHERE e.user_id_ = :userId", nativeQuery = true)
-    void deleteAllByUserId(@Param("userId") long userId);
+    void deleteAllByUserId(@Param("userId") @Nonnull Long userId);
 
     @Modifying
     @Transactional(rollbackFor = Throwable.class)
     @Query(value = "DELETE FROM iam_user_group_user_rel AS e WHERE e.group_id_ = :groupId", nativeQuery = true)
-    void deleteAllByGroupId(@Param("groupId") long groupId);
+    void deleteAllByGroupId(@Param("groupId") @Nonnull Long groupId);
 
 }

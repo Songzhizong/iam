@@ -25,10 +25,11 @@ public class UserTotpDO implements UserTotp {
     public static final String TABLE_NAME = "iam_user_totp";
 
     @Id
+    @Nonnull
     @Comment("用户ID")
     @Column(nullable = false, name = "user_id_")
     @ManualIdentityGenerator(name = TABLE_NAME)
-    private long userId = -1L;
+    private Long userId = -1L;
 
     @Nonnull
     @Comment("totp密钥")
@@ -49,7 +50,7 @@ public class UserTotpDO implements UserTotp {
     }
 
     @Nonnull
-    public static UserTotpDO create(long userId, @Nonnull String secret) {
+    public static UserTotpDO create(@Nonnull Long userId, @Nonnull String secret) {
         UserTotpDO userTotpDO = new UserTotpDO();
         userTotpDO.setUserId(userId);
         userTotpDO.setSecret(secret);

@@ -33,9 +33,15 @@ public class AccessTokenDO implements AccessToken {
     @JpaIdentityGenerator(name = TABLE_NAME)
     private Long id = null;
 
+    @Nonnull
+    @Comment("所属平台")
+    @Column(nullable = false, name = "platform_")
+    private String platform = "";
+
+    @Nonnull
     @Comment("用户ID")
     @Column(nullable = false, name = "user_id_")
-    private long userId = -1L;
+    private Long userId = -1L;
 
     @Nonnull
     @Comment("用户所属租户ID")
@@ -45,7 +51,7 @@ public class AccessTokenDO implements AccessToken {
     @Nonnull
     @Comment("授权端ID")
     @Column(nullable = false, name = "client_id_")
-    private long clientId = -1L;
+    private Long clientId = -1L;
 
     @Comment("有效时长, 单位毫秒")
     @Column(nullable = false, name = "session_timeout_")
@@ -69,6 +75,7 @@ public class AccessTokenDO implements AccessToken {
                                        long sessionTimeout) {
         long currentTimeMillis = System.currentTimeMillis();
         AccessTokenDO accessTokenDO = new AccessTokenDO();
+        accessTokenDO.setPlatform(userDetail.getPlatform());
         accessTokenDO.setUserId(userDetail.getId());
         accessTokenDO.setTenantId(userDetail.getTenantId());
         accessTokenDO.setClientId(authClient.getId());

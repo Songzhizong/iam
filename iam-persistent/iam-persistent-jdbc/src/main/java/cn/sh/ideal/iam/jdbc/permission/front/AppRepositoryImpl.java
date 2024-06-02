@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 @Repository
 @RequiredArgsConstructor
@@ -60,7 +60,7 @@ public class AppRepositoryImpl implements AppRepository {
 
     @Nonnull
     @Override
-    public Optional<App> findById(long id) {
+    public Optional<App> findById(@Nonnull Long id) {
         return appJpaRepository.findById(id).map(e -> e);
     }
 
@@ -69,6 +69,11 @@ public class AppRepositoryImpl implements AppRepository {
     public List<App> findAll() {
         return appJpaRepository.findAll()
                 .stream().map(e -> (App) e).toList();
+    }
+
+    @Override
+    public boolean exists() {
+        return appJpaRepository.existsByIdGreaterThan(0);
     }
 
     @Override

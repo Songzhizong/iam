@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 @Slf4j
 @Repository
@@ -36,6 +36,12 @@ public class PlatformRepositoryImpl implements PlatformRepository {
         return platformJpaRepository.save(entity);
     }
 
+    @Override
+    public void delete(@Nonnull Platform platform) {
+        PlatformDO entity = (PlatformDO) platform;
+        platformJpaRepository.delete(entity);
+    }
+
     @Nonnull
     @Override
     public Optional<Platform> findByCode(@Nonnull String code) {
@@ -56,5 +62,10 @@ public class PlatformRepositoryImpl implements PlatformRepository {
             log.info("获取平台信息失败, 平台不存在: {}", code);
             return new ResourceNotFoundException(i18nReader.getMessage("platform.not.found"));
         });
+    }
+
+    @Override
+    public boolean exists() {
+        return platformJpaRepository.existsByIdGreaterThan(0L);
     }
 }

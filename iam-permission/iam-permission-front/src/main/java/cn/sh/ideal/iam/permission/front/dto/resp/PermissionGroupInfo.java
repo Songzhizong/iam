@@ -3,18 +3,22 @@ package cn.sh.ideal.iam.permission.front.dto.resp;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.annotation.Nonnull;
+
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/30
  */
 @Getter
 @Setter
 public class PermissionGroupInfo {
 
     /** 主键 */
-    private long id = -1L;
+    @Nonnull
+    private Long id = -1L;
 
     /** 应用ID */
-    private long appId = -1L;
+    @Nonnull
+    private Long appId = -1L;
 
     /** 名称 */
     private String name = "";

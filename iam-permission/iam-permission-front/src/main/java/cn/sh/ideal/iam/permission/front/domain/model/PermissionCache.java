@@ -51,7 +51,7 @@ public class PermissionCache implements InitializingBean, ApplicationRunner, Per
     }
 
     @Nullable
-    public Permission findById(long permissionId) {
+    public Permission findById(@Nonnull Long permissionId) {
         return permissionMap.get(permissionId);
     }
 
@@ -81,7 +81,7 @@ public class PermissionCache implements InitializingBean, ApplicationRunner, Per
     }
 
     @Nonnull
-    public List<Permission> findAllByItemId(long itemId) {
+    public List<Permission> findAllByItemId(@Nonnull Long itemId) {
         return itemPermissionsMap.getOrDefault(itemId, new ArrayList<>());
     }
 
@@ -106,17 +106,17 @@ public class PermissionCache implements InitializingBean, ApplicationRunner, Per
             Map<Long, Permission> permissionMap = new HashMap<>();
             Map<Long, List<Permission>> itemPermissionsMap = new HashMap<>();
             for (Permission permission : permissions) {
-                long permissionId = permission.getId();
+                Long permissionId = permission.getId();
                 boolean available = permission.available();
                 if (!available) {
                     continue;
                 }
-                long itemId = permission.getItemId();
+                Long itemId = permission.getItemId();
                 PermissionItem item = itemMap.get(itemId);
                 if (item == null || !item.isEnabled()) {
                     continue;
                 }
-                long groupId = item.getGroupId();
+                Long groupId = item.getGroupId();
                 PermissionGroup group = groupMap.get(groupId);
                 if (group == null || !group.isEnabled()) {
                     continue;

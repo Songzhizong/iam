@@ -14,14 +14,14 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nonnull;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 @Component("frontEntityFactory")
 public class EntityFactoryImpl implements EntityFactory {
 
     @Nonnull
     @Override
-    public App app(long id, @Nonnull CreateAppArgs args) {
+    public App app(@Nonnull Long id, @Nonnull CreateAppArgs args) {
         return AppDO.create(id, args);
     }
 
@@ -39,13 +39,13 @@ public class EntityFactoryImpl implements EntityFactory {
 
     @Nonnull
     @Override
-    public Permission permission(long id, @Nonnull PermissionItem item, @Nonnull CreatePermissionArgs args) {
+    public Permission permission(@Nonnull Long id, @Nonnull PermissionItem item, @Nonnull CreatePermissionArgs args) {
         return PermissionDO.create(id, item, args);
     }
 
     @Nonnull
     @Override
-    public PermissionItem permissionItem(long id, @Nonnull PermissionGroup group, @Nonnull CreatePermissionItemArgs args) {
+    public PermissionItem permissionItem(@Nonnull Long id, @Nonnull PermissionGroup group, @Nonnull CreatePermissionItemArgs args) {
         return PermissionItemDO.create(id, group, args);
     }
 
@@ -57,7 +57,7 @@ public class EntityFactoryImpl implements EntityFactory {
 
     @Nonnull
     @Override
-    public PermissionGroup permissionGroup(long id, @Nonnull CreatePermissionGroupArgs args) {
+    public PermissionGroup permissionGroup(@Nonnull Long id, @Nonnull CreatePermissionGroupArgs args) {
         return PermissionGroupDO.create(id, args);
     }
 

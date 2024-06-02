@@ -1,6 +1,8 @@
 package cn.sh.ideal.iam.organization.domain.model;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -17,17 +19,20 @@ public interface TenantRepository {
     void delete(@Nonnull Tenant tenant);
 
     @Nonnull
-    Optional<Tenant> findById(long id);
+    Optional<Tenant> findById(@Nonnull Long id);
 
     @Nonnull
     Optional<Tenant> findByPlatformAndAbbreviation(@Nonnull String platform,
                                                    @Nonnull String abbreviation);
 
-    boolean existsByContainerId(long containerId);
+    @Nonnull
+    List<Tenant> findAllByContainerIdIn(@Nonnull Collection<Long> containerIds);
+
+    boolean existsByContainerId(@Nonnull Long containerId);
 
     boolean existsByPlatformAndAbbreviation(@Nonnull String platform,
                                             @Nonnull String abbreviation);
 
     @Nonnull
-    Tenant requireById(long id);
+    Tenant requireById(@Nonnull Long id);
 }

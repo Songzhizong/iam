@@ -55,13 +55,15 @@ public class UserDO implements User {
     @Column(nullable = false, name = "platform_")
     private String platform = "";
 
+    @Nonnull
     @Comment("所属租户ID")
     @Column(nullable = false, name = "tenant_id_")
-    private long tenantId = -1L;
+    private Long tenantId = -1L;
 
+    @Nonnull
     @Comment("安全容器ID")
     @Column(nullable = false, name = "container_id_")
-    private long containerId;
+    private Long containerId = -1L;
 
     @Nonnull
     @Comment("用户姓名")
@@ -150,7 +152,7 @@ public class UserDO implements User {
     @Nullable
     @Override
     public Long getContainerId() {
-        long containerId = this.containerId;
+        Long containerId = this.containerId;
         if (containerId < 1) {
             return null;
         }

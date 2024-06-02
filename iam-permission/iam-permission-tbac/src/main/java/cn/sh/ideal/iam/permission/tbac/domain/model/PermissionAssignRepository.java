@@ -5,28 +5,30 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/30
  */
 public interface PermissionAssignRepository {
 
     void insert(@Nonnull List<PermissionAssign> assigns);
 
-    int deleteAllByContainerIdAndUserGroupId(long containerId, long userGroupId);
+    int deleteAllByContainerIdAndUserGroupId(@Nonnull Long containerId, @Nonnull Long userGroupId);
 
-    void deleteAllByContainerIdAndUserGroupIdAndPermissionItemIdIn(long containerId,
-                                                                   long userGroupId,
+    void deleteAllByContainerIdAndUserGroupIdAndPermissionItemIdIn(@Nonnull Long containerId,
+                                                                   @Nonnull Long userGroupId,
                                                                    @Nonnull Collection<Long> permissionItemIds);
 
-    int deleteAllByContainerIdAndUserGroupIdAndPermissionIdIn(long containerId,
-                                                              long userGroupId,
+    int deleteAllByContainerIdAndUserGroupIdAndPermissionIdIn(@Nonnull Long containerId,
+                                                              @Nonnull Long userGroupId,
                                                               @Nonnull Collection<Long> permissionIds);
 
     @Nonnull
     List<PermissionAssign> findAllByUserGroupIdIn(@Nonnull Collection<Long> userGroupIds);
 
     @Nonnull
-    List<PermissionAssign> findAllByPermissionIdAndUserGroupIdIn(long permissionId,
+    List<PermissionAssign> findAllByPermissionIdAndUserGroupIdIn(@Nonnull Long permissionId,
                                                                  @Nonnull Collection<Long> userGroupIds);
 
-    void deleteAllByAppIdAndContainerIdAndUserGroupId(long appId, long containerId, long userGroupId);
+    void deleteAllByAppIdAndContainerIdAndUserGroupId(@Nonnull Long appId,
+                                                      @Nonnull Long containerId,
+                                                      @Nonnull Long userGroupId);
 }

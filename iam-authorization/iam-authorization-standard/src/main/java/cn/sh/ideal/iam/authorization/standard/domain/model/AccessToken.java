@@ -3,13 +3,17 @@ package cn.sh.ideal.iam.authorization.standard.domain.model;
 import javax.annotation.Nonnull;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 public interface AccessToken {
 
     Long getId();
 
-    long getUserId();
+    @Nonnull
+    String getPlatform();
+
+    @Nonnull
+    Long getUserId();
 
     @Nonnull
     Long getTenantId();

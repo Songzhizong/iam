@@ -1,0 +1,2 @@
+### 重新导入前端应用
+POST {{base_url}}/iam/ops/front_apps/reimport

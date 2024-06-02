@@ -1,7 +1,7 @@
 package cn.sh.ideal.iam.security.standard;
 
 import cn.sh.ideal.iam.security.api.Authentication;
-import cn.sh.ideal.iam.security.api.AuthorityValidator;
+import cn.sh.ideal.iam.security.api.PermissionValidator;
 import cn.sh.ideal.iam.security.api.SecurityContext;
 import cn.sh.ideal.iam.security.api.TenantAccessibility;
 import lombok.RequiredArgsConstructor;
@@ -9,13 +9,13 @@ import lombok.RequiredArgsConstructor;
 import javax.annotation.Nonnull;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 @RequiredArgsConstructor
 @SuppressWarnings("ClassCanBeRecord")
 public class SecurityContextImpl implements SecurityContext {
     private final Authentication authentication;
-    private final AuthorityValidator authorityValidator;
+    private final PermissionValidator permissionValidator;
     private final TenantAccessibility tenantAccessibility;
 
     @Nonnull
@@ -26,8 +26,8 @@ public class SecurityContextImpl implements SecurityContext {
 
     @Nonnull
     @Override
-    public AuthorityValidator authorityValidator() {
-        return authorityValidator;
+    public PermissionValidator permissionValidator() {
+        return permissionValidator;
     }
 
     @Nonnull

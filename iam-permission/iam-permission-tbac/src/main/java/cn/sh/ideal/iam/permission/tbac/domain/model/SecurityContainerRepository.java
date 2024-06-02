@@ -31,7 +31,7 @@ public interface SecurityContainerRepository {
     void delete(@Nonnull SecurityContainer securityContainer);
 
     @Nonnull
-    Optional<SecurityContainer> findById(long id);
+    Optional<SecurityContainer> findById(@Nonnull Long id);
 
     @Nonnull
     List<SecurityContainer> findAll();
@@ -44,12 +44,12 @@ public interface SecurityContainerRepository {
 
     boolean exists();
 
-    boolean existsByParentId(long parentId);
+    boolean existsByParentId(@Nonnull Long parentId);
 
     boolean existsByParentIdAndName(@Nullable Long parentId, @Nonnull String name);
 
     @Nonnull
-    default SecurityContainer requireById(long id, @Nonnull IamI18nReader i18nReader) {
+    default SecurityContainer requireById(@Nonnull Long id, @Nonnull IamI18nReader i18nReader) {
         return findById(id).orElseThrow(() -> {
             String[] args = {String.valueOf(id)};
             return new ResourceNotFoundException(i18nReader.getMessage("sc.notfound", args));

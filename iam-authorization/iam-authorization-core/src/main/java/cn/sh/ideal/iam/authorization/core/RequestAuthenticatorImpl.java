@@ -2,8 +2,8 @@ package cn.sh.ideal.iam.authorization.core;
 
 import cn.idealio.framework.lang.StringUtils;
 import cn.idealio.framework.util.net.http.HttpHeaders;
-import cn.sh.ideal.iam.security.api.adapter.RequestAuthenticator;
 import cn.sh.ideal.iam.security.api.Authentication;
+import cn.sh.ideal.iam.security.api.adapter.RequestAuthenticator;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 @Slf4j
 @Component

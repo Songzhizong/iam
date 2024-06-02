@@ -2,7 +2,7 @@ package cn.sh.ideal.iam.security.standard;
 
 import cn.idealio.framework.exception.ForbiddenException;
 import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
-import cn.sh.ideal.iam.security.api.AuthorityValidator;
+import cn.sh.ideal.iam.security.api.PermissionValidator;
 import cn.sh.ideal.iam.security.api.SecurityContext;
 import cn.sh.ideal.iam.security.api.SecurityContextHolder;
 import cn.sh.ideal.iam.security.api.annotation.HasAuthority;
@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 @Slf4j
 @Setter
@@ -44,10 +44,10 @@ public class SecurityInterceptor implements HandlerInterceptor, Ordered {
         HasAuthority authority = handlerMethod.getMethodAnnotation(HasAuthority.class);
         if (authority != null) {
             String value = authority.value();
-            AuthorityValidator authorityValidator = securityContext.authorityValidator();
-            boolean hasAuthority = authorityValidator.hasAuthority(value);
+            PermissionValidator permissionValidator = securityContext.permissionValidator();
+            boolean hasAuthority = permissionValidator.hasAuthority(value);
             if (!hasAuthority) {
-                long userId = securityContext.authentication().userId();
+                Long userId = securityContext.authentication().userId();
                 log.warn("用户 [{}] 没有此项权限: [{}]", userId, value);
                 String message;
                 if (i18nReader == null) {

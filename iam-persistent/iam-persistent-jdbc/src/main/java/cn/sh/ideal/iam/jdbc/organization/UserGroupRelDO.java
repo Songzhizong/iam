@@ -33,16 +33,18 @@ public class UserGroupRelDO {
     @JpaIdentityGenerator(name = TABLE_NAME)
     private Long id = null;
 
+    @Nonnull
     @Comment("用户ID")
     @Column(nullable = false, name = "user_id_")
-    private long userId = -1L;
-
-    @Comment("用户组ID")
-    @Column(nullable = false, name = "group_id_")
-    private long groupId = -1L;
+    private Long userId = -1L;
 
     @Nonnull
-    public static UserGroupRelDO create(long userId, long groupId) {
+    @Comment("用户组ID")
+    @Column(nullable = false, name = "group_id_")
+    private Long groupId = -1L;
+
+    @Nonnull
+    public static UserGroupRelDO create(@Nonnull Long userId, @Nonnull Long groupId) {
         UserGroupRelDO userGroupRelDO = new UserGroupRelDO();
         userGroupRelDO.setUserId(userId);
         userGroupRelDO.setGroupId(groupId);

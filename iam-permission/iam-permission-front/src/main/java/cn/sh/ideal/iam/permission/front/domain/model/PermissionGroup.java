@@ -7,13 +7,15 @@ import javax.annotation.Nonnull;
 /**
  * 权限组
  *
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 public interface PermissionGroup {
 
-    long getId();
+    @Nonnull
+    Long getId();
 
-    long getAppId();
+    @Nonnull
+    Long getAppId();
 
     @Nonnull
     String getName();

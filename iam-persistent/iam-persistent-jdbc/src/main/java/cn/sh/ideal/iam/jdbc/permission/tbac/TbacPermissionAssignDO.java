@@ -12,7 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.annotation.Nonnull;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 @Getter
 @Setter
@@ -38,29 +38,35 @@ public class TbacPermissionAssignDO implements PermissionAssign {
     @JpaIdentityGenerator(name = TABLE_NAME)
     private Long id = null;
 
+    @Nonnull
     @Comment("应用ID")
     @Column(nullable = false, name = "app_id_")
-    private long appId;
+    private Long appId = -1L;
 
+    @Nonnull
     @Comment("安全容器ID")
     @Column(nullable = false, name = "container_id_")
-    private long containerId;
+    private Long containerId = -1L;
 
+    @Nonnull
     @Comment("用户组ID")
     @Column(nullable = false, name = "user_group_id_")
-    private long userGroupId;
+    private Long userGroupId = -1L;
 
+    @Nonnull
     @Comment("权限组ID")
     @Column(nullable = false, name = "permission_group_id_")
-    private long permissionGroupId;
+    private Long permissionGroupId = -1L;
 
+    @Nonnull
     @Comment("权限项ID")
     @Column(nullable = false, name = "permission_item_id_")
-    private long permissionItemId;
+    private Long permissionItemId = -1L;
 
+    @Nonnull
     @Comment("权限点ID")
     @Column(nullable = false, name = "permission_id_")
-    private long permissionId;
+    private Long permissionId = -1L;
 
     @Comment("是否授权")
     @Column(nullable = false, name = "assigned_")
@@ -75,8 +81,8 @@ public class TbacPermissionAssignDO implements PermissionAssign {
     private boolean mfa = false;
 
     @Nonnull
-    public static TbacPermissionAssignDO create(long containerId,
-                                                long userGroupId,
+    public static TbacPermissionAssignDO create(@Nonnull Long containerId,
+                                                @Nonnull Long userGroupId,
                                                 boolean assign,
                                                 boolean inheritable,
                                                 boolean mfa,

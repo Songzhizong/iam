@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 @Component("tbacEntityFactory")
 public class EntityFactoryImpl implements EntityFactory {
@@ -29,8 +29,8 @@ public class EntityFactoryImpl implements EntityFactory {
 
     @Nonnull
     @Override
-    public List<PermissionAssign> assignPermissions(long containerId,
-                                                    long userGroupId,
+    public List<PermissionAssign> assignPermissions(@Nonnull Long containerId,
+                                                    @Nonnull Long userGroupId,
                                                     boolean assign,
                                                     boolean inheritable,
                                                     boolean mfa,
@@ -46,8 +46,8 @@ public class EntityFactoryImpl implements EntityFactory {
 
     @Nonnull
     @Override
-    public PermissionAssign assignPermission(long containerId,
-                                             long userGroupId,
+    public PermissionAssign assignPermission(@Nonnull Long containerId,
+                                             @Nonnull Long userGroupId,
                                              boolean assign,
                                              boolean inheritable,
                                              boolean mfa,

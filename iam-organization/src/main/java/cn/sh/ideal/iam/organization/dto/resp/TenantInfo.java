@@ -3,6 +3,7 @@ package cn.sh.ideal.iam.organization.dto.resp;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -13,7 +14,8 @@ import javax.annotation.Nullable;
 public class TenantInfo {
 
     /** 主键 */
-    private long id = -1L;
+    @Nonnull
+    private Long id = -1L;
 
     /** 安全容器ID */
     @Nullable

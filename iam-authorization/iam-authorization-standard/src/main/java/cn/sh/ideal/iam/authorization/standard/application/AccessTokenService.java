@@ -29,17 +29,17 @@ public class AccessTokenService {
     private static final Duration RENEWAL_TIMEOUT = Duration.ofSeconds(10);
     private static final Duration INVALIDATE_CACHE_DELAY = Duration.ofSeconds(2);
     private final String lockValue = UUID.randomUUID().toString();
-    private final EntityFactory entityFactory;
     private final GlobalLockFactory globalLockFactory;
     private final AuthorizationStandardProperties properties;
     private final AccessTokenRepository accessTokenRepository;
+    private final StandardAuthorizationEntityFactory entityFactory;
     private final cn.idealio.framework.cache.Cache<Long, Long> tokenChangeCache;
 
     public AccessTokenService(@Nonnull CacheFactory cacheFactory,
-                              @Nonnull EntityFactory entityFactory,
                               @Nonnull GlobalLockFactory globalLockFactory,
                               @Nonnull AuthorizationStandardProperties properties,
-                              @Nonnull AccessTokenRepository accessTokenRepository) {
+                              @Nonnull AccessTokenRepository accessTokenRepository,
+                              @Nonnull StandardAuthorizationEntityFactory entityFactory) {
         this.properties = properties;
         this.entityFactory = entityFactory;
         this.globalLockFactory = globalLockFactory;
@@ -54,32 +54,34 @@ public class AccessTokenService {
         long sessionTimeout = properties.getSessionTimeout().toMillis();
         AccessToken accessToken = entityFactory.accessToken(authClient, userDetail, sessionTimeout);
         accessToken = accessTokenRepository.insert(accessToken);
-        long accessId = accessToken.getId();
+        Long accessId = accessToken.getId();
         StandardAuthorization authorization = StandardAuthorization.create(accessId);
         String type = authorization.getType();
         String visibleToken = authorization.getVisibleToken();
         TOKEN_CACHE.put(accessId, new TokenCacheWrapper(accessToken, System.currentTimeMillis()));
         // 如果禁止重复登录, 则清理掉之前的token, 避免一个账号多地登录
         if (!properties.isAllowMultipleLogin()) {
-            long userId = userDetail.getId();
-            long clientId = authClient.getId();
+            Long userId = userDetail.getId();
+            Long clientId = authClient.getId();
             Asyncs.executeVirtual(() -> cleanupOutdatedToken(userId, clientId, accessId));
         }
         return VisibleToken.create(type, visibleToken);
     }
 
-    private void cleanupOutdatedToken(long userId, long clientId, long accessId) {
+    private void cleanupOutdatedToken(@Nonnull Long userId,
+                                      @Nonnull Long clientId,
+                                      @Nonnull Long accessId) {
         // TODO 清理过期Token
     }
 
 
-    public void delete(long accessId) {
+    public void delete(@Nonnull Long accessId) {
         accessTokenRepository.deleteById(accessId);
         invalidate(accessId);
     }
 
     @Nullable
-    public AccessToken get(long accessId) {
+    public AccessToken get(@Nonnull Long accessId) {
         TokenCacheWrapper wrapper = getTokenCacheWrapper(accessId);
         Long tokenChangeTime = tokenChangeCache.getIfPresent(accessId);
         if (tokenChangeTime != null && tokenChangeTime > wrapper.cachedTime) {
@@ -104,7 +106,7 @@ public class AccessTokenService {
         if (!accessToken.renewal()) {
             return;
         }
-        long accessId = accessToken.getId();
+        Long accessId = accessToken.getId();
         String lockKey = "iam:access_token:renewal:" + accessId;
         GlobalLock lock = globalLockFactory.getLock(lockKey, RENEWAL_TIMEOUT);
         boolean tryLock = lock.tryLock(lockValue);
@@ -122,13 +124,13 @@ public class AccessTokenService {
         }
     }
 
-    public void invalidate(long accessId) {
+    public void invalidate(@Nonnull Long accessId) {
         TOKEN_CACHE.invalidate(accessId);
         Asyncs.execAndDelayVirtual(INVALIDATE_CACHE_DELAY, () -> tokenChangeCache.invalidate(accessId));
     }
 
     @Nonnull
-    private TokenCacheWrapper getTokenCacheWrapper(long accessId) {
+    private TokenCacheWrapper getTokenCacheWrapper(@Nonnull Long accessId) {
         return TOKEN_CACHE.get(accessId, key -> {
             long currentTimeMillis = System.currentTimeMillis();
             AccessToken token = accessTokenRepository.findById(accessId).orElse(null);

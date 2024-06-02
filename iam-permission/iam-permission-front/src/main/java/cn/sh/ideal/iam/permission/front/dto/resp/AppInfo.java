@@ -7,13 +7,14 @@ import lombok.Setter;
 import javax.annotation.Nonnull;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/30
  */
 @Getter
 @Setter
 public class AppInfo {
     /** 主键 */
-    private long id = -1L;
+    @Nonnull
+    private Long id = -1L;
 
     /** 终端类型 */
     @Nonnull

@@ -5,7 +5,7 @@ import cn.idealio.framework.spring.matcher.MethodPathMatcher;
 import cn.sh.ideal.iam.common.util.RequestUtils;
 import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.security.api.*;
-import cn.sh.ideal.iam.security.api.adapter.AuthorityValidatorFactory;
+import cn.sh.ideal.iam.security.api.adapter.PermissionValidatorFactory;
 import cn.sh.ideal.iam.security.api.adapter.RequestAuthenticator;
 import cn.sh.ideal.iam.security.api.adapter.TenantAccessibilityFactory;
 import cn.sh.ideal.iam.security.core.configure.SecurityProperties;
@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.Set;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 @Slf4j
 @Component
@@ -32,18 +32,18 @@ public class SecurityContextFilter implements Filter, Ordered {
     private final MethodPathMatcher tenantAccessMatcher;
     private final SecurityProperties securityProperties;
     private final RequestAuthenticator requestAuthenticator;
-    private final AuthorityValidatorFactory authorityValidatorFactory;
+    private final PermissionValidatorFactory permissionValidatorFactory;
     private final TenantAccessibilityFactory tenantAccessibilityFactory;
 
     public SecurityContextFilter(@Nonnull IamI18nReader i18nReader,
                                  @Nonnull SecurityProperties securityProperties,
                                  @Nonnull RequestAuthenticator requestAuthenticator,
-                                 @Nonnull AuthorityValidatorFactory authorityValidatorFactory,
+                                 @Nonnull PermissionValidatorFactory permissionValidatorFactory,
                                  @Nonnull TenantAccessibilityFactory tenantAccessibilityFactory) {
         this.i18nReader = i18nReader;
         this.securityProperties = securityProperties;
         this.requestAuthenticator = requestAuthenticator;
-        this.authorityValidatorFactory = authorityValidatorFactory;
+        this.permissionValidatorFactory = permissionValidatorFactory;
         this.tenantAccessibilityFactory = tenantAccessibilityFactory;
         Set<String> permitMatchers = securityProperties.getPermitMatchers();
         this.permitMatcher = MethodPathMatcher.create(permitMatchers);
@@ -75,17 +75,12 @@ public class SecurityContextFilter implements Filter, Ordered {
             // 登录认证
             Authentication authentication = requestAuthenticator.authenticate(request);
             if (authentication == null) {
-                if (!securityProperties.isRequire()) {
-                    log.info("未认证, 但根据配置放行请求: {} {}", method, requestURI);
-                    filterChain.doFilter(servletRequest, servletResponse);
-                    return;
-                }
                 log.info("未认证, 拒绝请求: {} {}", method, requestURI);
                 throw new UnauthorizedException();
             }
 
             // 租户可访问性
-            long userId = authentication.userId();
+            Long userId = authentication.userId();
             TenantAccessibility tenantAccessibility =
                     tenantAccessibilityFactory.createTenantAccessibility(userId);
 
@@ -107,11 +102,16 @@ public class SecurityContextFilter implements Filter, Ordered {
             }
 
             // 权限验证器
-            AuthorityValidator authorityValidator =
-                    authorityValidatorFactory.createAuthorityValidator(authentication, request);
+            PermissionValidator permissionValidator;
+            if (securityProperties.isEnableApiAuthenticate()) {
+                permissionValidator = permissionValidatorFactory
+                        .createPermissionValidator(authentication, request);
+            } else {
+                permissionValidator = PermitAllPermissionValidator.getInstance();
+            }
 
             SecurityContext securityContext = new SecurityContextImpl(
-                    authentication, authorityValidator, tenantAccessibility);
+                    authentication, permissionValidator, tenantAccessibility);
             SecurityContextHolder.setContext(securityContext);
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {

@@ -1,15 +1,20 @@
 package cn.sh.ideal.iam.permission.tbac.domain.model;
 
+import javax.annotation.Nonnull;
+
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 public interface PermissionAssign {
 
-    long getAppId();
+    @Nonnull
+    Long getAppId();
 
-    long getContainerId();
+    @Nonnull
+    Long getContainerId();
 
-    long getPermissionId();
+    @Nonnull
+    Long getPermissionId();
 
     boolean isAssigned();
 

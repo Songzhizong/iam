@@ -43,7 +43,7 @@ public class SecurityContainerCache implements InitializingBean, ApplicationRunn
     }
 
     @Nullable
-    public AnalyzedSecurityContainer findById(long id) {
+    public AnalyzedSecurityContainer findById(@Nonnull Long id) {
         return containerMap.get(id);
     }
 

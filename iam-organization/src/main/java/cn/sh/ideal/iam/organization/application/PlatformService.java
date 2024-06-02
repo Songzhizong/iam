@@ -4,7 +4,8 @@ import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.exception.ResourceNotFoundException;
 import cn.idealio.framework.util.Asserts;
 import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
-import cn.sh.ideal.iam.organization.domain.model.EntityFactory;
+import cn.sh.ideal.iam.infrastructure.configure.IamIDGenerator;
+import cn.sh.ideal.iam.organization.domain.model.OrganizationEntityFactory;
 import cn.sh.ideal.iam.organization.domain.model.Platform;
 import cn.sh.ideal.iam.organization.domain.model.PlatformRepository;
 import cn.sh.ideal.iam.organization.dto.args.CreatePlatformArgs;
@@ -19,15 +20,16 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class PlatformService {
-    private final EntityFactory entityFactory;
     private final IamI18nReader i18nReader;
+    private final IamIDGenerator idGenerator;
     private final PlatformRepository platformRepository;
+    private final OrganizationEntityFactory entityFactory;
 
     @Nonnull
     @Transactional(rollbackFor = Throwable.class)
@@ -38,7 +40,8 @@ public class PlatformService {
             log.info("平台编码已被使用: {}", code);
             throw new BadRequestException(i18nReader.getMessage("platform.code.exists"));
         });
-        Platform platform = entityFactory.platform(args, i18nReader);
+        long id = idGenerator.generate();
+        Platform platform = entityFactory.platform(id, args, i18nReader);
         return platformRepository.insert(platform);
     }
 

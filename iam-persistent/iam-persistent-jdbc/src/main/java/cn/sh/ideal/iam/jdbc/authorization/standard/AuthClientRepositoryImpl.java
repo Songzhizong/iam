@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +25,15 @@ public class AuthClientRepositoryImpl implements AuthClientRepository {
         return authClientJpaRepository.saveAndFlush(entity);
     }
 
+    @Override
+    public void insert(@Nonnull Collection<AuthClient> clients) {
+        for (AuthClient client : clients) {
+            AuthClientDO entity = (AuthClientDO) client;
+            authClientJpaRepository.save(entity);
+        }
+        authClientJpaRepository.flush();
+    }
+
     @Nonnull
     @Override
     public AuthClient update(@Nonnull AuthClient authClient) {
@@ -37,9 +47,14 @@ public class AuthClientRepositoryImpl implements AuthClientRepository {
         authClientJpaRepository.delete(entity);
     }
 
+    @Override
+    public int deleteAllByPlatform(@Nonnull String platform) {
+        return authClientJpaRepository.deleteAllByPlatform(platform);
+    }
+
     @Nonnull
     @Override
-    public Optional<AuthClient> findById(long id) {
+    public Optional<AuthClient> findById(@Nonnull Long id) {
         return authClientJpaRepository.findById(id).map(e -> e);
     }
 

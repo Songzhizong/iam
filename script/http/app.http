@@ -21,6 +21,10 @@ Content-Type: multipart/form-data; boundary=WebAppBoundary
 Content-Disposition: form-data; name="file"; filename="app_config_508081442220146688.json"
 Content-Type: application/json
 
-< ../app_configs/app_config_508081442220146688.json
+< ../../config/ops/import_front_apps/app_config_508081442220146688.json
 
-###
+### test
+GET {{base_url}}/iam/oauth2/token
+Authorization: {{token_type}} {{access_token}}
+x-tenant-id: {{tenant_id}}
+x-auth-app-id: {{app_id}}

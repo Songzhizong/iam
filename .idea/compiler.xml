@@ -15,6 +15,7 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
         </processorPath>
+        <module name="iam-connect-oauth2" />
         <module name="iam-factor-sms" />
         <module name="iam-common" />
         <module name="iam-account-sync" />
@@ -27,15 +28,13 @@
         <module name="iam-permission-all" />
         <module name="iam-permission-front" />
         <module name="iam-security-standard" />
-        <module name="iam-linking-oauth2" />
-        <module name="iam-linking-all" />
         <module name="iam-permission-core" />
         <module name="iam-authorization-apikey" />
-        <module name="iam-linking-core" />
         <module name="iam-organization" />
         <module name="iam-event" />
         <module name="iam-permission-composite" />
         <module name="iam-permission-rbac" />
+        <module name="iam-connect-core" />
         <module name="iam-authorization-core" />
         <module name="iam-factor-core" />
         <module name="iam-launcher" />
@@ -44,14 +43,17 @@
         <module name="iam-authorization-all" />
         <module name="iam-infrastructure" />
         <module name="iam-permission-tbac" />
+        <module name="iam-ops" />
         <module name="iam-authorization-standard" />
         <module name="iam-factor-otp" />
+        <module name="iam-connect-all" />
         <module name="iam-idp-all" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="iam-compatibility" target="21" />
       <module name="iam-core" target="21" />
+      <module name="iam-initialization" target="21" />
       <module name="iam-integration" target="21" />
       <module name="iam-security-adapter" target="21" />
     </bytecodeTargetLevel>
@@ -67,6 +69,10 @@
       <module name="iam-authorization-standard" options="-parameters" />
       <module name="iam-common" options="-parameters" />
       <module name="iam-compatibility" options="-parameters" />
+      <module name="iam-connect" options="-parameters" />
+      <module name="iam-connect-all" options="-parameters" />
+      <module name="iam-connect-core" options="-parameters" />
+      <module name="iam-connect-oauth2" options="-parameters" />
       <module name="iam-event" options="-parameters" />
       <module name="iam-factor" options="-parameters" />
       <module name="iam-factor-all" options="-parameters" />
@@ -79,11 +85,9 @@
       <module name="iam-idp-core" options="-parameters" />
       <module name="iam-idp-oauth2" options="-parameters" />
       <module name="iam-infrastructure" options="-parameters" />
+      <module name="iam-initialization" options="-parameters" />
       <module name="iam-launcher" options="-parameters" />
-      <module name="iam-linking" options="-parameters" />
-      <module name="iam-linking-all" options="-parameters" />
-      <module name="iam-linking-core" options="-parameters" />
-      <module name="iam-linking-oauth2" options="-parameters" />
+      <module name="iam-ops" options="-parameters" />
       <module name="iam-organization" options="-parameters" />
       <module name="iam-permission" options="-parameters" />
       <module name="iam-permission-all" options="-parameters" />

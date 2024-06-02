@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 @Repository
 @RequiredArgsConstructor
@@ -29,13 +29,14 @@ public class TbacPermissionAssignRepositoryImpl implements PermissionAssignRepos
     }
 
     @Override
-    public int deleteAllByContainerIdAndUserGroupId(long containerId, long userGroupId) {
+    public int deleteAllByContainerIdAndUserGroupId(@Nonnull Long containerId,
+                                                    @Nonnull Long userGroupId) {
         return permissionAssignJpaRepository.deleteAllByContainerIdAndUserGroupId(containerId, userGroupId);
     }
 
     @Override
-    public void deleteAllByContainerIdAndUserGroupIdAndPermissionItemIdIn(long containerId,
-                                                                          long userGroupId,
+    public void deleteAllByContainerIdAndUserGroupIdAndPermissionItemIdIn(@Nonnull Long containerId,
+                                                                          @Nonnull Long userGroupId,
                                                                           @Nonnull Collection<Long> permissionItemIds) {
         if (permissionItemIds.isEmpty()) {
             return;
@@ -44,7 +45,9 @@ public class TbacPermissionAssignRepositoryImpl implements PermissionAssignRepos
     }
 
     @Override
-    public int deleteAllByContainerIdAndUserGroupIdAndPermissionIdIn(long containerId, long userGroupId, @Nonnull Collection<Long> permissionIds) {
+    public int deleteAllByContainerIdAndUserGroupIdAndPermissionIdIn(@Nonnull Long containerId,
+                                                                     @Nonnull Long userGroupId,
+                                                                     @Nonnull Collection<Long> permissionIds) {
         if (permissionIds.isEmpty()) {
             return 0;
         }
@@ -63,7 +66,7 @@ public class TbacPermissionAssignRepositoryImpl implements PermissionAssignRepos
 
     @Nonnull
     @Override
-    public List<PermissionAssign> findAllByPermissionIdAndUserGroupIdIn(long permissionId,
+    public List<PermissionAssign> findAllByPermissionIdAndUserGroupIdIn(@Nonnull Long permissionId,
                                                                         @Nonnull Collection<Long> userGroupIds) {
         if (userGroupIds.isEmpty()) {
             return List.of();
@@ -74,7 +77,9 @@ public class TbacPermissionAssignRepositoryImpl implements PermissionAssignRepos
     }
 
     @Override
-    public void deleteAllByAppIdAndContainerIdAndUserGroupId(long appId, long containerId, long userGroupId) {
+    public void deleteAllByAppIdAndContainerIdAndUserGroupId(@Nonnull Long appId,
+                                                             @Nonnull Long containerId,
+                                                             @Nonnull Long userGroupId) {
         permissionAssignJpaRepository.deleteAllByAppIdAndContainerIdAndUserGroupId(appId, containerId, userGroupId);
     }
 }

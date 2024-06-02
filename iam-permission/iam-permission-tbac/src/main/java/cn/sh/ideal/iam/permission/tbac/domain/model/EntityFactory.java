@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 public interface EntityFactory {
 
@@ -25,16 +25,16 @@ public interface EntityFactory {
                                         @Nonnull IamI18nReader i18nReader);
 
     @Nonnull
-    List<PermissionAssign> assignPermissions(long containerId,
-                                             long userGroupId,
+    List<PermissionAssign> assignPermissions(@Nonnull Long containerId,
+                                             @Nonnull Long userGroupId,
                                              boolean assign,
                                              boolean inheritable,
                                              boolean mfa,
                                              @Nonnull List<Permission> permissions);
 
     @Nonnull
-    PermissionAssign assignPermission(long containerId,
-                                      long userGroupId,
+    PermissionAssign assignPermission(@Nonnull Long containerId,
+                                      @Nonnull Long userGroupId,
                                       boolean assign,
                                       boolean inheritable,
                                       boolean mfa,

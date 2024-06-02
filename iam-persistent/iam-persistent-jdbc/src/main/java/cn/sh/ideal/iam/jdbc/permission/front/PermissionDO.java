@@ -23,7 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/30
  */
 @Getter
 @Setter
@@ -40,22 +40,26 @@ public class PermissionDO implements Permission {
     public static final String TABLE_NAME = "iam_permission";
 
     @Id
+    @Nonnull
     @Comment("主键")
     @Column(nullable = false, name = "id_")
     @ManualIdentityGenerator(name = TABLE_NAME)
-    private long id = -1L;
+    private Long id = -1L;
 
+    @Nonnull
     @Comment("应用ID")
     @Column(nullable = false, name = "app_id_")
-    private long appId = -1L;
+    private Long appId = -1L;
 
+    @Nonnull
     @Comment("权限组ID")
     @Column(nullable = false, name = "group_id_")
-    private long groupId = -1L;
+    private Long groupId = -1L;
 
+    @Nonnull
     @Comment("权限项ID")
     @Column(nullable = false, name = "item_id_")
-    private long itemId = -1L;
+    private Long itemId = -1L;
 
     @Nonnull
     @Comment("名称")
@@ -120,7 +124,7 @@ public class PermissionDO implements Permission {
     private long version = 0;
 
     @Nonnull
-    public static PermissionDO create(long id, @Nonnull PermissionItem item,
+    public static PermissionDO create(@Nonnull Long id, @Nonnull PermissionItem item,
                                       @Nonnull CreatePermissionArgs args) {
         String name = args.getName();
         Set<String> apis = args.getApis();

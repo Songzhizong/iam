@@ -45,7 +45,7 @@ public class AppCache implements InitializingBean, ApplicationRunner, AppReposit
     }
 
     @Nonnull
-    public Optional<App> findById(long appId) {
+    public Optional<App> findById(@Nonnull Long appId) {
         return Optional.ofNullable(appMap.get(appId));
     }
 

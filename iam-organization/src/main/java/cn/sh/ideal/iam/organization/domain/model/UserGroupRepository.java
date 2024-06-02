@@ -19,7 +19,7 @@ public interface UserGroupRepository {
     void delete(@Nonnull UserGroup group);
 
     @Nonnull
-    Optional<UserGroup> findById(long id);
+    Optional<UserGroup> findById(@Nonnull Long id);
 
     @Nonnull
     List<UserGroup> findAllById(@Nonnull Collection<Long> ids);

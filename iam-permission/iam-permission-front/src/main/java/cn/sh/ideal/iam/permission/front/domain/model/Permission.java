@@ -14,18 +14,22 @@ import java.util.Set;
 /**
  * 权限点
  *
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/30
  */
 public interface Permission {
     Logger log = LoggerFactory.getLogger(Permission.class);
 
-    long getId();
+    @Nonnull
+    Long getId();
 
-    long getAppId();
+    @Nonnull
+    Long getAppId();
 
-    long getGroupId();
+    @Nonnull
+    Long getGroupId();
 
-    long getItemId();
+    @Nonnull
+    Long getItemId();
 
     @Nonnull
     String getName();

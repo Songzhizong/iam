@@ -6,7 +6,7 @@ import lombok.Setter;
 import javax.annotation.Nullable;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 @Getter
 @Setter
@@ -31,8 +31,4 @@ public class UpdatePlatformArgs {
     /** 是否允许自主注册账号, 默认否 */
     @Nullable
     private Boolean registrable;
-
-    /** 平台前端配置信息 */
-    @Nullable
-    private String config;
 }

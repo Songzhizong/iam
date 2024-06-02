@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 public interface PermissionGroupRepository {
 
@@ -14,16 +14,16 @@ public interface PermissionGroupRepository {
 
     void insert(@Nonnull List<PermissionGroup> permissionGroups);
 
-    int deleteAllByAppId(long appId);
+    int deleteAllByAppId(@Nonnull Long appId);
 
     @Nonnull
-    Optional<PermissionGroup> findById(long id);
+    Optional<PermissionGroup> findById(@Nonnull Long id);
 
     @Nonnull
     List<PermissionGroup> findAll();
 
     @Nonnull
-    List<PermissionGroup> findAllByAppId(long appId);
+    List<PermissionGroup> findAllByAppId(@Nonnull Long appId);
 
-    boolean existsByAppId(long appId);
+    boolean existsByAppId(@Nonnull Long appId);
 }

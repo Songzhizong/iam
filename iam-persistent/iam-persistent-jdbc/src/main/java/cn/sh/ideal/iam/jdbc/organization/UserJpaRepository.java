@@ -10,11 +10,11 @@ import java.util.Optional;
  */
 public interface UserJpaRepository extends JpaRepository<UserDO, Long> {
 
-    boolean existsByTenantIdAndAccount(long tenantId, @Nonnull String account);
+    boolean existsByTenantIdAndAccount(@Nonnull Long tenantId, @Nonnull String account);
 
     @Nonnull
     Optional<UserDO> findByEmailAndPlatform(@Nonnull String email, @Nonnull String platform);
 
     @Nonnull
-    Optional<UserDO> findByTenantIdAndAccount(long tenantId, @Nonnull String account);
+    Optional<UserDO> findByTenantIdAndAccount(@Nonnull Long tenantId, @Nonnull String account);
 }

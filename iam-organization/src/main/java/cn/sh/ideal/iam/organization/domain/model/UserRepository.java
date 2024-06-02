@@ -19,7 +19,7 @@ public interface UserRepository {
     void delete(@Nonnull User user);
 
     @Nonnull
-    Optional<User> findById(long id);
+    Optional<User> findById(@Nonnull Long id);
 
     @Nonnull
     List<User> findAllById(@Nonnull Collection<Long> ids);
@@ -28,21 +28,21 @@ public interface UserRepository {
     Optional<User> findByPlatformAndEmail(@Nonnull String platform, @Nonnull String email);
 
     @Nonnull
-    Optional<User> findByTenantIdAndAccount(long tenantId, @Nonnull String account);
+    Optional<User> findByTenantIdAndAccount(@Nonnull Long tenantId, @Nonnull String account);
 
-    boolean existsByTenantIdAndAccount(long tenantId, @Nonnull String account);
+    boolean existsByTenantIdAndAccount(@Nonnull Long tenantId, @Nonnull String account);
 
     /** 获取用户关联的所有用户组 */
     @Nonnull
-    List<UserGroup> getGroups(long userId);
+    List<UserGroup> getGroups(@Nonnull Long userId);
 
     /** 获取用户关联的所有用户组id */
     @Nonnull
-    List<Long> getGroupIds(long userId);
+    List<Long> getGroupIds(@Nonnull Long userId);
 
     /** 保存用户关联的用户组 */
-    void saveGroups(long userId, @Nonnull Collection<UserGroup> groups);
+    void saveGroups(@Nonnull Long userId, @Nonnull Collection<UserGroup> groups);
 
     @Nonnull
-    User requireById(long id);
+    User requireById(@Nonnull Long id);
 }

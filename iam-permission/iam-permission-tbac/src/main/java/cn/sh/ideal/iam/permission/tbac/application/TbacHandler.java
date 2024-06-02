@@ -2,10 +2,12 @@ package cn.sh.ideal.iam.permission.tbac.application;
 
 import cn.idealio.framework.lang.Tuple;
 import cn.sh.ideal.iam.permission.tbac.domain.model.PermissionAssignable;
+import cn.sh.ideal.iam.security.api.AccessibleTenant;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.SequencedCollection;
 import java.util.Set;
 
 /**
@@ -24,7 +26,7 @@ public interface TbacHandler {
      * @author 宋志宗 on 2024/5/18
      */
     @Nonnull
-    Set<Long> visiblePermissionIds(long userId, long containerId, long appId);
+    Set<Long> visiblePermissionIds(@Nonnull Long userId, @Nonnull Long containerId, @Nonnull Long appId);
 
 
     /**
@@ -36,7 +38,7 @@ public interface TbacHandler {
      * @author 宋志宗 on 2024/5/18
      */
     @Nonnull
-    default Set<Long> authorityContainerIds(long userId,
+    default Set<Long> authorityContainerIds(@Nonnull Long userId,
                                             @Nonnull String authority) {
         return authorityContainerIds(userId, authority, null);
     }
@@ -51,7 +53,7 @@ public interface TbacHandler {
      * @author 宋志宗 on 2024/5/18
      */
     @Nonnull
-    Set<Long> authorityContainerIds(long userId,
+    Set<Long> authorityContainerIds(@Nonnull Long userId,
                                     @Nonnull String authority,
                                     @Nullable Long baseContainerId);
 
@@ -63,7 +65,7 @@ public interface TbacHandler {
      * @return [authority]有权限配置的containerId -> 是否分配 -> 是否继承
      */
     @Nonnull
-    Map<Long, Tuple<Boolean, Boolean>> authorityContainerAssignInfo(long userId,
+    Map<Long, Tuple<Boolean, Boolean>> authorityContainerAssignInfo(@Nonnull Long userId,
                                                                     @Nonnull String authority);
 
     /**
@@ -74,8 +76,8 @@ public interface TbacHandler {
      * @return [authority]有权限配置的containerId -> 是否分配 -> 是否继承
      */
     @Nonnull
-    Map<Long, Tuple<Boolean, Boolean>> permissionContainerAssignInfo(long userId,
-                                                                     long permissionId);
+    Map<Long, Tuple<Boolean, Boolean>> permissionContainerAssignInfo(@Nonnull Long userId,
+                                                                     @Nonnull Long permissionId);
 
     /**
      * 过滤用户在指定安全容器上有权限的权限ID列表
@@ -87,7 +89,7 @@ public interface TbacHandler {
      * @author 宋志宗 on 2024/5/18
      */
     @Nonnull
-    Set<Long> containerPermissionIds(long userId, long containerId,
+    Set<Long> containerPermissionIds(@Nonnull Long userId, @Nonnull Long containerId,
                                      @Nonnull Set<Long> permissionIds);
 
     /**
@@ -100,7 +102,7 @@ public interface TbacHandler {
      * @author 宋志宗 on 2024/5/18
      */
     @Nonnull
-    Map<Long, Set<Long>> containerPermissionIds(long userId,
+    Map<Long, Set<Long>> containerPermissionIds(@Nonnull Long userId,
                                                 @Nonnull Set<Long> containerIds,
                                                 @Nonnull Set<Long> permissionIds);
 
@@ -115,7 +117,7 @@ public interface TbacHandler {
      * @return 是否拥有指定权限
      * @author 宋志宗 on 2024/5/18
      */
-    boolean hasAuthority(long userId, long containerId, @Nonnull String authority);
+    boolean hasAuthority(@Nonnull Long userId, @Nonnull Long containerId, @Nonnull String authority);
 
     /**
      * 判断用户在指定安全容器上是否拥有任一权限
@@ -128,7 +130,7 @@ public interface TbacHandler {
      * @return 是否拥有任一权限
      * @author 宋志宗 on 2024/5/18
      */
-    boolean hasAnyAuthority(long userId, long containerId,
+    boolean hasAnyAuthority(@Nonnull Long userId, @Nonnull Long containerId,
                             @Nonnull Set<String> authorities);
 
     /**
@@ -143,10 +145,10 @@ public interface TbacHandler {
      * @return 是否拥有接口权限
      * @author 宋志宗 on 2024/5/18
      */
-    boolean hasApiPermission(long userId, long containerId,
+    boolean hasApiPermission(@Nonnull Long userId, @Nonnull Long containerId,
                              @Nonnull String method, @Nonnull String path);
 
-    boolean needMfa(long userId, long containerId, long permissionId);
+    boolean needMfa(@Nonnull Long userId, @Nonnull Long containerId, @Nonnull Long permissionId);
 
     /**
      * 获取用户可分配信息
@@ -157,5 +159,8 @@ public interface TbacHandler {
      * @return 用户可分配信息
      */
     @Nonnull
-    PermissionAssignable assignable(long userId, long containerId, long appId);
+    PermissionAssignable assignable(@Nonnull Long userId, @Nonnull Long containerId, @Nonnull Long appId);
+
+    @Nonnull
+    SequencedCollection<AccessibleTenant> accessibleTenants(@Nonnull Long userId);
 }

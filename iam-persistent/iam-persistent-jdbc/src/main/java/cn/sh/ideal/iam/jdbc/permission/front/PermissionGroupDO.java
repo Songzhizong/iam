@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 @Getter
 @Setter
@@ -30,14 +30,16 @@ public class PermissionGroupDO implements PermissionGroup {
     public static final String TABLE_NAME = "iam_permission_group";
 
     @Id
+    @Nonnull
     @Comment("主键")
     @Column(nullable = false, name = "id_")
     @ManualIdentityGenerator(name = TABLE_NAME)
-    private long id = -1L;
+    private Long id = -1L;
 
+    @Nonnull
     @Comment("应用ID")
     @Column(nullable = false, name = "app_id_")
-    private long appId = -1L;
+    private Long appId = -1L;
 
     @Nonnull
     @Comment("名称")
@@ -57,7 +59,8 @@ public class PermissionGroupDO implements PermissionGroup {
     private long version = 0;
 
     @Nonnull
-    public static PermissionGroupDO create(long id, @Nonnull CreatePermissionGroupArgs args) {
+    public static PermissionGroupDO create(@Nonnull Long id,
+                                           @Nonnull CreatePermissionGroupArgs args) {
         Long appId = args.getAppId();
         String name = args.getName();
         Boolean enabled = args.getEnabled();

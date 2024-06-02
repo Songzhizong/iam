@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/30
  */
 @Repository
 @RequiredArgsConstructor
@@ -21,7 +21,7 @@ public class PermissionItemRepositoryImpl implements PermissionItemRepository {
     @Override
     public PermissionItem insert(@Nonnull PermissionItem item) {
         PermissionItemDO entity = (PermissionItemDO) item;
-        return permissionItemJpaRepository.save(entity);
+        return permissionItemJpaRepository.saveAndFlush(entity);
     }
 
     @Override
@@ -30,16 +30,17 @@ public class PermissionItemRepositoryImpl implements PermissionItemRepository {
             PermissionItemDO entity = (PermissionItemDO) permissionItem;
             permissionItemJpaRepository.save(entity);
         }
+        permissionItemJpaRepository.flush();
     }
 
     @Override
-    public int deleteAllByAppId(long appId) {
+    public int deleteAllByAppId(@Nonnull Long appId) {
         return permissionItemJpaRepository.deleteAllByAppId(appId);
     }
 
     @Nonnull
     @Override
-    public Optional<PermissionItem> findById(long id) {
+    public Optional<PermissionItem> findById(@Nonnull Long id) {
         return permissionItemJpaRepository.findById(id).map(e -> e);
     }
 
@@ -52,13 +53,13 @@ public class PermissionItemRepositoryImpl implements PermissionItemRepository {
 
     @Nonnull
     @Override
-    public List<PermissionItem> findAllByAppId(long appId) {
+    public List<PermissionItem> findAllByAppId(@Nonnull Long appId) {
         return permissionItemJpaRepository.findAllByAppId(appId)
                 .stream().map(e -> (PermissionItem) e).toList();
     }
 
     @Override
-    public boolean existsByAppId(long appId) {
+    public boolean existsByAppId(@Nonnull Long appId) {
         return permissionItemJpaRepository.existsByAppId(appId);
     }
 

@@ -40,19 +40,21 @@ public class TenantDO implements Tenant {
     private static final Pattern ABBREVIATION_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
 
     @Id
+    @Nonnull
     @Comment("主键")
     @Column(nullable = false, name = "id_")
     @ManualIdentityGenerator(name = TABLE_NAME)
-    private long id = -1L;
+    private Long id = -1L;
 
     @Nonnull
     @Comment("所属平台")
     @Column(nullable = false, name = "platform_")
     private String platform = "";
 
+    @Nonnull
     @Comment("安全容器ID")
     @Column(nullable = false, name = "container_id_")
-    private long containerId = -1L;
+    private Long containerId = -1L;
 
     @Nonnull
     @Comment("租户名称")
@@ -83,7 +85,7 @@ public class TenantDO implements Tenant {
     private long version = 0;
 
     @Nonnull
-    public static TenantDO create(long id,
+    public static TenantDO create(@Nonnull Long id,
                                   @Nonnull Platform platform,
                                   @Nonnull CreateTenantArgs args,
                                   @Nonnull IamI18nReader i18nReader) {
@@ -109,7 +111,7 @@ public class TenantDO implements Tenant {
     @Nullable
     @Override
     public Long getContainerId() {
-        long containerId = this.containerId;
+        Long containerId = this.containerId;
         if (containerId < 1) {
             return null;
         }

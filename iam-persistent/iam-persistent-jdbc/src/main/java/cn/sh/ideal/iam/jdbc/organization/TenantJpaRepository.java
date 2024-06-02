@@ -3,6 +3,8 @@ package cn.sh.ideal.iam.jdbc.organization;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -10,7 +12,7 @@ import java.util.Optional;
  */
 public interface TenantJpaRepository extends JpaRepository<TenantDO, Long> {
 
-    boolean existsByContainerId(long containerId);
+    boolean existsByContainerId(@Nonnull Long containerId);
 
     boolean existsByAbbreviation(@Nonnull String abbreviation);
 
@@ -20,4 +22,7 @@ public interface TenantJpaRepository extends JpaRepository<TenantDO, Long> {
     @Nonnull
     Optional<TenantDO> findByPlatformAndAbbreviation(@Nonnull String platform,
                                                      @Nonnull String abbreviation);
+
+    @Nonnull
+    List<TenantDO> findAllByContainerIdIn(@Nonnull Collection<Long> containerIds);
 }

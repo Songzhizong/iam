@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 public interface PermissionItemJpaRepository extends JpaRepository<PermissionItemDO, Long> {
 
@@ -20,7 +20,7 @@ public interface PermissionItemJpaRepository extends JpaRepository<PermissionIte
     @Modifying
     @Transactional(rollbackFor = Throwable.class)
     @Query(value = "DELETE FROM iam_permission_item AS e WHERE e.app_id_ = :appId", nativeQuery = true)
-    int deleteAllByAppId(@Param("appId") long appId);
+    int deleteAllByAppId(@Param("appId") @Nonnull Long appId);
 
-    boolean existsByAppId(long appId);
+    boolean existsByAppId(@Nonnull Long appId);
 }

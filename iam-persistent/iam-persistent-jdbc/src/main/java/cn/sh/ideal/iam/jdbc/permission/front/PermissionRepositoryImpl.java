@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 @Repository
 @RequiredArgsConstructor
@@ -37,8 +37,9 @@ public class PermissionRepositoryImpl implements PermissionRepository {
     public void insert(@Nonnull List<Permission> permissions) {
         for (Permission permission : permissions) {
             PermissionDO entity = (PermissionDO) permission;
-            permissionJpaRepository.saveAndFlush(entity);
+            permissionJpaRepository.save(entity);
         }
+        permissionJpaRepository.flush();
         Asyncs.delayExec(Duration.ofSeconds(1), () -> {
             for (PermissionRepositoryListener listener : listeners) {
                 listener.onPermissionTableChanged();
@@ -47,7 +48,7 @@ public class PermissionRepositoryImpl implements PermissionRepository {
     }
 
     @Override
-    public int deleteAllByAppId(long appId) {
+    public int deleteAllByAppId(@Nonnull Long appId) {
         int deleted = permissionJpaRepository.deleteAllByAppId(appId);
         Asyncs.delayExec(Duration.ofSeconds(1), () -> {
             for (PermissionRepositoryListener listener : listeners) {
@@ -66,7 +67,7 @@ public class PermissionRepositoryImpl implements PermissionRepository {
 
     @Nonnull
     @Override
-    public List<Permission> findAllByAppId(long appId) {
+    public List<Permission> findAllByAppId(@Nonnull Long appId) {
         return permissionJpaRepository.findAllByAppId(appId)
                 .stream().map(e -> (Permission) e).toList();
     }
@@ -94,7 +95,7 @@ public class PermissionRepositoryImpl implements PermissionRepository {
     }
 
     @Override
-    public boolean existsByAppId(long appId) {
+    public boolean existsByAppId(@Nonnull Long appId) {
         return permissionJpaRepository.existsByAppId(appId);
     }
 }

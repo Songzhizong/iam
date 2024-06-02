@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 public interface PermissionRepository {
     List<PermissionRepositoryListener> listeners = new ArrayList<>();
@@ -20,13 +20,13 @@ public interface PermissionRepository {
 
     void insert(@Nonnull List<Permission> permissions);
 
-    int deleteAllByAppId(long appId);
+    int deleteAllByAppId(@Nonnull Long appId);
 
     @Nonnull
     List<Permission> findAll();
 
     @Nonnull
-    List<Permission> findAllByAppId(long appId);
+    List<Permission> findAllByAppId(@Nonnull Long appId);
 
     @Nonnull
     List<Permission> findAllById(@Nonnull Collection<Long> ids);
@@ -34,5 +34,5 @@ public interface PermissionRepository {
     @Nonnull
     List<Permission> findAllByItemIdIn(@Nonnull Collection<Long> itemIds);
 
-    boolean existsByAppId(long appId);
+    boolean existsByAppId(@Nonnull Long appId);
 }

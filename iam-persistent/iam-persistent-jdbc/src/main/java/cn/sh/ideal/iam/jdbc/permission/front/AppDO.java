@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 @Getter
 @Setter
@@ -34,10 +34,11 @@ public class AppDO implements App {
     public static final String TABLE_NAME = "iam_front_app";
 
     @Id
+    @Nonnull
     @Comment("主键")
     @Column(nullable = false, name = "id_")
     @ManualIdentityGenerator(name = TABLE_NAME)
-    private long id = -1L;
+    private Long id = -1L;
 
     @Nonnull
     @Comment("终端类型")
@@ -68,6 +69,10 @@ public class AppDO implements App {
     @Column(nullable = false, name = "note_")
     private String note = "";
 
+    @Comment("是否启用API鉴权")
+    @Column(nullable = false, name = "enable_api_authenticate_")
+    private boolean apiAuthenticateEnabled = true;
+
     @Comment("排序值")
     @Column(nullable = false, name = "order_num_")
     private int orderNum = 0;
@@ -82,7 +87,7 @@ public class AppDO implements App {
     private long version = 0;
 
     @Nonnull
-    public static AppDO create(long id, @Nonnull CreateAppArgs args) {
+    public static AppDO create(@Nonnull Long id, @Nonnull CreateAppArgs args) {
         Terminal terminal = args.getTerminal();
         String rootPath = args.getRootPath();
         String name = args.getName();

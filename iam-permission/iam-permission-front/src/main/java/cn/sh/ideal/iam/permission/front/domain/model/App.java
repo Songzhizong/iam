@@ -9,11 +9,12 @@ import javax.annotation.Nonnull;
 /**
  * 前端应用
  *
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 public interface App {
 
-    long getId();
+    @Nonnull
+    Long getId();
 
     @Nonnull
     Terminal getTerminal();
@@ -29,6 +30,8 @@ public interface App {
 
     @Nonnull
     String getNote();
+
+    boolean isApiAuthenticateEnabled();
 
     int getOrderNum();
 

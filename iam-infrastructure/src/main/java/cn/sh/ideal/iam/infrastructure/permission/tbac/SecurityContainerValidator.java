@@ -1,9 +1,11 @@
 package cn.sh.ideal.iam.infrastructure.permission.tbac;
 
+import javax.annotation.Nonnull;
+
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 public interface SecurityContainerValidator {
 
-    void requireExits(long containerId);
+    void requireExits(@Nonnull Long containerId);
 }

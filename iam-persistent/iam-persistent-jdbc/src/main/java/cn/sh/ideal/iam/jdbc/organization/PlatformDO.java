@@ -3,11 +3,12 @@ package cn.sh.ideal.iam.jdbc.organization;
 import cn.idealio.framework.exception.BadRequestException;
 import cn.idealio.framework.lang.StringUtils;
 import cn.idealio.framework.util.Asserts;
-import cn.idealio.framework.util.data.hibernate.annotations.JpaIdentityGenerator;
+import cn.idealio.framework.util.data.hibernate.annotations.ManualIdentityGenerator;
 import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.organization.domain.model.Platform;
 import cn.sh.ideal.iam.organization.dto.args.CreatePlatformArgs;
 import cn.sh.ideal.iam.organization.dto.args.UpdatePlatformArgs;
+import cn.sh.ideal.iam.organization.dto.resp.PlatformInfo;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,7 +21,7 @@ import javax.annotation.Nullable;
 import java.util.regex.Pattern;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 @Slf4j
 @Getter
@@ -37,10 +38,11 @@ public class PlatformDO implements Platform {
     private static final Pattern CODE_PATTERN = Pattern.compile("^[a-z][a-z0-9_]*$");
 
     @Id
+    @Nonnull
     @Comment("主键")
     @Column(nullable = false, name = "id_")
-    @JpaIdentityGenerator(name = TABLE_NAME)
-    private Long id = null;
+    @ManualIdentityGenerator(name = TABLE_NAME)
+    private Long id = -1L;
 
     @Nonnull
     @Comment("平台编码")
@@ -66,11 +68,6 @@ public class PlatformDO implements Platform {
     @Column(nullable = false, name = "registrable_")
     private boolean registrable = false;
 
-    @Nonnull
-    @Comment("配置信息")
-    @Column(nullable = false, name = "config_")
-    private String config = "";
-
     @Comment("是否已被删除")
     @Column(nullable = false, name = "deleted_")
     private boolean deleted = false;
@@ -80,7 +77,8 @@ public class PlatformDO implements Platform {
     private long version = 0;
 
     @Nonnull
-    public static PlatformDO create(@Nonnull CreatePlatformArgs args,
+    public static PlatformDO create(@Nonnull Long id,
+                                    @Nonnull CreatePlatformArgs args,
                                     @Nonnull IamI18nReader i18nReader) {
         String code = args.getCode();
         String name = args.getName();
@@ -95,12 +93,25 @@ public class PlatformDO implements Platform {
             openName = name;
         }
         PlatformDO platformDO = new PlatformDO();
+        platformDO.setId(id);
         platformDO.setCode(code);
         platformDO.setName(name);
         platformDO.setOpenName(openName);
         platformDO.setNote(args.getNote());
         platformDO.setRegistrable(args.getRegistrable());
-        platformDO.setConfig(args.getConfig());
+        return platformDO;
+    }
+
+    @Nonnull
+    public static PlatformDO create(@Nonnull PlatformInfo platformInfo) {
+        PlatformDO platformDO = new PlatformDO();
+        platformDO.setNote(platformInfo.getNote());
+        platformDO.setRegistrable(platformInfo.isRegistrable());
+        platformDO.setId(platformInfo.getId());
+        platformDO.setCode(platformInfo.getCode());
+        platformDO.setName(platformInfo.getName());
+        platformDO.setOpenName(platformInfo.getOpenName());
+        platformDO.setDeleted(false);
         return platformDO;
     }
 
@@ -126,7 +137,6 @@ public class PlatformDO implements Platform {
         this.setOpenName(openName);
         this.setNote(args.getNote());
         this.setRegistrable(args.getRegistrable());
-        this.setConfig(args.getConfig());
     }
 
     public void setNote(@Nullable String note) {
@@ -141,12 +151,5 @@ public class PlatformDO implements Platform {
             registrable = false;
         }
         this.registrable = registrable;
-    }
-
-    public void setConfig(@Nullable String config) {
-        if (config == null) {
-            config = "";
-        }
-        this.config = config;
     }
 }

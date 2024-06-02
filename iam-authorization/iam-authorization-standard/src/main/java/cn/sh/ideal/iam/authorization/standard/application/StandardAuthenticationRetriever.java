@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 @Slf4j
 @Service
@@ -32,7 +32,7 @@ public class StandardAuthenticationRetriever implements AuthenticationRetriever 
     @Override
     public Authentication retrieve(@Nonnull String authorization) {
         StandardAuthorization standardAuthorization = StandardAuthorization.read(authorization);
-        long accessId = standardAuthorization.getAccessId();
+        Long accessId = standardAuthorization.getAccessId();
         AccessToken accessToken = accessTokenService.get(accessId);
         return new StandardAuthentication(accessToken, userDetailService);
     }
@@ -46,8 +46,9 @@ public class StandardAuthenticationRetriever implements AuthenticationRetriever 
         @Nullable
         private String account = null;
 
+        @Nonnull
         @Override
-        public long userId() {
+        public Long userId() {
             return accessToken.getUserId();
         }
 
@@ -55,6 +56,12 @@ public class StandardAuthenticationRetriever implements AuthenticationRetriever 
         @Override
         public Long tenantId() {
             return accessToken.getTenantId();
+        }
+
+        @Nonnull
+        @Override
+        public String platform() {
+            return accessToken.getPlatform();
         }
 
         @Nullable

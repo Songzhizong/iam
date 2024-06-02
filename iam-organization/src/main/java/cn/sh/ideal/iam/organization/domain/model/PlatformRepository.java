@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 public interface PlatformRepository {
     List<PlatformRepositoryListener> listeners = new ArrayList<>();
@@ -21,6 +21,8 @@ public interface PlatformRepository {
     @Nonnull
     Platform update(@Nonnull Platform platform);
 
+    void delete(@Nonnull Platform platform);
+
     @Nonnull
     Optional<Platform> findByCode(@Nonnull String code);
 
@@ -29,4 +31,6 @@ public interface PlatformRepository {
 
     @Nonnull
     Platform requireByCode(@Nonnull String code);
+
+    boolean exists();
 }

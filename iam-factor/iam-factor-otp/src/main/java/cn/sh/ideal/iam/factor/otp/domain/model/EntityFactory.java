@@ -8,5 +8,5 @@ import javax.annotation.Nonnull;
 public interface EntityFactory {
 
     @Nonnull
-    UserTotp userTotp(long userId, @Nonnull String secret);
+    UserTotp userTotp(@Nonnull Long userId, @Nonnull String secret);
 }

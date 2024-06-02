@@ -5,6 +5,7 @@ import cn.idealio.framework.cache.serialize.LongSerializer;
 import cn.idealio.framework.lang.Sets;
 import cn.idealio.framework.spring.matcher.AlwaysFalseMethodPathMatcher;
 import cn.idealio.framework.spring.matcher.MethodPathMatcher;
+import cn.sh.ideal.iam.organization.domain.model.TenantRepository;
 import cn.sh.ideal.iam.organization.domain.model.UserRepository;
 import cn.sh.ideal.iam.permission.front.domain.model.Permission;
 import cn.sh.ideal.iam.permission.front.domain.model.PermissionCache;
@@ -47,9 +48,10 @@ public class CacheableTbacHandler extends CachelessTbacHandler {
     public CacheableTbacHandler(@Nonnull CacheFactory cacheFactory,
                                 @Nonnull UserRepository userRepository,
                                 @Nonnull PermissionCache permissionCache,
+                                @Nonnull TenantRepository tenantRepository,
                                 @Nonnull SecurityContainerCache securityContainerCache,
                                 @Nonnull PermissionAssignRepository permissionAssignRepository) {
-        super(userRepository, permissionCache, securityContainerCache, permissionAssignRepository);
+        super(userRepository, permissionCache, tenantRepository, securityContainerCache, permissionAssignRepository);
         this.userAuthLatestRefreshTimestampCache = cacheFactory
                 .<Long, Long>newBuilder(LongSerializer.instance())
                 .expireAfterWrite(USER_AUTH_REFRESH_TIME_CACHE_TIMEOUT)
@@ -58,20 +60,21 @@ public class CacheableTbacHandler extends CachelessTbacHandler {
 
     @Nonnull
     @Override
-    public List<PermissionAssign> getAllAssigns(long userId) {
+    public List<PermissionAssign> getAllAssigns(@Nonnull Long userId) {
         return getPermissionAssignsCacheWrapper(userId).assigns();
     }
 
     @Nonnull
     @Override
-    public List<PermissionAssign> getPermissionAssigns(long userId, long permissionId) {
+    public List<PermissionAssign> getPermissionAssigns(@Nonnull Long userId,
+                                                       @Nonnull Long permissionId) {
         return getPermissionAssignsCacheWrapper(userId)
                 .permissionAssigns()
                 .getOrDefault(permissionId, List.of());
     }
 
     @Nonnull
-    private PermissionAssignsCacheWrapper getPermissionAssignsCacheWrapper(long userId) {
+    private PermissionAssignsCacheWrapper getPermissionAssignsCacheWrapper(@Nonnull Long userId) {
         PermissionAssignsCacheWrapper wrapper = PERMISSION_ASSIGN_CACHE.get(userId, k -> {
             List<PermissionAssign> assigns = super.getAllAssigns(userId);
             return PermissionAssignsCacheWrapper.of(assigns);
@@ -89,20 +92,23 @@ public class CacheableTbacHandler extends CachelessTbacHandler {
     }
 
     @Override
-    public boolean hasAuthority(long userId, long containerId, @Nonnull String authority) {
+    public boolean hasAuthority(@Nonnull Long userId,
+                                @Nonnull Long containerId,
+                                @Nonnull String authority) {
         Set<String> authorities = getAuthorities(userId, containerId);
         return authorities.contains(authority);
     }
 
     @Override
-    public boolean hasAnyAuthority(long userId, long containerId,
+    public boolean hasAnyAuthority(@Nonnull Long userId,
+                                   @Nonnull Long containerId,
                                    @Nonnull Set<String> authorities) {
         Set<String> userAuthorities = getAuthorities(userId, containerId);
         return Sets.containsAny(userAuthorities, authorities);
     }
 
     @Nonnull
-    private Set<String> getAuthorities(long userId, long containerId) {
+    private Set<String> getAuthorities(@Nonnull Long userId, @Nonnull Long containerId) {
         AuthoritiesCacheWrapper wrapper = AUTHORITIES_CACHE.get(userId, key ->
                 new AuthoritiesCacheWrapper(System.currentTimeMillis(), new ConcurrentHashMap<>()));
         Long latestRefreshTimestamp = getUserAuthLatestRefreshTimestamp(userId);
@@ -131,7 +137,8 @@ public class CacheableTbacHandler extends CachelessTbacHandler {
     }
 
     @Override
-    public boolean hasApiPermission(long userId, long containerId,
+    public boolean hasApiPermission(@Nonnull Long userId,
+                                    @Nonnull Long containerId,
                                     @Nonnull String method, @Nonnull String path) {
         ApiPermissionCacheWrapper wrapper = API_PERMISSION_CACHE.get(userId, key ->
                 new ApiPermissionCacheWrapper(System.currentTimeMillis(), new ConcurrentHashMap<>()));
@@ -146,7 +153,8 @@ public class CacheableTbacHandler extends CachelessTbacHandler {
     }
 
     @Nonnull
-    private MethodPathMatcher getMethodPathMatcher(long userId, long containerId,
+    private MethodPathMatcher getMethodPathMatcher(@Nonnull Long userId,
+                                                   @Nonnull Long containerId,
                                                    @Nonnull ApiPermissionCacheWrapper wrapper) {
         ConcurrentMap<Long, MethodPathMatcher> map = wrapper.matcherMap();
         return map.computeIfAbsent(containerId, key -> {
@@ -167,12 +175,12 @@ public class CacheableTbacHandler extends CachelessTbacHandler {
         });
     }
 
-    public void updateUserAuthLatestRefreshTimestamp(long userId, long timestamp) {
+    public void updateUserAuthLatestRefreshTimestamp(@Nonnull Long userId, long timestamp) {
         userAuthLatestRefreshTimestampCache.put(userId, timestamp);
     }
 
     @Nullable
-    private Long getUserAuthLatestRefreshTimestamp(long userId) {
+    private Long getUserAuthLatestRefreshTimestamp(@Nonnull Long userId) {
         return userAuthLatestRefreshTimestampCache.getIfPresent(userId);
     }
 
@@ -192,7 +200,7 @@ public class CacheableTbacHandler extends CachelessTbacHandler {
         public static PermissionAssignsCacheWrapper of(@Nonnull List<PermissionAssign> assigns) {
             Map<Long, List<PermissionAssign>> permissionAssigns = new HashMap<>();
             for (PermissionAssign assign : assigns) {
-                long permissionId = assign.getPermissionId();
+                @Nonnull Long permissionId = assign.getPermissionId();
                 permissionAssigns.computeIfAbsent(permissionId, k -> new ArrayList<>()).add(assign);
             }
             return new PermissionAssignsCacheWrapper(System.currentTimeMillis(), assigns, permissionAssigns);

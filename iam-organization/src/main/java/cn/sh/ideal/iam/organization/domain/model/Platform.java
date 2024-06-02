@@ -2,14 +2,19 @@ package cn.sh.ideal.iam.organization.domain.model;
 
 import cn.sh.ideal.iam.infrastructure.configure.IamI18nReader;
 import cn.sh.ideal.iam.organization.dto.args.UpdatePlatformArgs;
+import cn.sh.ideal.iam.organization.dto.resp.PlatformInfo;
 import cn.sh.ideal.iam.organization.dto.resp.PlatformVO;
 
 import javax.annotation.Nonnull;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 public interface Platform {
+
+    @Nonnull
+    Long getId();
+
     @Nonnull
     String getCode();
 
@@ -23,9 +28,6 @@ public interface Platform {
     String getNote();
 
     boolean isRegistrable();
-
-    @Nonnull
-    String getConfig();
 
     void delete();
 
@@ -41,8 +43,18 @@ public interface Platform {
         platformVO.setOpenName(getOpenName());
         platformVO.setNote(getNote());
         platformVO.setRegistrable(isRegistrable());
-        platformVO.setConfig(getConfig());
         return platformVO;
+    }
 
+    @Nonnull
+    default PlatformInfo toInfo() {
+        PlatformInfo platformInfo = new PlatformInfo();
+        platformInfo.setId(getId());
+        platformInfo.setCode(getCode());
+        platformInfo.setName(getName());
+        platformInfo.setOpenName(getOpenName());
+        platformInfo.setNote(getNote());
+        platformInfo.setRegistrable(isRegistrable());
+        return platformInfo;
     }
 }

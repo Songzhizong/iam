@@ -31,13 +31,13 @@ public class AccessTokenRepositoryImpl implements AccessTokenRepository {
     }
 
     @Override
-    public void deleteById(long id) {
+    public void deleteById(@Nonnull Long id) {
         accessTokenJpaRepository.deleteById(id);
     }
 
     @Nonnull
     @Override
-    public Optional<AccessToken> findById(long id) {
+    public Optional<AccessToken> findById(@Nonnull Long id) {
         return accessTokenJpaRepository.findById(id).map(it -> it);
     }
 }

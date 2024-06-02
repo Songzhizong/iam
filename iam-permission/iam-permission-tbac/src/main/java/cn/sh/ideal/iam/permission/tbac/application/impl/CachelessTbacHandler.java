@@ -2,11 +2,15 @@ package cn.sh.ideal.iam.permission.tbac.application.impl;
 
 import cn.idealio.framework.lang.*;
 import cn.idealio.framework.spring.matcher.PathMatchers;
+import cn.sh.ideal.iam.organization.domain.model.Tenant;
+import cn.sh.ideal.iam.organization.domain.model.TenantRepository;
 import cn.sh.ideal.iam.organization.domain.model.UserRepository;
 import cn.sh.ideal.iam.permission.front.domain.model.Permission;
 import cn.sh.ideal.iam.permission.front.domain.model.PermissionCache;
 import cn.sh.ideal.iam.permission.tbac.application.TbacHandler;
 import cn.sh.ideal.iam.permission.tbac.domain.model.*;
+import cn.sh.ideal.iam.security.api.AccessibleTenant;
+import cn.sh.ideal.iam.security.api.AuthorityConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -28,6 +32,7 @@ import java.util.stream.Collectors;
 public class CachelessTbacHandler implements TbacHandler {
     protected final UserRepository userRepository;
     protected final PermissionCache permissionCache;
+    protected final TenantRepository tenantRepository;
     protected final SecurityContainerCache securityContainerCache;
     protected final PermissionAssignRepository permissionAssignRepository;
 
@@ -43,7 +48,9 @@ public class CachelessTbacHandler implements TbacHandler {
      */
     @Nonnull
     @Override
-    public Set<Long> visiblePermissionIds(long userId, long containerId, long appId) {
+    public Set<Long> visiblePermissionIds(@Nonnull Long userId,
+                                          @Nonnull Long containerId,
+                                          @Nonnull Long appId) {
         // 获取用户在指定节点上的所有权限, 包括他的所有子节点
         Collection<AssignedPermission> assignedPermissions =
                 getAssignedPermissions(userId, containerId, true, appId);
@@ -55,7 +62,7 @@ public class CachelessTbacHandler implements TbacHandler {
 
     @Nonnull
     @Override
-    public Set<Long> authorityContainerIds(long userId,
+    public Set<Long> authorityContainerIds(@Nonnull Long userId,
                                            @Nonnull String authority,
                                            @Nullable Long baseContainerId) {
         // 获取用户在各个容器节点上的权限配置信息, [authority]有权限配置的containerId -> 是否分配 -> 是否继承
@@ -178,7 +185,7 @@ public class CachelessTbacHandler implements TbacHandler {
     @Nonnull
     @Override
     public Map<Long, Tuple<Boolean, Boolean>>
-    authorityContainerAssignInfo(long userId, @Nonnull String authority) {
+    authorityContainerAssignInfo(@Nonnull Long userId, @Nonnull String authority) {
         return containerAssignInfo(userId,
                 permission -> permission.getAuthorities().contains(authority)
         );
@@ -187,13 +194,13 @@ public class CachelessTbacHandler implements TbacHandler {
     @Nonnull
     @Override
     public Map<Long, Tuple<Boolean, Boolean>>
-    permissionContainerAssignInfo(long userId, long permissionId) {
+    permissionContainerAssignInfo(@Nonnull Long userId, @Nonnull Long permissionId) {
         return containerAssignInfo(userId, permission -> permission.getId() == permissionId);
     }
 
     @Nonnull
     private Map<Long, Tuple<Boolean, Boolean>> containerAssignInfo(
-            long userId, @Nonnull Predicate<Permission> predicate) {
+            @Nonnull Long userId, @Nonnull Predicate<Permission> predicate) {
         Map<Long, Collection<PermissionAssignDetail>>
                 assignDetails = getPermissionAssignDetails(userId);
         if (assignDetails.isEmpty()) {
@@ -231,7 +238,7 @@ public class CachelessTbacHandler implements TbacHandler {
 
     @Nonnull
     @Override
-    public Set<Long> containerPermissionIds(long userId, long containerId,
+    public Set<Long> containerPermissionIds(@Nonnull Long userId, @Nonnull Long containerId,
                                             @Nonnull Set<Long> permissionIds) {
 
         Set<Long> containerIds = Set.of(containerId);
@@ -241,7 +248,7 @@ public class CachelessTbacHandler implements TbacHandler {
 
     @Nonnull
     @Override
-    public Map<Long, Set<Long>> containerPermissionIds(long userId,
+    public Map<Long, Set<Long>> containerPermissionIds(@Nonnull Long userId,
                                                        @Nonnull Set<Long> containerIds,
                                                        @Nonnull Set<Long> permissionIds) {
         // containerId -> 权限分配信息列表
@@ -255,7 +262,7 @@ public class CachelessTbacHandler implements TbacHandler {
             return result;
         }
         Map<Long, Set<Long>> result = new HashMap<>();
-        for (long containerId : containerIds) {
+        for (Long containerId : containerIds) {
             AnalyzedSecurityContainer container = securityContainerCache.findById(containerId);
             if (container == null) {
                 log.warn("批量过滤容器权限ID列表:  安全容器[{}]不存在", containerId);
@@ -266,14 +273,14 @@ public class CachelessTbacHandler implements TbacHandler {
             SequencedSet<Long> containerParentIds = container.getParentIds();
             LinkedHashSet<Long> containerIdChain = new LinkedHashSet<>(containerParentIds);
             containerIdChain.add(containerId);
-            for (long loopContainerId : containerIdChain) {
+            for (Long loopContainerId : containerIdChain) {
                 Collection<PermissionAssignDetail> details = assignMap.get(loopContainerId);
                 if (CollectionUtils.isEmpty(details)) {
                     continue;
                 }
                 for (PermissionAssignDetail detail : details) {
                     Permission permission = detail.getPermission();
-                    long permissionId = permission.getId();
+                    Long permissionId = permission.getId();
                     if (!permissionIds.contains(permissionId)) {
                         continue;
                     }
@@ -284,7 +291,7 @@ public class CachelessTbacHandler implements TbacHandler {
                     }
                     // 父节点且不继承, 那么权限到这一步也就中断了
                     boolean inheritable = detail.isInheritable();
-                    if (!inheritable && loopContainerId != containerId) {
+                    if (!inheritable && !Objects.equals(loopContainerId, containerId)) {
                         hasPermissionIds.remove(permissionId);
                         continue;
                     }
@@ -298,21 +305,26 @@ public class CachelessTbacHandler implements TbacHandler {
     }
 
     @Override
-    public boolean hasAuthority(long userId, long containerId, @Nonnull String authority) {
+    public boolean hasAuthority(@Nonnull Long userId,
+                                @Nonnull Long containerId,
+                                @Nonnull String authority) {
         return checkAuthority(userId, containerId, permission ->
                 permission.getAuthorities().contains(authority)
         );
     }
 
     @Override
-    public boolean hasAnyAuthority(long userId, long containerId,
+    public boolean hasAnyAuthority(@Nonnull Long userId,
+                                   @Nonnull Long containerId,
                                    @Nonnull Set<String> authorities) {
         return checkAuthority(userId, containerId, permission ->
                 permission.getAuthorities().stream().anyMatch(authorities::contains)
         );
     }
 
-    private boolean checkAuthority(long userId, long containerId, Predicate<Permission> predicate) {
+    private boolean checkAuthority(@Nonnull Long userId,
+                                   @Nonnull Long containerId,
+                                   @Nonnull Predicate<Permission> predicate) {
         return getAssignedPermissions(userId, containerId, true).stream()
                 .map(AssignedPermission::getPermission)
                 .anyMatch(predicate);
@@ -320,8 +332,10 @@ public class CachelessTbacHandler implements TbacHandler {
 
 
     @Override
-    public boolean hasApiPermission(long userId, long containerId,
-                                    @Nonnull String method, @Nonnull String path) {
+    public boolean hasApiPermission(@Nonnull Long userId,
+                                    @Nonnull Long containerId,
+                                    @Nonnull String method,
+                                    @Nonnull String path) {
         Collection<AssignedPermission> assignedPermissions =
                 getAssignedPermissions(userId, containerId, true);
         if (assignedPermissions.isEmpty()) {
@@ -356,7 +370,7 @@ public class CachelessTbacHandler implements TbacHandler {
     }
 
     @Override
-    public boolean needMfa(long userId, long containerId, long permissionId) {
+    public boolean needMfa(@Nonnull Long userId, @Nonnull Long containerId, @Nonnull Long permissionId) {
         List<PermissionAssign> assigns = getPermissionAssigns(userId, permissionId);
         if (assigns.isEmpty()) {
             log.info("mfa验证失败, 用户[{}]在安全容器[{}]上没有分配权限[{}]",
@@ -368,8 +382,8 @@ public class CachelessTbacHandler implements TbacHandler {
         Collection<AssignedPermission> assignedPermissions =
                 getAssignedPermissions(containerId, false, null, assignDetails);
         for (AssignedPermission permission : assignedPermissions) {
-            long assignedPermissionId = permission.getPermission().getId();
-            if (assignedPermissionId == permissionId) {
+            Long assignedPermissionId = permission.getPermission().getId();
+            if (assignedPermissionId.equals(permissionId)) {
                 return permission.isMfa();
             }
         }
@@ -380,7 +394,9 @@ public class CachelessTbacHandler implements TbacHandler {
 
     @Nonnull
     @Override
-    public PermissionAssignable assignable(long userId, long containerId, long appId) {
+    public PermissionAssignable assignable(@Nonnull Long userId,
+                                           @Nonnull Long containerId,
+                                           @Nonnull Long appId) {
         Collection<AssignedPermission> assignedPermissions =
                 getAssignedPermissions(userId, containerId, false, appId);
         if (assignedPermissions.isEmpty()) {
@@ -404,6 +420,14 @@ public class CachelessTbacHandler implements TbacHandler {
         return assignable;
     }
 
+    @Nonnull
+    @Override
+    public SequencedCollection<AccessibleTenant> accessibleTenants(@Nonnull Long userId) {
+        Set<Long> containerIds = authorityContainerIds(userId, AuthorityConstants.TENANT_ACCESS, null);
+        List<Tenant> tenants = tenantRepository.findAllByContainerIdIn(containerIds);
+        return tenants.stream().map(Tenant::toAccessibleTenant).toList();
+    }
+
     /**
      * 获取用户指定节点上的拥有的所有权限
      *
@@ -414,8 +438,8 @@ public class CachelessTbacHandler implements TbacHandler {
      * @author 宋志宗 on 2024/5/18
      */
     @Nonnull
-    public Collection<AssignedPermission> getAssignedPermissions(long userId,
-                                                                 long containerId,
+    public Collection<AssignedPermission> getAssignedPermissions(@Nonnull Long userId,
+                                                                 @Nonnull Long containerId,
                                                                  boolean includeChildren) {
         return getAssignedPermissions(userId, containerId, includeChildren, null);
     }
@@ -431,8 +455,8 @@ public class CachelessTbacHandler implements TbacHandler {
      * @author 宋志宗 on 2024/5/18
      */
     @Nonnull
-    public Collection<AssignedPermission> getAssignedPermissions(long userId,
-                                                                 long containerId,
+    public Collection<AssignedPermission> getAssignedPermissions(@Nonnull Long userId,
+                                                                 @Nonnull Long containerId,
                                                                  boolean includeChildren,
                                                                  @Nullable Long appId) {
         // containerId -> 权限分配信息列表
@@ -456,7 +480,7 @@ public class CachelessTbacHandler implements TbacHandler {
      */
     @Nonnull
     public Collection<AssignedPermission> getAssignedPermissions(
-            long containerId, boolean includeChildren, @Nullable Long appId,
+            @Nonnull Long containerId, boolean includeChildren, @Nullable Long appId,
             @Nonnull Map<Long, Collection<PermissionAssignDetail>> assignMap) {
         AnalyzedSecurityContainer container = securityContainerCache.findById(containerId);
         if (container == null) {
@@ -468,7 +492,7 @@ public class CachelessTbacHandler implements TbacHandler {
         SequencedSet<Long> containerParentIds = container.getParentIds();
         LinkedHashSet<Long> containerIds = new LinkedHashSet<>(containerParentIds);
         containerIds.add(containerId);
-        for (long loopContainerId : containerIds) {
+        for (Long loopContainerId : containerIds) {
             Collection<PermissionAssignDetail> details = assignMap.get(loopContainerId);
             if (CollectionUtils.isEmpty(details)) {
                 continue;
@@ -478,7 +502,7 @@ public class CachelessTbacHandler implements TbacHandler {
                 if (appId != null && appId != permission.getAppId()) {
                     continue;
                 }
-                long permissionId = permission.getId();
+                Long permissionId = permission.getId();
                 // 如果是不授权, 则移除
                 if (!detail.isAssigned()) {
                     assignedPermissionMap.remove(permissionId);
@@ -486,7 +510,7 @@ public class CachelessTbacHandler implements TbacHandler {
                 }
                 // 父节点且不继承, 则直接跳过, 不需要加入到权限列表
                 boolean inheritable = detail.isInheritable();
-                if (!inheritable && loopContainerId != containerId) {
+                if (!inheritable && !Objects.equals(loopContainerId, containerId)) {
                     // 中间变成了不继承, 那么权限到这一步也就中断了
                     assignedPermissionMap.remove(permissionId);
                     continue;
@@ -508,7 +532,7 @@ public class CachelessTbacHandler implements TbacHandler {
                 if (!parentIds.contains(containerId)) {
                     continue;
                 }
-                long analyzedContainerId = analyzedSecurityContainer.getContainer().getId();
+                Long analyzedContainerId = analyzedSecurityContainer.getContainer().getId();
                 Collection<PermissionAssignDetail> details = assignMap.get(analyzedContainerId);
                 if (CollectionUtils.isEmpty(details)) {
                     continue;
@@ -518,7 +542,7 @@ public class CachelessTbacHandler implements TbacHandler {
                         continue;
                     }
                     Permission permission = detail.getPermission();
-                    long permissionId = permission.getId();
+                    Long permissionId = permission.getId();
                     if (assignedPermissionMap.containsKey(permissionId)) {
                         continue;
                     }
@@ -536,7 +560,7 @@ public class CachelessTbacHandler implements TbacHandler {
      * @author 宋志宗 on 2024/5/18
      */
     @Nonnull
-    public List<PermissionAssign> getAllAssigns(long userId) {
+    public List<PermissionAssign> getAllAssigns(@Nonnull Long userId) {
         List<Long> userGroupIds = userRepository.getGroupIds(userId);
         if (userGroupIds.isEmpty()) {
             log.info("获取所有权限分配信息返回空, 用户[{}]未关联任何用户组", userId);
@@ -546,7 +570,8 @@ public class CachelessTbacHandler implements TbacHandler {
     }
 
     @Nonnull
-    public List<PermissionAssign> getPermissionAssigns(long userId, long permissionId) {
+    public List<PermissionAssign> getPermissionAssigns(@Nonnull Long userId,
+                                                       @Nonnull Long permissionId) {
         List<Long> userGroupIds = userRepository.getGroupIds(userId);
         if (userGroupIds.isEmpty()) {
             log.info("获取指定权限分配信息返回空, 用户[{}]未关联任何用户组", userId);
@@ -566,7 +591,7 @@ public class CachelessTbacHandler implements TbacHandler {
      * @return 容器ID -> 权限配置信息
      */
     @Nonnull
-    public Map<Long, Collection<PermissionAssignDetail>> getPermissionAssignDetails(long userId) {
+    public Map<Long, Collection<PermissionAssignDetail>> getPermissionAssignDetails(@Nonnull Long userId) {
         List<PermissionAssign> assigns = getAllAssigns(userId);
         if (assigns.isEmpty()) {
             log.info("用户[{}]未配置任何权限", userId);
@@ -591,8 +616,8 @@ public class CachelessTbacHandler implements TbacHandler {
         Map<Long, Map<Long, PermissionAssignDetail>>
                 containerPermissionAssignMap = new HashMap<>();
         for (PermissionAssign permissionAssign : assigns) {
-            long containerId = permissionAssign.getContainerId();
-            long permissionId = permissionAssign.getPermissionId();
+            Long containerId = permissionAssign.getContainerId();
+            Long permissionId = permissionAssign.getPermissionId();
             Permission permission = permissionCache.findById(permissionId);
             if (permission == null || !permission.available()) {
                 log.info("用户权限树分析: 权限[{}]不存在或者不可用", permissionId);

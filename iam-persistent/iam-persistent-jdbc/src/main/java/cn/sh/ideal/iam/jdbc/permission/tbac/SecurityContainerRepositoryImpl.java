@@ -71,7 +71,7 @@ public class SecurityContainerRepositoryImpl implements SecurityContainerReposit
 
     @Nonnull
     @Override
-    public Optional<SecurityContainer> findById(long id) {
+    public Optional<SecurityContainer> findById(@Nonnull Long id) {
         return securityContainerJpaRepository.findById(id).map(e -> e);
     }
 
@@ -105,7 +105,7 @@ public class SecurityContainerRepositoryImpl implements SecurityContainerReposit
     }
 
     @Override
-    public boolean existsByParentId(long parentId) {
+    public boolean existsByParentId(@Nonnull Long parentId) {
         return securityContainerJpaRepository.existsByParentId(parentId);
     }
 

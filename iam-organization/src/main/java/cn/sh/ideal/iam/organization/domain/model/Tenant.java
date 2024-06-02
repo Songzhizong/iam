@@ -1,6 +1,7 @@
 package cn.sh.ideal.iam.organization.domain.model;
 
 import cn.sh.ideal.iam.organization.dto.resp.TenantInfo;
+import cn.sh.ideal.iam.security.api.AccessibleTenant;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -11,7 +12,8 @@ import javax.annotation.Nullable;
 public interface Tenant {
 
     /** 主键 */
-    long getId();
+    @Nonnull
+    Long getId();
 
     @Nonnull
     String getPlatform();
@@ -49,5 +51,14 @@ public interface Tenant {
         tenantInfo.setNote(getNote());
         tenantInfo.setSystemEdition(getSystemEdition());
         return tenantInfo;
+    }
+
+    @Nonnull
+    default AccessibleTenant toAccessibleTenant() {
+        AccessibleTenant accessibleTenant = new AccessibleTenant();
+        accessibleTenant.setId(getId());
+        accessibleTenant.setName(getName());
+        accessibleTenant.setAbbreviation(getAbbreviation());
+        return accessibleTenant;
     }
 }

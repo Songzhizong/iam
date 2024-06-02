@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * @author 宋志宗 on 2024/2/5
+ * @author 宋志宗 on 2024/5/16
  */
 @Getter
 @Setter
@@ -32,18 +32,21 @@ public class PermissionItemDO implements PermissionItem {
     public static final String TABLE_NAME = "iam_permission_item";
 
     @Id
+    @Nonnull
     @Comment("主键")
     @Column(nullable = false, name = "id_")
     @ManualIdentityGenerator(name = TABLE_NAME)
-    private long id = -1L;
+    private Long id = -1L;
 
+    @Nonnull
     @Comment("应用ID")
     @Column(nullable = false, name = "app_id_")
-    private long appId = -1L;
+    private Long appId = -1L;
 
+    @Nonnull
     @Comment("权限组ID")
     @Column(nullable = false, name = "group_id_")
-    private long groupId = -1L;
+    private Long groupId = -1L;
 
     @Nonnull
     @Comment("名称")
@@ -63,7 +66,8 @@ public class PermissionItemDO implements PermissionItem {
     private long version = 0;
 
     @Nonnull
-    public static PermissionItemDO create(long id, @Nonnull PermissionGroup group,
+    public static PermissionItemDO create(@Nonnull Long id,
+                                          @Nonnull PermissionGroup group,
                                           @Nonnull CreatePermissionItemArgs args) {
         String name = args.getName();
         Asserts.notBlank(name, "权限项名称为空");

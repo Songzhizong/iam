@@ -17,9 +17,9 @@ import java.util.Set;
 public class SecurityProperties {
 
     /**
-     * 是否强制进行安全验证, 默认开启, 本地开发时可以关闭该选项
+     * 是否开启接口鉴权, 默认是
      */
-    private boolean require = true;
+    private boolean enableApiAuthenticate = true;
 
 
     /** 不需要登录认证的接口清单 */

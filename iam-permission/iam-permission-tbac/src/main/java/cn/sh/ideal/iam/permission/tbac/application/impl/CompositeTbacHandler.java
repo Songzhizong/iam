@@ -4,6 +4,7 @@ import cn.idealio.framework.lang.Tuple;
 import cn.sh.ideal.iam.permission.tbac.application.TbacHandler;
 import cn.sh.ideal.iam.permission.tbac.configure.TbacProperties;
 import cn.sh.ideal.iam.permission.tbac.domain.model.PermissionAssignable;
+import cn.sh.ideal.iam.security.api.AccessibleTenant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.SequencedCollection;
 import java.util.Set;
 
 /**
@@ -36,7 +38,7 @@ public class CompositeTbacHandler implements TbacHandler {
     @Nonnull
     @Override
     public Map<Long, Tuple<Boolean, Boolean>>
-    authorityContainerAssignInfo(long userId, @Nonnull String authority) {
+    authorityContainerAssignInfo(@Nonnull Long userId, @Nonnull String authority) {
         if (properties.isCacheEnabled()) {
             return cacheableTbacHandler.authorityContainerAssignInfo(userId, authority);
         }
@@ -46,7 +48,7 @@ public class CompositeTbacHandler implements TbacHandler {
     @Nonnull
     @Override
     public Map<Long, Tuple<Boolean, Boolean>>
-    permissionContainerAssignInfo(long userId, long permissionId) {
+    permissionContainerAssignInfo(@Nonnull Long userId, @Nonnull Long permissionId) {
         if (properties.isCacheEnabled()) {
             return cacheableTbacHandler.permissionContainerAssignInfo(userId, permissionId);
         }
@@ -55,7 +57,9 @@ public class CompositeTbacHandler implements TbacHandler {
 
     @Nonnull
     @Override
-    public Set<Long> visiblePermissionIds(long userId, long containerId, long appId) {
+    public Set<Long> visiblePermissionIds(@Nonnull Long userId,
+                                          @Nonnull Long containerId,
+                                          @Nonnull Long appId) {
         long nanoTime = System.nanoTime();
         try {
             if (properties.isCacheEnabled()) {
@@ -73,7 +77,7 @@ public class CompositeTbacHandler implements TbacHandler {
 
     @Nonnull
     @Override
-    public Set<Long> authorityContainerIds(long userId,
+    public Set<Long> authorityContainerIds(@Nonnull Long userId,
                                            @Nonnull String authority,
                                            @Nullable Long baseContainerId) {
         long nanoTime = System.nanoTime();
@@ -93,7 +97,7 @@ public class CompositeTbacHandler implements TbacHandler {
 
     @Nonnull
     @Override
-    public Set<Long> containerPermissionIds(long userId, long containerId,
+    public Set<Long> containerPermissionIds(@Nonnull Long userId, @Nonnull Long containerId,
                                             @Nonnull Set<Long> permissionIds) {
         long nanoTime = System.nanoTime();
         try {
@@ -112,7 +116,7 @@ public class CompositeTbacHandler implements TbacHandler {
 
     @Nonnull
     @Override
-    public Map<Long, Set<Long>> containerPermissionIds(long userId,
+    public Map<Long, Set<Long>> containerPermissionIds(@Nonnull Long userId,
                                                        @Nonnull Set<Long> containerIds,
                                                        @Nonnull Set<Long> permissionIds) {
         long nanoTime = System.nanoTime();
@@ -131,7 +135,9 @@ public class CompositeTbacHandler implements TbacHandler {
     }
 
     @Override
-    public boolean hasAuthority(long userId, long containerId, @Nonnull String authority) {
+    public boolean hasAuthority(@Nonnull Long userId,
+                                @Nonnull Long containerId,
+                                @Nonnull String authority) {
         long nanoTime = System.nanoTime();
         try {
             if (properties.isCacheEnabled()) {
@@ -148,7 +154,7 @@ public class CompositeTbacHandler implements TbacHandler {
     }
 
     @Override
-    public boolean hasAnyAuthority(long userId, long containerId,
+    public boolean hasAnyAuthority(@Nonnull Long userId, @Nonnull Long containerId,
                                    @Nonnull Set<String> authorities) {
         long nanoTime = System.nanoTime();
         try {
@@ -166,7 +172,7 @@ public class CompositeTbacHandler implements TbacHandler {
     }
 
     @Override
-    public boolean hasApiPermission(long userId, long containerId,
+    public boolean hasApiPermission(@Nonnull Long userId, @Nonnull Long containerId,
                                     @Nonnull String method, @Nonnull String path) {
         long nanoTime = System.nanoTime();
         try {
@@ -184,7 +190,7 @@ public class CompositeTbacHandler implements TbacHandler {
     }
 
     @Override
-    public boolean needMfa(long userId, long containerId, long permissionId) {
+    public boolean needMfa(@Nonnull Long userId, @Nonnull Long containerId, @Nonnull Long permissionId) {
         long nanoTime = System.nanoTime();
         try {
             if (properties.isCacheEnabled()) {
@@ -202,7 +208,9 @@ public class CompositeTbacHandler implements TbacHandler {
 
     @Nonnull
     @Override
-    public PermissionAssignable assignable(long userId, long containerId, long appId) {
+    public PermissionAssignable assignable(@Nonnull Long userId,
+                                           @Nonnull Long containerId,
+                                           @Nonnull Long appId) {
         long nanoTime = System.nanoTime();
         try {
             if (properties.isCacheEnabled()) {
@@ -214,6 +222,24 @@ public class CompositeTbacHandler implements TbacHandler {
                 long micros = (System.nanoTime() - nanoTime) / 1000;
                 double millis = micros / 1000D;
                 log.debug("执行[获取用户可分配信息]耗时 {}ms", millis);
+            }
+        }
+    }
+
+    @Nonnull
+    @Override
+    public SequencedCollection<AccessibleTenant> accessibleTenants(@Nonnull Long userId) {
+        long nanoTime = System.nanoTime();
+        try {
+            if (properties.isCacheEnabled()) {
+                return cacheableTbacHandler.accessibleTenants(userId);
+            }
+            return cachelessTbacHandler.accessibleTenants(userId);
+        } finally {
+            if (log.isDebugEnabled()) {
+                long micros = (System.nanoTime() - nanoTime) / 1000;
+                double millis = micros / 1000D;
+                log.debug("执行[获取用户可访问的租户列表]耗时 {}ms", millis);
             }
         }
     }

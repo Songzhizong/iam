@@ -37,7 +37,7 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
     @Override
     public void delete(@Nonnull UserGroup group) {
         // 删除用户组的同时要删除用户组和用户之间的关系
-        long groupId = group.getId();
+        Long groupId = group.getId();
         userGroupRelJpaRepository.deleteAllByGroupId(groupId);
         // 删除用户组
         UserGroupDO entity = (UserGroupDO) group;
@@ -46,7 +46,7 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
 
     @Nonnull
     @Override
-    public Optional<UserGroup> findById(long id) {
+    public Optional<UserGroup> findById(@Nonnull Long id) {
         return userGroupJpaRepository.findById(id).map(e -> e);
     }
 

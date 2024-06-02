@@ -1,8 +1,9 @@
 package cn.sh.ideal.iam.jdbc.authorization.standard;
 
 import cn.idealio.framework.util.Asserts;
-import cn.idealio.framework.util.data.hibernate.annotations.JpaIdentityGenerator;
+import cn.idealio.framework.util.data.hibernate.annotations.ManualIdentityGenerator;
 import cn.sh.ideal.iam.authorization.standard.domain.model.AuthClient;
+import cn.sh.ideal.iam.authorization.standard.domain.model.AuthClientInfo;
 import cn.sh.ideal.iam.authorization.standard.dto.args.CreateAuthClientArgs;
 import cn.sh.ideal.iam.common.constant.Terminal;
 import jakarta.persistence.*;
@@ -34,10 +35,11 @@ public class AuthClientDO implements AuthClient {
     public static final String TABLE_NAME = "iam_auth_client";
 
     @Id
+    @Nonnull
     @Comment("主键")
     @Column(nullable = false, name = "id_")
-    @JpaIdentityGenerator(name = TABLE_NAME)
-    private Long id = null;
+    @ManualIdentityGenerator(name = TABLE_NAME)
+    private Long id = -1L;
 
     @Nonnull
     @Comment("所属平台")
@@ -82,7 +84,8 @@ public class AuthClientDO implements AuthClient {
     private long updatedTime = 0;
 
     @Nonnull
-    public static AuthClientDO create(@Nonnull CreateAuthClientArgs args) {
+    public static AuthClientDO create(@Nonnull Long id,
+                                      @Nonnull CreateAuthClientArgs args) {
         String platform = args.getPlatform();
         String name = args.getName();
         Terminal terminal = args.getTerminal();
@@ -90,11 +93,24 @@ public class AuthClientDO implements AuthClient {
         Asserts.notBlank(name, "名称为空");
         Asserts.nonnull(terminal, "终端类型为空");
         AuthClientDO authClientDO = new AuthClientDO();
+        authClientDO.setId(id);
         authClientDO.setPlatform(platform);
         authClientDO.setName(name);
         authClientDO.setNote(args.getNote());
         authClientDO.setTerminal(terminal);
         authClientDO.setToken(UUID.randomUUID().toString());
+        return authClientDO;
+    }
+
+    @Nonnull
+    public static AuthClientDO create(@Nonnull AuthClientInfo authClientInfo) {
+        AuthClientDO authClientDO = new AuthClientDO();
+        authClientDO.setNote(authClientInfo.getNote());
+        authClientDO.setId(authClientInfo.getId());
+        authClientDO.setPlatform(authClientInfo.getPlatform());
+        authClientDO.setName(authClientInfo.getName());
+        authClientDO.setTerminal(authClientInfo.getTerminal());
+        authClientDO.setToken(authClientInfo.getToken());
         return authClientDO;
     }
 

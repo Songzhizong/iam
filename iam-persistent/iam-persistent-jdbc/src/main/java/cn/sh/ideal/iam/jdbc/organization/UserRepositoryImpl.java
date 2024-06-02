@@ -46,7 +46,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void delete(@Nonnull User user) {
         // 删除用户的同时要删除用户和用户组之间的关系
-        long userId = user.getId();
+        Long userId = user.getId();
         userGroupRelJpaRepository.deleteAllByUserId(userId);
         // 删除用户
         UserDO entity = (UserDO) user;
@@ -55,7 +55,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Nonnull
     @Override
-    public Optional<User> findById(long id) {
+    public Optional<User> findById(@Nonnull Long id) {
         return userJpaRepository.findById(id).map(e -> e);
     }
 
@@ -76,18 +76,18 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Nonnull
     @Override
-    public Optional<User> findByTenantIdAndAccount(long tenantId, @Nonnull String account) {
+    public Optional<User> findByTenantIdAndAccount(@Nonnull Long tenantId, @Nonnull String account) {
         return userJpaRepository.findByTenantIdAndAccount(tenantId, account).map(e -> e);
     }
 
     @Override
-    public boolean existsByTenantIdAndAccount(long tenantId, @Nonnull String account) {
+    public boolean existsByTenantIdAndAccount(@Nonnull Long tenantId, @Nonnull String account) {
         return userJpaRepository.existsByTenantIdAndAccount(tenantId, account);
     }
 
     @Nonnull
     @Override
-    public List<UserGroup> getGroups(long userId) {
+    public List<UserGroup> getGroups(@Nonnull Long userId) {
         List<UserGroupRelDO> relList = userGroupRelJpaRepository.findAllByUserId(userId);
         if (relList.isEmpty()) {
             return List.of();
@@ -99,13 +99,13 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Nonnull
     @Override
-    public List<Long> getGroupIds(long userId) {
+    public List<Long> getGroupIds(@Nonnull Long userId) {
         List<UserGroupRelDO> relList = userGroupRelJpaRepository.findAllByUserId(userId);
         return relList.stream().map(UserGroupRelDO::getGroupId).toList();
     }
 
     @Override
-    public void saveGroups(long userId, @Nonnull Collection<UserGroup> groups) {
+    public void saveGroups(@Nonnull Long userId, @Nonnull Collection<UserGroup> groups) {
         userGroupRelJpaRepository.deleteAllByUserId(userId);
         if (groups.isEmpty()) {
             return;
@@ -119,7 +119,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Nonnull
     @Override
-    public User requireById(long id) {
+    public User requireById(@Nonnull Long id) {
         return findById(id).orElseThrow(() -> {
             log.info("用户不存在: {}", id);
             return new ResourceNotFoundException(i18nReader.getMessage1("user.not_found", id));

@@ -33,11 +33,11 @@ public class UserService {
     private static final Duration INVALIDATE_CACHE_DELAY = Duration.ofSeconds(2);
     private final UserCache userCache;
     private final IamI18nReader i18nReader;
-    private final EntityFactory entityFactory;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TenantRepository tenantRepository;
     private final UserGroupRepository userGroupRepository;
+    private final OrganizationEntityFactory entityFactory;
     @Nullable
     @Autowired(required = false)
     @SuppressWarnings("SpringJavaAutowiredFieldsWarningInspection")

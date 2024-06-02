@@ -24,9 +24,9 @@ import javax.annotation.Nullable;
 @RequiredArgsConstructor
 public class GroupService {
     private final IamI18nReader i18nReader;
-    private final EntityFactory entityFactory;
     private final TenantRepository tenantRepository;
     private final UserGroupRepository userGroupRepository;
+    private final OrganizationEntityFactory entityFactory;
     @Nullable
     @Autowired(required = false)
     @SuppressWarnings("SpringJavaAutowiredFieldsWarningInspection")

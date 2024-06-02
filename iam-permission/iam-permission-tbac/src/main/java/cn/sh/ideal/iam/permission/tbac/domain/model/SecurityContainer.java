@@ -46,7 +46,7 @@ public interface SecurityContainer {
             setParentRoute("");
             return;
         }
-        long parentId = parent.getId();
+        Long parentId = parent.getId();
         SequencedSet<Long> parentIds = parent.parentIds();
         if (parentIds.contains(getId())) {
             log.info("不能将自身的子容器设为父容器");
@@ -61,7 +61,7 @@ public interface SecurityContainer {
     @Nonnull
     default String generateRoute() {
         String parentRoute = getParentRoute();
-        long id = getId();
+        Long id = getId();
         // 将数字转成36进制拼接, 36进制只有数字和小写字母可以防止索引冲突
         String convert = NumberSystemConverter.to36(id);
         if (StringUtils.isBlank(parentRoute)) {

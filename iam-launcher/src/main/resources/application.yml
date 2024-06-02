@@ -21,8 +21,14 @@ spring:
     allow-bean-definition-overriding: true
 
 ideal-iam:
+  ops:
+    ip-whitelist:
+      - 127.0.0.1
+      - 172.17.0.1
+      - 192.168.0.0/16
   security:
     permit-matchers:
+      - /iam/ops/**
       - /iam/login/**
 
 ideal:

@@ -15,10 +15,11 @@
 
     <modules>
         <module>iam-idp</module>
+        <module>iam-ops</module>
         <module>iam-event</module>
         <module>iam-common</module>
         <module>iam-factor</module>
-        <module>iam-linking</module>
+        <module>iam-connect</module>
         <module>iam-launcher</module>
         <module>iam-security</module>
         <module>iam-permission</module>
@@ -32,7 +33,7 @@
     <properties>
         <java.version>21</java.version>
         <jose4j.version>0.9.6</jose4j.version>
-        <hutool.version>5.8.27</hutool.version>
+        <hutool.version>5.8.28</hutool.version>
         <pinyin4j.version>2.5.1</pinyin4j.version>
         <java-jwt.version>4.4.0</java-jwt.version>
     </properties>
@@ -70,9 +71,9 @@
     <profiles>
         <profile>
             <id>repo-ideal-nj</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <!--            <activation>-->
+            <!--                <activeByDefault>true</activeByDefault>-->
+            <!--            </activation>-->
             <repositories>
                 <repository>
                     <id>ideal-release</id>
