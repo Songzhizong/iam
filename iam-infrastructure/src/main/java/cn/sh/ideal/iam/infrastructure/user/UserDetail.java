@@ -9,7 +9,8 @@ import javax.annotation.Nullable;
 public interface UserDetail {
 
     /** 获取用户ID */
-    long getId();
+    @Nonnull
+    Long getId();
 
     /** 获取用户归属平台 */
     @Nonnull

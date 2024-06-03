@@ -45,6 +45,7 @@ public class JdbcPersistentRuntimeHints implements RuntimeHintsRegistrar {
                 TypeReference.of(UserDO.class),
                 TypeReference.of(UserGroupDO.class),
                 TypeReference.of(UserGroupRelDO.class),
+                TypeReference.of(UserLastActiveDO.class),
                 // permission.front
                 TypeReference.of(AppDO.class),
                 TypeReference.of(PermissionDO.class),

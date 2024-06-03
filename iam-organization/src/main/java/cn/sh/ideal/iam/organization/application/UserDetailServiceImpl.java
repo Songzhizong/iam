@@ -74,8 +74,9 @@ public class UserDetailServiceImpl implements UserDetailService {
     public static class UserDetailImpl implements UserDetail {
         private final User user;
 
+        @Nonnull
         @Override
-        public long getId() {
+        public Long getId() {
             return user.getId();
         }
 

@@ -55,6 +55,11 @@
       <module name="iam-core" target="21" />
       <module name="iam-initialization" target="21" />
       <module name="iam-integration" target="21" />
+      <module name="iam-linking" target="21" />
+      <module name="iam-linking-all" target="21" />
+      <module name="iam-linking-core" target="21" />
+      <module name="iam-linking-oauth2" target="21" />
+      <module name="iam-permission-web" target="21" />
       <module name="iam-security-adapter" target="21" />
     </bytecodeTargetLevel>
   </component>

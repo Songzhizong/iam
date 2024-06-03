@@ -29,7 +29,9 @@ ideal-iam:
   security:
     permit-matchers:
       - /iam/ops/**
-      - /iam/login/**
+      - /iam/login/password
+      - /iam/register/user
+      - /iam/register/tenant
 
 ideal:
   trace:
