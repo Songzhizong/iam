@@ -77,7 +77,7 @@ public class TenantService {
     }
 
     @Nonnull
-    private String generateAbbreviation(@Nonnull String platform) {
+    public String generateAbbreviation(@Nonnull String platform) {
         String abbreviation;
         do {
             abbreviation = NumberSystemConverter.to26(MAX_TIME - System.currentTimeMillis());
